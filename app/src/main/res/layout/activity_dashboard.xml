@@ -54,4 +54,182 @@
 
     </RelativeLayout>
 
+    <!--Scroll View for cards-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbarRl"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!--Income-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/incomeCv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="10dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardMaxElevation="12dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <ImageView
+                    android:id="@+id/incomeIv"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="start"
+                    android:src="@drawable/ic_income_gray"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/incomeTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/income"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+            </androidx.cardview.widget.CardView>
+
+            <!--Expenses-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/expensesCv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="10dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_below="@id/incomeCv"
+                app:cardBackgroundColor="@color/white"
+                app:cardMaxElevation="12dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <ImageView
+                    android:id="@+id/expensesIv"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="start"
+                    android:src="@drawable/ic_expenses_gray"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/expensesTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/expenses"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+            </androidx.cardview.widget.CardView>
+
+            <!--Statistics-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/statisticsCv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="10dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_below="@id/expensesCv"
+                app:cardBackgroundColor="@color/white"
+                app:cardMaxElevation="12dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <ImageView
+                    android:id="@+id/statisticsIv"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="start"
+                    android:src="@drawable/ic_statistics_gray"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/statisticsTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/statistics"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+            </androidx.cardview.widget.CardView>
+
+            <!--Categories-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/categoriesCv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="10dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/statisticsCv"
+                app:cardBackgroundColor="@color/white"
+                app:cardMaxElevation="12dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <ImageView
+                    android:id="@+id/categoriesIv"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="start"
+                    android:src="@drawable/ic_categories_gray"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/categoriesTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/categories"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+    </ScrollView>
+
 </RelativeLayout>

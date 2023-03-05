@@ -8,6 +8,8 @@
     <string name="password">Password</string>
     <string name="submit">Submit</string>
     <string name="update">Update</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
     <string name="name">Name</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
@@ -58,6 +60,19 @@
 
     <!--main/dashboard activity-->
     <string name="dashboard">Dashboard</string>
+    <string name="signout">Sign out</string>
+    <string name="sure_signout">Are you sure you want to sign out ?</string>
+    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="statistics">Statistics</string>
+    <string name="categories">Categories</string>
+
+    <!--operations activity-->
+    <string name="operations">Income/Expenses</string>
+
+    <!--statistics activity-->
+
+    <!--categories activity-->
 
     <!--errors-->
     <string name="failed_to_update_db">Failed to update db due to</string>
