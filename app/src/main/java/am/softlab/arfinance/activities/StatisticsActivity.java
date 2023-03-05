@@ -13,8 +13,7 @@ public class StatisticsActivity extends AppCompatActivity {
     //view binding
     private ActivityStatisticsBinding binding;
 
-    private String bookId;
-    private static final String TAG = "OPERATIONS_TAG";
+    private static final String TAG = "STATISTICS_TAG";
 
     //resources
     Resources res;
