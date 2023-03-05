@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "172342459676",
+    "project_id": "arfinance-6686c",
+    "storage_bucket": "arfinance-6686c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:172342459676:android:7e82f185dbb806f5aa0ed9",
+        "android_client_info": {
+          "package_name": "am.softlab.arfinance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "172342459676-pi9ao35pnvtupnf6n42cvu3ne9k2ae15.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "am.softlab.arfinance",
+            "certificate_hash": "a9787b9b1a268fcade550b059aa4266fc0da40f7"
+          }
+        },
+        {
+          "client_id": "172342459676-rdfg0cpjps0apcfkko2qb05550qah1g5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBouTN51_ikUq7Oexq8fk5V7OaYgpWNYbM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "172342459676-rdfg0cpjps0apcfkko2qb05550qah1g5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
