@@ -1,10 +1,9 @@
-package am.softlab.arfinance;
+package am.softlab.arfinance.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 
 import am.softlab.arfinance.databinding.ActivityMainBinding;
@@ -24,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         binding.loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
             }
         });
 
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         binding.skipBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
+                startActivity(new Intent(MainActivity.this, DashboardActivity.class));
             }
         });
     }
