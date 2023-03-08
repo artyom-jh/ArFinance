@@ -51,7 +51,8 @@ public class OperationAddActivity extends AppCompatActivity {
     //arraylist to hold odf categories
     private ArrayList<String> categoryTitleArrayList, categoryIdArrayList;
     //selected category id and category title
-    private String selectedCategoryId, selectedCategoryTitle;
+    private String selectedCategoryId, selectedCategoryTitle, oldSelectedCategoryId="";
+    private double oldAmount = 0;
     private long operationTimestamp=0;
     //operation id get from intent started from AdapterOperation
 
@@ -142,7 +143,7 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void loadCategories() {
-        Log.d(TAG, "loadPdfCategories: Loading categories...");
+        Log.d(TAG, "loadCategories: Loading categories...");
         categoryTitleArrayList = new ArrayList<>();
         categoryIdArrayList = new ArrayList<>();
 
@@ -178,14 +179,17 @@ public class OperationAddActivity extends AppCompatActivity {
     private void loadOperationInfo() {
         Log.d(TAG, "loadOperationInfo: Loading operation info");
 
-        DatabaseReference refBooks = FirebaseDatabase.getInstance().getReference("Operations");
-        refBooks.child(operId)
+        DatabaseReference refOperations = FirebaseDatabase.getInstance().getReference("Operations");
+        refOperations.child(operId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        //get book info
+                        //get operation info
                         selectedCategoryId = ""+snapshot.child("categoryId").getValue();
+                        oldSelectedCategoryId = selectedCategoryId;
                         String amountStr = ""+snapshot.child("amount").getValue();
+                        oldAmount = Double.parseDouble(amountStr);
+
                         String notes = ""+snapshot.child("notes").getValue();
                         //set to view
                         operationTimestamp = Long.parseLong(snapshot.child("operationTimestamp").getValue().toString());
@@ -195,8 +199,8 @@ public class OperationAddActivity extends AppCompatActivity {
                         binding.operNotesEt.setText(notes);
 
                         Log.d(TAG, "onDataChange: Loading Operation Category Info");
-                        DatabaseReference refBookCategory = FirebaseDatabase.getInstance().getReference("Categories");
-                        refBookCategory.child(selectedCategoryId)
+                        DatabaseReference refOperationCategory = FirebaseDatabase.getInstance().getReference("Categories");
+                        refOperationCategory.child(selectedCategoryId)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -339,6 +343,7 @@ public class OperationAddActivity extends AppCompatActivity {
                         public void onSuccess(Void unused) {
                             //category add success
                             Log.d(TAG, "onSuccess: Operation added...");
+                            MyApplication.updateCategoryAmount(selectedCategoryId, amount);
                             progressDialog.dismiss();
                             Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_added), Toast.LENGTH_SHORT).show();
                         }
@@ -367,6 +372,14 @@ public class OperationAddActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void unused) {
                             Log.d(TAG, "onSuccess: Operation updated...");
+
+                            if (selectedCategoryId.equals(oldSelectedCategoryId)) {
+                                MyApplication.updateCategoryAmount(selectedCategoryId, amount - oldAmount);
+                            } else {
+                                MyApplication.updateCategoryAmount(oldSelectedCategoryId, 0-oldAmount);
+                                MyApplication.updateCategoryAmount(selectedCategoryId, amount);
+                            }
+
                             progressDialog.dismiss();
                             Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_updated), Toast.LENGTH_SHORT).show();
                         }

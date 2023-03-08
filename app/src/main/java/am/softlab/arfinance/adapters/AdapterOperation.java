@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
@@ -68,7 +69,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         // get data
         ModelOperation model = operationArrayList.get(position);
         String id = model.getId();
-        String categoryId = model.getCategoryId();
+        String category = MyApplication.getCategoryById(model.getCategoryId());
         String notes = model.getNotes();
         boolean isIncome = model.getIsIncome();
         double amount = model.getAmount();
@@ -80,7 +81,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         //set data
         holder.operDateTv.setText(dateStr);
         holder.operAmountTv.setText(""+amount);
-        holder.categoryTv.setText(categoryId);
+        holder.categoryTv.setText(category);
         holder.operNotesTv.setText(notes);
 
         // handle click, delete operation
@@ -91,13 +92,12 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle(res.getString(R.string.delete))
                         .setMessage(res.getString(R.string.sure_delete_operation))
-                        .setPositiveButton(res.getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //begin delete
                                 Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
                                 deleteOperation(model, holder);
-
                             }
                         })
                         .setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -122,9 +122,14 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         });
     }
 
+    private String deleteCategoryId;
+    private double deleteAmount;
     private void deleteOperation(ModelOperation model, AdapterOperation.HolderOperation holder) {
         //det id of operation to delete
         String id = model.getId();
+        deleteCategoryId = model.getCategoryId();
+        deleteAmount = model.getAmount();
+
         //Firebase DB > Operations > operationId >
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
         ref.child(id)
@@ -133,6 +138,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                     @Override
                     public void onSuccess(Void unused) {
                         // deleted successfully
+                        MyApplication.updateCategoryAmount(deleteCategoryId, 0-deleteAmount);
                         Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                     }
                 })

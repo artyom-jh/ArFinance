@@ -93,6 +93,7 @@
     <string name="operation_added">Operation added successfully…</string>
     <string name="operation_updated">Operation updated successfully…</string>
     <string name="select_date">Select a date</string>
+    <string name="category_used">Category is used, impossible to delete</string>
 
     <!--statistics activity-->
 

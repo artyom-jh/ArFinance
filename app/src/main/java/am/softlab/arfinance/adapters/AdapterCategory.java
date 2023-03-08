@@ -19,8 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -87,13 +90,12 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle(res.getString(R.string.delete))
                         .setMessage(res.getString(R.string.sure_delete_category))
-                        .setPositiveButton(res.getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //begin delete
                                 Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
-                                deleteCategory(model, holder);
-
+                                checkAndDeleteCategory(model, holder);
                             }
                         })
                         .setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -121,12 +123,34 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
         });
     }
 
-    private void deleteCategory(ModelCategory model, HolderCategory holder) {
-        //det id of category to delete
-        String id = model.getId();
+    private String deleteCategoryId = "";
+    private void checkAndDeleteCategory(ModelCategory model, HolderCategory holder) {
+        deleteCategoryId = model.getId();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
+        ref.orderByChild("categoryId").equalTo(deleteCategoryId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        long rowCount = snapshot.getChildrenCount();
+                        if (rowCount <= 0) {
+                            deleteCategory(deleteCategoryId);
+                        } else {
+                            Toast.makeText(context, res.getString(R.string.category_used), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        //noop
+                    }
+                });
+    }
+
+    private void deleteCategory(String categoryId) {
         //Firebase DB > Categories > categoryId >
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
-        ref.child(id)
+        ref.child(categoryId)
                 .removeValue()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

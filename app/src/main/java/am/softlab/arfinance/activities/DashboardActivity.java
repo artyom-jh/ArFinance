@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityDashboardBinding;
 
@@ -154,6 +155,8 @@ public class DashboardActivity extends AppCompatActivity {
             String email = firebaseUser.getEmail();
             //set in textview of toolbar
             binding.subTitleTv.setText(email);
+
+            MyApplication.loadCategoryList();
         }
     }
 }

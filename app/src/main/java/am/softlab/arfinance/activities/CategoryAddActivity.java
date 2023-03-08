@@ -85,7 +85,7 @@ public class CategoryAddActivity extends AppCompatActivity {
             binding.categoryNameEt.setText( getIntent().getStringExtra("categoryName") );
             binding.categoryNotesEt.setText( getIntent().getStringExtra("categoryNotes") );
 
-            boolean isIncome = getIntent().getStringExtra("isIncome").equalsIgnoreCase("true");
+            boolean isIncome = getIntent().getBooleanExtra("isIncome", true);
             if (isIncome) {
                 selectedCategoryTypeIndex = 0;
                 selectedCategoryTypeTitle = categoryTypeArray[0];

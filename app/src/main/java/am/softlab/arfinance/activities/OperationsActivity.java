@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.adapters.AdapterOperation;
 import am.softlab.arfinance.databinding.ActivityOperationsBinding;
