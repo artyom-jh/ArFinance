@@ -18,15 +18,10 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +31,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 
@@ -60,7 +54,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private String name ="";
 
     //resources
-    Resources res;
+    private Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,29 +74,14 @@ public class ProfileEditActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         loadUserInfo();
 
-        //handle click, goback
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        //handle click, goBack
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
         //handle click, pick image
-        binding.profileIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showImageAttachMenu();
-            }
-        });
+        binding.profileIv.setOnClickListener(v -> showImageAttachMenu());
 
         //handle click, update profile
-        binding.updateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateData();
-            }
-        });
+        binding.updateBtn.setOnClickListener(v -> validateData());
     }
 
     private void loadUserInfo() {
@@ -114,12 +93,8 @@ public class ProfileEditActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //get all info of user here from snapshot
-                        String email = ""+snapshot.child("email").getValue();
                         String name = ""+snapshot.child("name").getValue();
                         String profileImage = ""+snapshot.child("profileImage").getValue();
-                        String timestamp = ""+snapshot.child("timestamp").getValue();
-                        String uid = ""+snapshot.child("uid").getValue();
-                        String userType = ""+snapshot.child("userType").getValue();
 
                         //set data to ui
                         binding.nameEt.setText(name);
@@ -171,27 +146,22 @@ public class ProfileEditActivity extends AppCompatActivity {
         //storage reference
         StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
         reference.putFile(imageUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.d(TAG, "onSuccess: Profile image uploaded");
-                        Log.d(TAG, "onSuccess: Getting url of uploaded image");
-                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isSuccessful());
-                        String uploadedImageUrl = ""+uriTask.getResult();
+                .addOnSuccessListener(taskSnapshot -> {
+                    Log.d(TAG, "onSuccess: Profile image uploaded");
+                    Log.d(TAG, "onSuccess: Getting url of uploaded image");
+                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                    //noinspection StatementWithEmptyBody
+                    while (!uriTask.isSuccessful());
+                    String uploadedImageUrl = ""+uriTask.getResult();
 
-                        Log.d(TAG, "onSuccess: Uploaded Image URL: " + uploadedImageUrl);
+                    Log.d(TAG, "onSuccess: Uploaded Image URL: " + uploadedImageUrl);
 
-                        updateProfile(uploadedImageUrl);
-                    }
+                    updateProfile(uploadedImageUrl);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onFailure: Failed to upload image due to " + e.getMessage());
-                        progressDialog.dismiss();
-                        Toast.makeText(ProfileEditActivity.this, res.getString(R.string.failed_to_upload_image) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "onFailure: Failed to upload image due to " + e.getMessage());
+                    progressDialog.dismiss();
+                    Toast.makeText(ProfileEditActivity.this, res.getString(R.string.failed_to_upload_image) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -211,28 +181,17 @@ public class ProfileEditActivity extends AppCompatActivity {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
         databaseReference.child(firebaseAuth.getUid())
                 .updateChildren(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d(TAG, "onSuccess: Profile updated...");
-                        progressDialog.dismiss();
-                        Toast.makeText(ProfileEditActivity.this, res.getString(R.string.profile_updated), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnSuccessListener(unused -> {
+                    Log.d(TAG, "onSuccess: Profile updated...");
+                    progressDialog.dismiss();
+                    Toast.makeText(ProfileEditActivity.this, res.getString(R.string.profile_updated), Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "onFailure: Failed to update db due to " + e.getMessage());
-                        progressDialog.dismiss();
-                        Toast.makeText(ProfileEditActivity.this, res.getString(R.string.failed_to_update_db) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "onFailure: Failed to update db due to " + e.getMessage());
+                    progressDialog.dismiss();
+                    Toast.makeText(ProfileEditActivity.this, res.getString(R.string.failed_to_update_db) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 })
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        finish();
-                    }
-                });
+                .addOnCompleteListener(task -> finish());
     }
 
     private void showImageAttachMenu() {
@@ -244,21 +203,18 @@ public class ProfileEditActivity extends AppCompatActivity {
         popupMenu.show();
 
         //handle menu item click
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                //get id of item clicked
-                int which = item.getItemId();
-                if (which == 0) {
-                    //camera clicked
-                    pickImageCamera();
-                }
-                else if (which == 1) {
-                    //gallery clicked
-                    pickImageGallery();
-                }
-                return false;
+        popupMenu.setOnMenuItemClickListener(item -> {
+            //get id of item clicked
+            int which = item.getItemId();
+            if (which == 0) {
+                //camera clicked
+                pickImageCamera();
             }
+            else if (which == 1) {
+                //gallery clicked
+                pickImageGallery();
+            }
+            return false;
         });
     }
 
@@ -290,7 +246,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                     //get uri of image
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Log.d(TAG, "onActivityResult: Picked From Camera " + imageUri);
-                        Intent data = result.getData(); //no need here as in camera case we already have image in imageUri variable
                         binding.profileIv.setImageURI(imageUri);
                     }
                     else {

@@ -4,11 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,17 +37,11 @@ public class CategoriesActivity extends AppCompatActivity {
 
     private static final String TAG = "CATEGORIES_TAG";
 
-    //resources
-    Resources res;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCategoriesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        //get resources
-        res = this.getResources();
 
         //init firebase auth
         firebaseAuth = FirebaseAuth.getInstance();
@@ -69,7 +61,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 try{
                     adapterCategory.getFilter().filter(charSequence);
                 }catch (Exception e){
-
+                    //noop
                 }
             }
 
@@ -80,20 +72,12 @@ public class CategoriesActivity extends AppCompatActivity {
         });
 
         //handle click, start category add screen
-        binding.addCategoryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(CategoriesActivity.this, CategoryAddActivity.class));
-            }
-        });
+        binding.addCategoryBtn.setOnClickListener(
+                view -> startActivity(new Intent(CategoriesActivity.this, CategoryAddActivity.class))
+        );
 
         //handle click, goback
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     private void loadCategories() {

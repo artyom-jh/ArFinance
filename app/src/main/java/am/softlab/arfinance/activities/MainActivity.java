@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import am.softlab.arfinance.databinding.ActivityMainBinding;
 
@@ -20,19 +19,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         //handle loginBtn click, start login screen
-        binding.loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            }
-        });
+        binding.loginBtn.setOnClickListener(
+                v -> startActivity(new Intent(MainActivity.this, LoginActivity.class))
+        );
 
         //handle skipBtn click, start continue without login screen
-        binding.skipBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, DashboardActivity.class));
-            }
-        });
+        binding.skipBtn.setOnClickListener(
+                v -> startActivity(new Intent(MainActivity.this, DashboardActivity.class))
+        );
     }
 }

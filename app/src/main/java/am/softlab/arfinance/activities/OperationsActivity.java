@@ -43,7 +43,7 @@ public class OperationsActivity extends AppCompatActivity {
     private static final String TAG = "OPERATIONS_TAG";
 
     //resources
-    Resources res;
+    private Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,7 @@ public class OperationsActivity extends AppCompatActivity {
                 try{
                     adapterOperation.getFilter().filter(charSequence);
                 }catch (Exception e){
-
+                    //noop
                 }
             }
 
@@ -92,22 +92,14 @@ public class OperationsActivity extends AppCompatActivity {
         });
 
         //handle click, start operation add screen
-        binding.addOperationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(OperationsActivity.this, OperationAddActivity.class);
-                intent.putExtra("isIncome", isIncome);
-                startActivity(intent);
-            }
+        binding.addOperationBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(OperationsActivity.this, OperationAddActivity.class);
+            intent.putExtra("isIncome", isIncome);
+            startActivity(intent);
         });
 
-        //handle click, goback
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        //handle click, goBack
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     private void loadOperations() {

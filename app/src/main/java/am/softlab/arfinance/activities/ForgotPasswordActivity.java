@@ -1,17 +1,13 @@
 package am.softlab.arfinance.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import am.softlab.arfinance.R;
@@ -29,7 +25,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     //resources
-    Resources res;
+    private Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +45,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
 
         //handle click, begin recovery password
-        binding.submitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateData();
-            }
-        });
+        binding.submitBtn.setOnClickListener(v -> validateData());
     }
 
     private String email = "";
@@ -89,21 +75,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         //begin sending recovery
         firebaseAuth.sendPasswordResetEmail(email)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        //sent
-                        progressDialog.dismiss();
-                        Toast.makeText(ForgotPasswordActivity.this, res.getString(R.string.instructions_sent) + " " + email, Toast.LENGTH_SHORT).show();
-                    }
+                .addOnSuccessListener(unused -> {
+                    //sent
+                    progressDialog.dismiss();
+                    Toast.makeText(ForgotPasswordActivity.this, res.getString(R.string.instructions_sent) + " " + email, Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //failed to send
-                        progressDialog.dismiss();
-                        Toast.makeText(ForgotPasswordActivity.this, res.getString(R.string.failed_to_send) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    //failed to send
+                    progressDialog.dismiss();
+                    Toast.makeText(ForgotPasswordActivity.this, res.getString(R.string.failed_to_send) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 }

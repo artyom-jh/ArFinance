@@ -1,22 +1,15 @@
 package am.softlab.arfinance.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -38,7 +31,7 @@ public class CategoryAddActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     //resources
-    Resources res;
+    private Resources res;
 
     //category id get from intent started from AdapterCategory
     private String categoryId;
@@ -97,28 +90,13 @@ public class CategoryAddActivity extends AppCompatActivity {
         }
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> onBackPressed());
 
         //handle click, begin upload category
-        binding.submitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                validateData();
-            }
-        });
+        binding.submitBtn.setOnClickListener(view -> validateData());
 
         //handle click, pick category
-        binding.categoryTypeTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                categoryTypePickDialog();
-            }
-        });
+        binding.categoryTypeTv.setOnClickListener(view -> categoryTypePickDialog());
     }
 
     private String category = "";
@@ -148,19 +126,19 @@ public class CategoryAddActivity extends AppCompatActivity {
         //alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(res.getString(R.string.pick_category_type))
-                .setItems(categoryTypeArray, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {
-                        //handle item click
-                        //get clicked item from list
-                        selectedCategoryTypeIndex = which;
-                        selectedCategoryTypeTitle = categoryTypeArray[which];
-                        //set to category textview
-                        binding.categoryTypeTv.setText(selectedCategoryTypeTitle);
+                .setItems(
+                        categoryTypeArray,
+                        (dialogInterface, which) -> {
+                            //handle item click
+                            //get clicked item from list
+                            selectedCategoryTypeIndex = which;
+                            selectedCategoryTypeTitle = categoryTypeArray[which];
+                            //set to category textview
+                            binding.categoryTypeTv.setText(selectedCategoryTypeTitle);
 
-                        Log.d(TAG, "onClick: Selected Category: " + selectedCategoryTypeIndex + " " + selectedCategoryTypeTitle);
-                    }
-                })
+                            Log.d(TAG, "onClick: Selected Category: " + selectedCategoryTypeIndex + " " + selectedCategoryTypeTitle);
+                        }
+                )
                 .show();
     }
 
@@ -191,57 +169,35 @@ public class CategoryAddActivity extends AppCompatActivity {
             //add to firebase db... Database Root > Categories > categoryId > category info
             ref.child(""+timestamp)
                     .setValue(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            //category add success
-                            Log.d(TAG, "onSuccess: Category added...");
-                            progressDialog.dismiss();
-                            Toast.makeText(CategoryAddActivity.this, res.getString(R.string.category_added), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnSuccessListener(unused -> {
+                        //category add success
+                        Log.d(TAG, "onSuccess: Category added...");
+                        progressDialog.dismiss();
+                        Toast.makeText(CategoryAddActivity.this, res.getString(R.string.category_added), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            //category add failed
-                            progressDialog.dismiss();
-                            Toast.makeText(CategoryAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnFailureListener(e -> {
+                        //category add failed
+                        progressDialog.dismiss();
+                        Toast.makeText(CategoryAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            finish();
-                        }
-                    });
+                    .addOnCompleteListener(task -> finish());
         }
         else {          // Edit mode
             hashMap.put("id", ""+categoryId);
 
             ref.child(""+categoryId)
                     .updateChildren(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Log.d(TAG, "onSuccess: Category updated...");
-                            progressDialog.dismiss();
-                            Toast.makeText(CategoryAddActivity.this, res.getString(R.string.category_updated), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnSuccessListener(unused -> {
+                        Log.d(TAG, "onSuccess: Category updated...");
+                        progressDialog.dismiss();
+                        Toast.makeText(CategoryAddActivity.this, res.getString(R.string.category_updated), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
-                            progressDialog.dismiss();
-                            Toast.makeText(CategoryAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnFailureListener(e -> {
+                        Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+                        progressDialog.dismiss();
+                        Toast.makeText(CategoryAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            finish();
-                        }
-                    });
+                    .addOnCompleteListener(task -> finish());
         }
     }
 

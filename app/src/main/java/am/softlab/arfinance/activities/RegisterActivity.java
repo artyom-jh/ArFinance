@@ -1,6 +1,5 @@
 package am.softlab.arfinance.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -9,12 +8,8 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,7 +31,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     //resources
-    Resources res;
+    private Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,20 +52,10 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> onBackPressed());
 
         //handle click, begin register
-        binding.registerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                validateData();
-            }
-        });
+        binding.registerBtn.setOnClickListener(view -> validateData());
     }
 
     private String name = "", email = "", password = "";
@@ -108,21 +93,15 @@ public class RegisterActivity extends AppCompatActivity {
 
         //create user in firebase auth
         firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        //account creation success, now add in firebase realtime database
-                        updateUserInfo();
+                .addOnSuccessListener(authResult -> {
+                    //account creation success, now add in firebase realtime database
+                    updateUserInfo();
 
-                    }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //account creating failed
-                        progressDialog.dismiss();
-                        Toast.makeText(RegisterActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    //account creating failed
+                    progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -148,25 +127,18 @@ public class RegisterActivity extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.child(uid)
                 .setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        //data added to db
-
-                        progressDialog.dismiss();
-                        Toast.makeText(RegisterActivity.this, res.getString(R.string.account_created), Toast.LENGTH_SHORT).show();
-                        //since user account is created so start dashboard of user
-                        startActivity(new Intent(RegisterActivity.this, DashboardActivity.class));
-                        finish();
-                    }
+                .addOnSuccessListener(unused -> {
+                    //data added to db
+                    progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this, res.getString(R.string.account_created), Toast.LENGTH_SHORT).show();
+                    //since user account is created so start dashboard of user
+                    startActivity(new Intent(RegisterActivity.this, DashboardActivity.class));
+                    finish();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //data failed adding to db
-                        progressDialog.dismiss();
-                        Toast.makeText(RegisterActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    //data failed adding to db
+                    progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 }

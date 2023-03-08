@@ -8,7 +8,7 @@
     tools:context=".activities.LoginActivity">
 
     <RelativeLayout
-        android:id="@+id/toolBarl"
+        android:id="@+id/toolBarRl"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:background="@drawable/shape_toolbar01">

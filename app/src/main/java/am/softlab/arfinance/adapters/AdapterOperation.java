@@ -2,7 +2,6 @@ package am.softlab.arfinance.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
@@ -17,13 +16,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
@@ -44,7 +40,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     private FilterOperation filter;
 
     //resources
-    Resources res;
+    private Resources res;
 
     public AdapterOperation(Context context, ArrayList<ModelOperation> operationArrayList) {
         this.context = context;
@@ -85,46 +81,32 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         holder.operNotesTv.setText(notes);
 
         // handle click, delete operation
-        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //confirm delete dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(res.getString(R.string.delete))
-                        .setMessage(res.getString(R.string.sure_delete_operation))
-                        .setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //begin delete
-                                Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
-                                deleteOperation(model, holder);
-                            }
-                        })
-                        .setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        })
-                        .show();
-            }
+        holder.deleteBtn.setOnClickListener(view -> {
+            //confirm delete dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(res.getString(R.string.delete))
+                    .setMessage(res.getString(R.string.sure_delete_operation))
+                    .setPositiveButton(res.getString(R.string.delete), (dialogInterface, i) -> {
+                        //begin delete
+                        Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
+                        deleteOperation(model);
+                    })
+                    .setNegativeButton(res.getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
+                    .show();
         });
 
         //handle item click
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, OperationAddActivity.class);
-                intent.putExtra("operId", id);
-                intent.putExtra("isIncome", isIncome);
-                context.startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, OperationAddActivity.class);
+            intent.putExtra("operId", id);
+            intent.putExtra("isIncome", isIncome);
+            context.startActivity(intent);
         });
     }
 
     private String deleteCategoryId;
     private double deleteAmount;
-    private void deleteOperation(ModelOperation model, AdapterOperation.HolderOperation holder) {
+    private void deleteOperation(ModelOperation model) {
         //det id of operation to delete
         String id = model.getId();
         deleteCategoryId = model.getCategoryId();
@@ -134,20 +116,14 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
         ref.child(id)
                 .removeValue()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        // deleted successfully
-                        MyApplication.updateCategoryAmount(deleteCategoryId, 0-deleteAmount);
-                        Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnSuccessListener(unused -> {
+                    // deleted successfully
+                    MyApplication.updateCategoryAmount(deleteCategoryId, 0-deleteAmount);
+                    Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // failed to delete
-                        Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    // failed to delete
+                    Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 

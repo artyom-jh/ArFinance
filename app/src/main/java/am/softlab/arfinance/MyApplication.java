@@ -2,7 +2,6 @@ package am.softlab.arfinance;
 
 import android.app.Application;
 import android.text.format.DateFormat;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -18,12 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import am.softlab.arfinance.activities.CategoriesActivity;
-import am.softlab.arfinance.activities.OperationsActivity;
-import am.softlab.arfinance.adapters.AdapterCategory;
-import am.softlab.arfinance.adapters.AdapterOperation;
 import am.softlab.arfinance.models.ModelCategory;
-import am.softlab.arfinance.models.ModelOperation;
 
 public class MyApplication extends Application {
 
@@ -38,13 +32,12 @@ public class MyApplication extends Application {
 
     //created a static method to convert timestamp to proper date format, so we can use
     //it everywhere in project, no need to rewrite again
-    public static final String formatTimestamp(long timestamp){
+    public static String formatTimestamp(long timestamp){
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(timestamp);
-        //formatting timestamp to dd/MM/yyyy
-        String date = DateFormat.format("dd/MM/yyyy", cal).toString();
 
-        return date;
+        //formatting timestamp to dd/MM/yyyy
+        return DateFormat.format("dd/MM/yyyy", cal).toString();
     }
 
     public static void loadCategoryList() {
@@ -63,7 +56,7 @@ public class MyApplication extends Application {
                     // get data
                     ModelCategory model = ds.getValue(ModelCategory.class);
                     //add to arraylist
-                    List<String> currentList = new ArrayList<String>();;
+                    List<String> currentList = new ArrayList<String>();
                     currentList.add(model.getId());
                     currentList.add(model.getCategory());
                     categoryArrayList.add(currentList);

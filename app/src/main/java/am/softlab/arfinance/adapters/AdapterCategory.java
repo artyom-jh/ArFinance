@@ -1,8 +1,8 @@
 package am.softlab.arfinance.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
@@ -17,8 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +42,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
     private FilterCategory filter;
 
     //resources
-    Resources res;
+    private final Resources res;
 
     public AdapterCategory(Context context, ArrayList<ModelCategory> categoryArrayList) {
         this.context = context;
@@ -64,6 +62,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
         return new HolderCategory(binding.getRoot());
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull HolderCategory holder, int position) {
         // get data
@@ -73,8 +72,6 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
         String notes = model.getNotes();
         boolean isIncome = model.getIsIncome();
         double amount = model.getAmount();
-        String uid = model.getUid();
-        long timestamp = model.getTimestamp();
 
         //set data
         holder.categoryTv.setText(category);
@@ -83,48 +80,40 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
         holder.categoryAmountTv.setText(""+amount);
 
         // handle click, delete category
-        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //confirm delete dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(res.getString(R.string.delete))
-                        .setMessage(res.getString(R.string.sure_delete_category))
-                        .setPositiveButton(res.getString(R.string.delete), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+        holder.deleteBtn.setOnClickListener(view -> {
+            //confirm delete dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(res.getString(R.string.delete))
+                    .setMessage(res.getString(R.string.sure_delete_category))
+                    .setPositiveButton(
+                            res.getString(R.string.delete),
+                            (dialogInterface, i) -> {
                                 //begin delete
                                 Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
-                                checkAndDeleteCategory(model, holder);
+                                checkAndDeleteCategory(model);
                             }
-                        })
-                        .setNegativeButton(res.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        })
-                        .show();
-            }
+                    )
+                    .setNegativeButton(
+                            res.getString(R.string.cancel),
+                            (dialogInterface, i) -> dialogInterface.dismiss()
+                    )
+                    .show();
         });
 
         //handle item click
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, CategoryAddActivity.class);
-                intent.putExtra("categoryId", id);
-                intent.putExtra("categoryName", category);
-                intent.putExtra("categoryNotes", notes);
-                intent.putExtra("isIncome", isIncome);
-                intent.putExtra("categoryAmount", amount);
-                context.startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, CategoryAddActivity.class);
+            intent.putExtra("categoryId", id);
+            intent.putExtra("categoryName", category);
+            intent.putExtra("categoryNotes", notes);
+            intent.putExtra("isIncome", isIncome);
+            intent.putExtra("categoryAmount", amount);
+            context.startActivity(intent);
         });
     }
 
     private String deleteCategoryId = "";
-    private void checkAndDeleteCategory(ModelCategory model, HolderCategory holder) {
+    private void checkAndDeleteCategory(ModelCategory model) {
         deleteCategoryId = model.getId();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
@@ -152,19 +141,13 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
         ref.child(categoryId)
                 .removeValue()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        // deleted successfully
-                        Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnSuccessListener(unused -> {
+                    // deleted successfully
+                    Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // failed to delete
-                        Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    // failed to delete
+                    Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 

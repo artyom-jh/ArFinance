@@ -45,7 +45,7 @@ public class PieFragment extends Fragment {
     private FragmentPieBinding binding;
     private PieChart categoryPieChart;
 
-    Resources res;
+    private Resources res;
 
     private static final String TAG = "PIE_FRAGMENT_TAG";
 
@@ -83,14 +83,7 @@ public class PieFragment extends Fragment {
         setupCategoryPieChart();
 
         Log.d(TAG, "onCreateView: Pie: " + statPageId);
-        if (statPageId == Constants.PAGE_INCOME) {
-            //load income categories for pie
-            loadCategories(true);
-        }
-        else {
-            //load expenses categories for pie
-            loadCategories(false);
-        }
+        loadCategories(statPageId == Constants.PAGE_INCOME);
 
         return binding.getRoot();
     }
@@ -140,9 +133,6 @@ public class PieFragment extends Fragment {
     }
 
     private void loadPieChartData(ArrayList<PieEntry> entries, boolean isIncome) {
-        //entries.add(new PieEntry(0.2f, "label1"));
-        //entries.add(new PieEntry(0.15f, "label3"));
-
         ArrayList<Integer> colors = new ArrayList<>();
         for (int color: ColorTemplate.MATERIAL_COLORS) {
             colors.add(color);

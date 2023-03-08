@@ -5,18 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -46,7 +40,7 @@ public class OperationAddActivity extends AppCompatActivity {
     private MaterialDatePicker<Long> materialDatePicker;
 
     //resources
-    Resources res;
+    private Resources res;
 
     //arraylist to hold odf categories
     private ArrayList<String> categoryTitleArrayList, categoryIdArrayList;
@@ -110,36 +104,16 @@ public class OperationAddActivity extends AppCompatActivity {
         }
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        binding.backBtn.setOnClickListener(view -> onBackPressed());
 
         //handle click, begin upload category
-        binding.submitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                validateData();
-            }
-        });
+        binding.submitBtn.setOnClickListener(view -> validateData());
 
         //handle click, pick date
-        binding.operDateTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                datePickDialog();
-            }
-        });
+        binding.operDateTv.setOnClickListener(view -> datePickDialog());
 
         //handle click, pick category
-        binding.categoryTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                categoryPickDialog();
-            }
-        });
+        binding.categoryTv.setOnClickListener(view -> categoryPickDialog());
     }
 
     private void loadCategories() {
@@ -265,19 +239,19 @@ public class OperationAddActivity extends AppCompatActivity {
         //alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Pick Category")
-                .setItems(categoriesArray, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {
-                        //handle item click
-                        //get clicked item from list
-                        selectedCategoryTitle = categoryTitleArrayList.get(which);
-                        selectedCategoryId = categoryIdArrayList.get(which);
-                        //set to category textview
-                        binding.categoryTv.setText(selectedCategoryTitle);
+                .setItems(
+                        categoriesArray,
+                        (dialogInterface, which) -> {
+                            //handle item click
+                            //get clicked item from list
+                            selectedCategoryTitle = categoryTitleArrayList.get(which);
+                            selectedCategoryId = categoryIdArrayList.get(which);
+                            //set to category textview
+                            binding.categoryTv.setText(selectedCategoryTitle);
 
-                        Log.d(TAG, "onClick: Selected Category: " + selectedCategoryId+" "+selectedCategoryTitle);
-                    }
-                })
+                            Log.d(TAG, "onClick: Selected Category: " + selectedCategoryId + " " + selectedCategoryTitle);
+                        }
+                )
                 .show();
     }
 
@@ -338,66 +312,44 @@ public class OperationAddActivity extends AppCompatActivity {
             //add to firebase db... Database Root > Operations > operId > operation info
             ref.child(""+timestamp)
                     .setValue(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            //category add success
-                            Log.d(TAG, "onSuccess: Operation added...");
-                            MyApplication.updateCategoryAmount(selectedCategoryId, amount);
-                            progressDialog.dismiss();
-                            Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_added), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnSuccessListener(unused -> {
+                        //category add success
+                        Log.d(TAG, "onSuccess: Operation added...");
+                        MyApplication.updateCategoryAmount(selectedCategoryId, amount);
+                        progressDialog.dismiss();
+                        Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_added), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            //category add failed
-                            progressDialog.dismiss();
-                            Toast.makeText(OperationAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnFailureListener(e -> {
+                        //category add failed
+                        progressDialog.dismiss();
+                        Toast.makeText(OperationAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            finish();
-                        }
-                    });
+                    .addOnCompleteListener(task -> finish());
         }
         else {          // Edit mode
             hashMap.put("id", ""+operId);
 
             ref.child(""+operId)
                     .updateChildren(hashMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Log.d(TAG, "onSuccess: Operation updated...");
+                    .addOnSuccessListener(unused -> {
+                        Log.d(TAG, "onSuccess: Operation updated...");
 
-                            if (selectedCategoryId.equals(oldSelectedCategoryId)) {
-                                MyApplication.updateCategoryAmount(selectedCategoryId, amount - oldAmount);
-                            } else {
-                                MyApplication.updateCategoryAmount(oldSelectedCategoryId, 0-oldAmount);
-                                MyApplication.updateCategoryAmount(selectedCategoryId, amount);
-                            }
+                        if (selectedCategoryId.equals(oldSelectedCategoryId)) {
+                            MyApplication.updateCategoryAmount(selectedCategoryId, amount - oldAmount);
+                        } else {
+                            MyApplication.updateCategoryAmount(oldSelectedCategoryId, 0-oldAmount);
+                            MyApplication.updateCategoryAmount(selectedCategoryId, amount);
+                        }
 
-                            progressDialog.dismiss();
-                            Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_updated), Toast.LENGTH_SHORT).show();
-                        }
+                        progressDialog.dismiss();
+                        Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_updated), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
-                            progressDialog.dismiss();
-                            Toast.makeText(OperationAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+                    .addOnFailureListener(e -> {
+                        Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+                        progressDialog.dismiss();
+                        Toast.makeText(OperationAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            finish();
-                        }
-                    });
+                    .addOnCompleteListener(task -> finish());
         }
     }
 

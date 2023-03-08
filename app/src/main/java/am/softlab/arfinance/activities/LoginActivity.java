@@ -1,7 +1,6 @@
 package am.softlab.arfinance.activities;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -10,12 +9,8 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -41,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     //resources
-    Resources res;
+    private Resources res;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,28 +56,17 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
 
         //handle click, go to register screen
-        binding.noAccountTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-            }
-        });
+        binding.noAccountTv.setOnClickListener(
+                view -> startActivity(new Intent(LoginActivity.this, RegisterActivity.class))
+        );
 
         //handle click, begin login
-        binding.loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                validateData();
-            }
-        });
+        binding.loginBtn.setOnClickListener(view -> validateData());
 
         //handle click, open forgot password activity
-        binding.forgotTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-            }
-        });
+        binding.forgotTv.setOnClickListener(
+                v -> startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class))
+        );
     }
 
     private String email = "", password = "";
@@ -114,20 +98,14 @@ public class LoginActivity extends AppCompatActivity {
 
         //login user
         firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        //login success, check if user is user or admin
-                        checkUser();
-                    }
+                .addOnSuccessListener(authResult -> {
+                    //login success, check if user is user or admin
+                    checkUser();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //login failed
-                        progressDialog.dismiss();
-                        Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    //login failed
+                    progressDialog.dismiss();
+                    Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -180,11 +158,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private  void initTablesAndStartDashboard() {
-        int incomLastIndex = 2;  // ATTENTION
+        int incomeLastIndex = 2;  // ATTENTION
         String[] categoryTypesArray = new String[] {
                 "Salary",
                 "Scholarship",
-                "Օther Income",     // !!! Last Income
+                "Other Income",     // !!! Last Income
                 "Household",
                 "Healthcare",
                 "Gifts",
@@ -203,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
 
         for (int i=0; i < categoryTypesArray.length; i++) {
             long timestamp = System.currentTimeMillis();
-            boolean isIncome = (i <= incomLastIndex);
+            boolean isIncome = (i <= incomeLastIndex);
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("id", ""+timestamp);
@@ -224,13 +202,13 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
-        ref.updateChildren(hashMapMulti, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                progressDialog.dismiss();
-                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                finish();
-            }
-        });
+        ref.updateChildren(
+                hashMapMulti,
+                (error, ref1) -> {
+                    progressDialog.dismiss();
+                    startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                    finish();
+                }
+        );
     }
 }

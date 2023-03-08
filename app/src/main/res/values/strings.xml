@@ -75,6 +75,7 @@
     <string name="operdate">Date</string>
     <string name="operation_category">Category</string>
     <string name="operAmount">Amount</string>
+    <string name="not_logged_in">Not Logged In</string>
 
     <!--operations activity-->
     <string name="operations">Income/Expenses</string>
