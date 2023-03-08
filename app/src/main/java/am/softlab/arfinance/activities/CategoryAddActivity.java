@@ -73,7 +73,7 @@ public class CategoryAddActivity extends AppCompatActivity {
         progressDialog.setTitle(res.getString(R.string.please_wait));
         progressDialog.setCanceledOnTouchOutside(false);
 
-        //book id get from intent started from AdapterPdfAdmin
+        //category id get from intent started from AdapterCategory
         categoryId = getIntent().getStringExtra("categoryId");
 
         if (categoryId == null) {   // Add mode
@@ -85,7 +85,7 @@ public class CategoryAddActivity extends AppCompatActivity {
             binding.categoryNameEt.setText( getIntent().getStringExtra("categoryName") );
             binding.categoryNotesEt.setText( getIntent().getStringExtra("categoryNotes") );
 
-            Boolean isIncome = getIntent().getStringExtra("isIncome").equalsIgnoreCase("true");
+            boolean isIncome = getIntent().getStringExtra("isIncome").equalsIgnoreCase("true");
             if (isIncome) {
                 selectedCategoryTypeIndex = 0;
                 selectedCategoryTypeTitle = categoryTypeArray[0];
@@ -173,7 +173,7 @@ public class CategoryAddActivity extends AppCompatActivity {
         long timestamp = System.currentTimeMillis();
 
         //setup info to add in firebase db
-        Boolean isIncome = selectedCategoryTypeIndex == 0;
+        boolean isIncome = selectedCategoryTypeIndex == 0;
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("category", ""+category);
@@ -185,6 +185,7 @@ public class CategoryAddActivity extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
 
         if (categoryId == null) {   // Add mode
+            hashMap.put("amount", (double)0);
             hashMap.put("id", ""+timestamp);
 
             //add to firebase db... Database Root > Categories > categoryId > category info

@@ -1,20 +1,21 @@
 package am.softlab.arfinance.models;
 
-public class ModelCategory {
+public class ModelOperation {
     // using same spellings for model variables as they appear in firebase
-    String id, category, notes, uid;
+    String id, categoryId, notes, uid;
     boolean isIncome;
     double amount;
-    long timestamp;
+    long operationTimestamp, timestamp;
 
     //constructor empty required for firebase
-    public ModelCategory() {
+    public ModelOperation() {
     }
 
     //constructor with parameters
-    public ModelCategory(String id, String category, String notes, String uid, boolean isIncome, double amount, long timestamp) {
+    public ModelOperation(String id, long operationTimestamp, String categoryId, String notes, String uid, boolean isIncome, double amount, long timestamp) {
         this.id = id;
-        this.category = category;
+        this.operationTimestamp = operationTimestamp;
+        this.categoryId = categoryId;
         this.notes = notes;
         this.uid = uid;
         this.isIncome = isIncome;
@@ -32,12 +33,19 @@ public class ModelCategory {
         this.id = id;
     }
 
-    public String getCategory() {
-        return category;
+    public long getOperationTimestamp() {
+        return operationTimestamp;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setOperationTimestamp(long operationTimestamp) {
+        this.operationTimestamp = operationTimestamp;
+    }
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getNotes() {

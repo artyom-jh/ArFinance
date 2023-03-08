@@ -43,6 +43,7 @@
     <string name="sending_password">Sending password recovery instructions to</string>
     <string name="instructions_sent">Instructions to reset password sent to</string>
     <string name="failed_to_send">Failed to send due to</string>
+    <string name="initTables">Init categories table…</string>
 
     <!--profile/editProfile activity-->
     <string name="profile">Profile</string>
@@ -71,9 +72,27 @@
     <string name="expenses">Expenses</string>
     <string name="statistics">Statistics</string>
     <string name="categories">Categories</string>
+    <string name="operdate">Date</string>
+    <string name="operation_category">Category</string>
+    <string name="operAmount">Amount</string>
 
     <!--operations activity-->
     <string name="operations">Income/Expenses</string>
+    <string name="sure_delete_operation">Are you sure you want to delete this operation ?</string>
+    <string name="add_operation_btn">+ Add Operation</string>
+    <string name="add_income">Add a new Income</string>
+    <string name="add_expenses">Add a new Expenses</string>
+    <string name="edit_income">Edit Income</string>
+    <string name="edit_expenses">Edit Expenses</string>
+    <string name="operation_notes">Notes</string>
+    <string name="pick_date">Pick Date</string>
+    <string name="pick_category">Pick Category</string>
+    <string name="adding_operation">Adding operation…</string>
+    <string name="updating_operation">Updating operation…</string>
+    <string name="enter_amount">Enter Amount…</string>
+    <string name="operation_added">Operation added successfully…</string>
+    <string name="operation_updated">Operation updated successfully…</string>
+    <string name="select_date">Select a date</string>
 
     <!--statistics activity-->
 

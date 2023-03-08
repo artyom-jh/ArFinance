@@ -1,6 +1,7 @@
 package am.softlab.arfinance.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -22,6 +23,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityLoginBinding;
@@ -139,9 +143,8 @@ public class LoginActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        progressDialog.dismiss();
-                        startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                        finish();
+                        // progressDialog.dismiss(); // not here, dismiss in checkCategoriesTable
+                        checkCategoriesTable();
                     }
 
                     @Override
@@ -149,5 +152,85 @@ public class LoginActivity extends AppCompatActivity {
                         //noop
                     }
                 });
+    }
+
+    private  void checkCategoriesTable() {
+        progressDialog.setMessage(res.getString(R.string.initTables));
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int size = (int) snapshot.getChildrenCount();
+                if (size == 0) {
+                    // progressDialog.dismiss(); // not here, dismiss in initTablesAndStartDashboard()
+                    initTablesAndStartDashboard();
+                } else {
+                    progressDialog.dismiss();
+                    startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //noop
+            }
+        });
+    }
+
+    private  void initTablesAndStartDashboard() {
+        int incomLastIndex = 2;  // ATTENTION
+        String[] categoryTypesArray = new String[] {
+                "Salary",
+                "Scholarship",
+                "Օther Income",     // !!! Last Income
+                "Household",
+                "Healthcare",
+                "Gifts",
+                "Vacation",
+                "Education",
+                "Clothing",
+                "Leisure",
+                "Groceries",
+                "Phones and Internet",
+                "Transport",
+                "Entertainment"
+        };
+
+        String uid = "" + firebaseAuth.getCurrentUser().getUid();
+        HashMap<String, Object> hashMapMulti = new HashMap<>();
+
+        for (int i=0; i < categoryTypesArray.length; i++) {
+            long timestamp = System.currentTimeMillis();
+            boolean isIncome = (i <= incomLastIndex);
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("id", ""+timestamp);
+            hashMap.put("category", ""+categoryTypesArray[i]);
+            hashMap.put("notes", "");
+            hashMap.put("isIncome", isIncome);
+            hashMap.put("amount", (double)0);
+            hashMap.put("timestamp", timestamp);
+            hashMap.put("uid", uid);
+
+            hashMapMulti.put(""+timestamp, hashMap);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                //e.printStackTrace();
+            }
+        }
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
+        ref.updateChildren(hashMapMulti, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                progressDialog.dismiss();
+                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                finish();
+            }
+        });
     }
 }
