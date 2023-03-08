@@ -96,6 +96,9 @@
     <string name="category_used">Category is used, impossible to delete</string>
 
     <!--statistics activity-->
+    <string name="income_category">Income Category</string>
+    <string name="expenses_category">Expenses Category</string>
+    <string name="spending_category">Spending by Category</string>
 
     <!--categories activity-->
     <string name="add_category">Add a new Category</string>
@@ -112,5 +115,7 @@
 
     <!--errors-->
     <string name="failed_to_update_db">Failed to update db due to</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
