@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -15,10 +16,13 @@ import android.view.ViewGroup;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import am.softlab.arfinance.databinding.FragmentPieBinding;
@@ -103,6 +108,25 @@ public class PieFragment extends Fragment {
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
         legend.setDrawInside(false);
         legend.setEnabled(true);
+
+        categoryPieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+                PieEntry pieEntry = (PieEntry)e;
+                String amountStr = NumberFormat.getCurrencyInstance().format(pieEntry.getValue());
+
+                new AlertDialog.Builder(getContext())
+                        .setTitle(pieEntry.getLabel())
+                        .setCancelable(true)
+                        .setMessage(amountStr)
+                        .show();
+            }
+
+            @Override
+            public void onNothingSelected() {
+                //noop
+            }
+        });
     }
 
     private void loadCategories(boolean isIncome) {

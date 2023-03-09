@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/toolBarRl"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="230dp"
         android:background="@drawable/shape_toolbar01">
 
         <ImageButton
@@ -27,7 +27,7 @@
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="38dp"
             android:src="@drawable/logo"/>
 
         <TextView
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/iconIv"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="8dp"
             android:text="Create New Account"
             android:textColor="@color/white"
             android:fontFamily="sans-serif-condensed"
@@ -48,7 +48,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="38dp"
         android:layout_marginEnd="38dp"
-        android:layout_marginTop="225dp">
+        android:layout_marginTop="205dp">
 
         <RelativeLayout
             android:layout_width="match_parent"

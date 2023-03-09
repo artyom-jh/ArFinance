@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import am.softlab.arfinance.R;
@@ -77,7 +78,8 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
         holder.categoryTv.setText(category);
         holder.categoryTypeTv.setText(isIncome ? res.getString(R.string.income) : res.getString(R.string.expenses) );
         holder.categoryNotesTv.setText(notes);
-        holder.categoryAmountTv.setText(""+amount);
+        String amountStr = NumberFormat.getCurrencyInstance().format(amount);
+        holder.categoryAmountTv.setText(amountStr);
 
         // handle click, delete category
         holder.deleteBtn.setOnClickListener(view -> {

@@ -10,7 +10,7 @@
     <!--title bar-->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="230dp"
         android:background="@drawable/shape_toolbar01">
 
         <ImageButton
@@ -27,7 +27,7 @@
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="30dp"
             android:src="@drawable/logo"/>
 
         <TextView
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/iconIv"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
             android:fontFamily="sans-serif-condensed"
             android:text="@string/add_category"
             android:textColor="@color/white"
@@ -45,7 +45,7 @@
 
     <!-- Scroll View -->
     <ScrollView
-        android:layout_marginTop="225dp"
+        android:layout_marginTop="205dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -74,7 +74,7 @@
                     android:padding="10dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray01"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

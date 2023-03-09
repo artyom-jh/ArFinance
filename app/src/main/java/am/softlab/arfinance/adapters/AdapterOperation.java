@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import am.softlab.arfinance.MyApplication;
@@ -76,7 +77,8 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
 
         //set data
         holder.operDateTv.setText(dateStr);
-        holder.operAmountTv.setText(""+amount);
+        String amountStr = NumberFormat.getCurrencyInstance().format(amount);
+        holder.operAmountTv.setText(amountStr);
         holder.categoryTv.setText(category);
         holder.operNotesTv.setText(notes);
 
