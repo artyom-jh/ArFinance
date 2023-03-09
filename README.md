@@ -21,7 +21,12 @@ finances and achieve your financial goals competently.
 
 ## Screenshots
 ![login.png](screenshots/login.png)
+![signup.png](screenshots/signup.png)
+![pleaselogin.png](screenshots/pleaselogin.png)
 ![dashboard.png](screenshots/dashboard.png)
-![expenses.png](screenshots/expenses.png)
-![edit_income.png](screenshots/edit_income.png)
-![statistics.png](screenshots/statistics.png)
+![categories.png](screenshots/categories.png)
+![editcategory.png](screenshots/editcategory.png)
+![incomelist.png](screenshots/incomelist.png)
+![editincome.png](screenshots/editincome.png)
+![piechart.png](screenshots/piechart.png)
+![profile.png](screenshots/profile.png)
