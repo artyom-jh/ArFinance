@@ -77,7 +77,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         //handle click, verify user if not
         binding.accountStatusTv.setOnClickListener(v -> {
-            if(firebaseUser.isEmailVerified()){
+
+            if (firebaseUser.isEmailVerified()) {
                 //already verified
                 Toast.makeText(ProfileActivity.this, res.getString(R.string.already_verified), Toast.LENGTH_SHORT).show();
             }

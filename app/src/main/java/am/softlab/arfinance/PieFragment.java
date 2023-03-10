@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -24,6 +25,7 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import am.softlab.arfinance.activities.DashboardActivity;
 import am.softlab.arfinance.databinding.FragmentPieBinding;
 import am.softlab.arfinance.models.ModelCategory;
 
@@ -51,6 +54,9 @@ public class PieFragment extends Fragment {
     private PieChart categoryPieChart;
 
     private Resources res;
+
+    //firebase auth
+    private FirebaseAuth firebaseAuth;
 
     private static final String TAG = "PIE_FRAGMENT_TAG";
 
@@ -73,6 +79,8 @@ public class PieFragment extends Fragment {
         if (getArguments() != null) {
             statPageId = getArguments().getInt("statPageId");
         }
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         //get resources
         res = this.getResources();
@@ -131,29 +139,35 @@ public class PieFragment extends Fragment {
 
     private void loadCategories(boolean isIncome) {
         //get all categories from firebase > Categories
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
-        ref.orderByChild("isIncome").equalTo(isIncome)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<PieEntry> entries = new ArrayList<>();
+        if (firebaseAuth.getCurrentUser() != null) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
+            ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            ArrayList<PieEntry> entries = new ArrayList<>();
 
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            // get data
-                            ModelCategory model = ds.getValue(ModelCategory.class);
-                            float fAmount = (float) model.getAmount();
-                            if (fAmount > 0) {
-                                entries.add(new PieEntry(fAmount, model.getCategory()));
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                // get data
+                                ModelCategory model = ds.getValue(ModelCategory.class);
+                                if (model.getIsIncome() == isIncome) {
+                                    float fAmount = (float) model.getAmount();
+                                    if (fAmount > 0) {
+                                        entries.add(new PieEntry(fAmount, model.getCategory()));
+                                    }
+                                }
                             }
+                            loadPieChartData(entries, isIncome);
                         }
-                        loadPieChartData(entries, isIncome);
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        //noop
-                    }
-                });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            //noop
+                        }
+                    });
+        }
+        else
+            Toast.makeText(getContext(), res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
     }
 
     private void loadPieChartData(ArrayList<PieEntry> entries, boolean isIncome) {

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,6 +34,7 @@ public class OperationsActivity extends AppCompatActivity {
 
     //firebase auth
     private FirebaseAuth firebaseAuth;
+    private FirebaseUser firebaseUser;
 
     //arraylist to store operation
     private ArrayList<ModelOperation> operationArrayList;
@@ -65,7 +67,9 @@ public class OperationsActivity extends AppCompatActivity {
 
         //init firebase auth
         firebaseAuth = FirebaseAuth.getInstance();
-        checkUser();
+        //get current user
+        firebaseUser = firebaseAuth.getCurrentUser();
+
         loadOperations();
 
         //edit text change listener, search
@@ -93,9 +97,21 @@ public class OperationsActivity extends AppCompatActivity {
 
         //handle click, start operation add screen
         binding.addOperationBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(OperationsActivity.this, OperationAddActivity.class);
-            intent.putExtra("isIncome", isIncome);
-            startActivity(intent);
+            if (firebaseAuth.getCurrentUser() != null) {
+                if (firebaseAuth.getCurrentUser() != null) {
+                    if (firebaseUser.isEmailVerified()) {
+                        Intent intent = new Intent(OperationsActivity.this, OperationAddActivity.class);
+                        intent.putExtra("isIncome", isIncome);
+                        startActivity(intent);
+                    }
+                    else
+                        Toast.makeText(this, res.getString(R.string.not_verified_detailed), Toast.LENGTH_SHORT).show();
+                }
+                else
+                    Toast.makeText(this, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(this, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
         });
 
         //handle click, goBack
@@ -105,40 +121,35 @@ public class OperationsActivity extends AppCompatActivity {
     private void loadOperations() {
         // init arraylist
         operationArrayList = new ArrayList<>();
-        //get all operations from firebase > Operations
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
-        ref.orderByChild("isIncome").equalTo(isIncome)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        // clear arraylist before adding data into it
-                        operationArrayList.clear();
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            // get data
-                            ModelOperation model = ds.getValue(ModelOperation.class);
-                            //add to arraylist
-                            operationArrayList.add(model);
+        if (firebaseAuth.getCurrentUser() != null) {
+            //get all operations from firebase > Operations
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
+            ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            // clear arraylist before adding data into it
+                            operationArrayList.clear();
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                // get data
+                                ModelOperation model = ds.getValue(ModelOperation.class);
+                                if (model.getIsIncome() == isIncome) {
+                                    //add to arraylist
+                                    operationArrayList.add(model);
+                                }
+                            }
+                            //setup adapter
+                            adapterOperation = new AdapterOperation(OperationsActivity.this, operationArrayList);
+                            //set adapter tp recyclerview
+                            binding.operationsRv.setAdapter(adapterOperation);
                         }
-                        //setup adapter
-                        adapterOperation = new AdapterOperation(OperationsActivity.this, operationArrayList);
-                        //set adapter tp recyclerview
-                        binding.operationsRv.setAdapter(adapterOperation);
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        //noop
-                    }
-                });
-    }
-
-    private void checkUser() {
-        // get current user
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        if (firebaseUser == null) {
-            //not logged in, goto main screen
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            //noop
+                        }
+                    });
         }
     }
+
 }

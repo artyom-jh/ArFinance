@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityLoginBinding;
 
@@ -136,25 +137,26 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage(res.getString(R.string.initTables));
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int size = (int) snapshot.getChildrenCount();
-                if (size == 0) {
-                    // progressDialog.dismiss(); // not here, dismiss in initTablesAndStartDashboard()
-                    initTablesAndStartDashboard();
-                } else {
-                    progressDialog.dismiss();
-                    startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                    finish();
-                }
-            }
+        ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int size = (int) snapshot.getChildrenCount();
+                        if (size == 0) {
+                            // progressDialog.dismiss(); // not here, dismiss in initTablesAndStartDashboard()
+                            initTablesAndStartDashboard();
+                        } else {
+                            progressDialog.dismiss();
+                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            finish();
+                        }
+                    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                //noop
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        //noop
+                    }
+                });
     }
 
     private  void initTablesAndStartDashboard() {

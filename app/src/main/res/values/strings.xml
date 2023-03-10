@@ -18,7 +18,6 @@
     <string name="canceled">Canceled</string>
     <string name="verified">Verified</string>
     <string name="not_verified">Not Verified</string>
-    <string name="login_first">Please login first !</string>
     <string name="delete">Delete</string>
     <string name="deleted">Successfully deleted…</string>
     <string name="deleting">Deleting…</string>
@@ -116,7 +115,7 @@
 
     <!--errors-->
     <string name="failed_to_update_db">Failed to update db due to</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="not_logged_in_detailed">Not logged in ! Please log in and get verified first</string>
+    <string name="not_verified_detailed">Not Verified ! Verify your email address first</string>
 
 </resources>

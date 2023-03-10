@@ -164,7 +164,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Account Status"
+                android:text="@string/account_status"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textAlignment="center"
@@ -174,7 +174,7 @@
                 android:id="@+id/accountStatusTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Not Verified"
+                android:text="@string/not_verified"
                 android:textColor="@color/black"
                 android:textAlignment="center"
                 android:textSize="12sp"/>

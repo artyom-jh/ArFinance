@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import am.softlab.arfinance.MyApplication;
+import am.softlab.arfinance.R;
 import am.softlab.arfinance.adapters.AdapterCategory;
 import am.softlab.arfinance.databinding.ActivityCategoriesBinding;
 import am.softlab.arfinance.models.ModelCategory;
@@ -35,6 +39,9 @@ public class CategoriesActivity extends AppCompatActivity {
     //adapter
     private AdapterCategory adapterCategory;
 
+    //resources
+    private Resources res;
+
     private static final String TAG = "CATEGORIES_TAG";
 
     @Override
@@ -43,9 +50,11 @@ public class CategoriesActivity extends AppCompatActivity {
         binding = ActivityCategoriesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //get resources
+        res = this.getResources();
+
         //init firebase auth
         firebaseAuth = FirebaseAuth.getInstance();
-        checkUser();
         loadCategories();
 
         //edit text change listener, search
@@ -58,9 +67,9 @@ public class CategoriesActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 //called as and when user type each letter
-                try{
+                try {
                     adapterCategory.getFilter().filter(charSequence);
-                }catch (Exception e){
+                } catch (Exception e) {
                     //noop
                 }
             }
@@ -73,7 +82,13 @@ public class CategoriesActivity extends AppCompatActivity {
 
         //handle click, start category add screen
         binding.addCategoryBtn.setOnClickListener(
-                view -> startActivity(new Intent(CategoriesActivity.this, CategoryAddActivity.class))
+                view -> {
+                    if (firebaseAuth.getCurrentUser() != null) {
+                        startActivity(new Intent(CategoriesActivity.this, CategoryAddActivity.class));
+                    }
+                    else
+                        Toast.makeText(this, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
+                }
         );
 
         //handle click, goback
@@ -83,39 +98,33 @@ public class CategoriesActivity extends AppCompatActivity {
     private void loadCategories() {
         // init arraylist
         categoryArrayList = new ArrayList<>();
-        //get all categories from firebase > Categories
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // clear arraylist before adding data into it
-                categoryArrayList.clear();
-                for (DataSnapshot ds: snapshot.getChildren()){
-                    // get data
-                    ModelCategory model = ds.getValue(ModelCategory.class);
-                    //add to arraylist
-                    categoryArrayList.add(model);
-                }
-                //setup adapter
-                adapterCategory = new AdapterCategory(CategoriesActivity.this, categoryArrayList);
-                //set adapter tp recyclerview
-                binding.categoriesRv.setAdapter(adapterCategory);
-            }
+        if (firebaseAuth.getCurrentUser() != null) {
+            //get all categories from firebase > Categories
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
+            ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            // clear arraylist before adding data into it
+                            categoryArrayList.clear();
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                // get data
+                                ModelCategory model = ds.getValue(ModelCategory.class);
+                                //add to arraylist
+                                categoryArrayList.add(model);
+                            }
+                            //setup adapter
+                            adapterCategory = new AdapterCategory(CategoriesActivity.this, categoryArrayList);
+                            //set adapter tp recyclerview
+                            binding.categoriesRv.setAdapter(adapterCategory);
+                        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                //noop
-            }
-        });
-    }
-
-    private void checkUser() {
-        // get current user
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        if (firebaseUser == null) {
-            //not logged in, goto main screen
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            //noop
+                        }
+                    });
         }
     }
+
 }

@@ -69,7 +69,7 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity((new Intent(DashboardActivity.this, ProfileActivity.class)));
             }
             else {
-                Toast.makeText(DashboardActivity.this, res.getString(R.string.login_first), Toast.LENGTH_SHORT).show();
+                Toast.makeText(DashboardActivity.this, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -78,46 +78,26 @@ public class DashboardActivity extends AppCompatActivity {
 
         //handle card click, Income
         binding.incomeCv.setOnClickListener(v -> {
-            if (firebaseAuth.getCurrentUser() != null) {
-                Intent intent = new Intent(DashboardActivity.this, OperationsActivity.class);
-                intent.putExtra("actType", "income");
-                startActivity(intent);
-            }
-            else {
-                Toast.makeText(DashboardActivity.this, res.getString(R.string.login_first), Toast.LENGTH_SHORT).show();
-            }
+            Intent intent = new Intent(DashboardActivity.this, OperationsActivity.class);
+            intent.putExtra("actType", "income");
+            startActivity(intent);
         });
 
         //handle card click, Expenses
         binding.expensesCv.setOnClickListener(v -> {
-            if (firebaseAuth.getCurrentUser() != null) {
-                Intent intent = new Intent(DashboardActivity.this, OperationsActivity.class);
-                intent.putExtra("actType", "expenses");
-                startActivity(intent);
-            }
-            else {
-                Toast.makeText(DashboardActivity.this, res.getString(R.string.login_first), Toast.LENGTH_SHORT).show();
-            }
+            Intent intent = new Intent(DashboardActivity.this, OperationsActivity.class);
+            intent.putExtra("actType", "expenses");
+            startActivity(intent);
         });
 
         //handle card click, Statistics
         binding.statisticsCv.setOnClickListener(v -> {
-            if (firebaseAuth.getCurrentUser() != null) {
-                startActivity((new Intent(DashboardActivity.this, StatisticsActivity.class)));
-            }
-            else {
-                Toast.makeText(DashboardActivity.this, res.getString(R.string.login_first), Toast.LENGTH_SHORT).show();
-            }
+            startActivity((new Intent(DashboardActivity.this, StatisticsActivity.class)));
         });
 
         //handle card click, Categories
         binding.categoriesCv.setOnClickListener(v -> {
-            if (firebaseAuth.getCurrentUser() != null) {
-                startActivity((new Intent(DashboardActivity.this, CategoriesActivity.class)));
-            }
-            else {
-                Toast.makeText(DashboardActivity.this, res.getString(R.string.login_first), Toast.LENGTH_SHORT).show();
-            }
+            startActivity((new Intent(DashboardActivity.this, CategoriesActivity.class)));
         });
     }
 

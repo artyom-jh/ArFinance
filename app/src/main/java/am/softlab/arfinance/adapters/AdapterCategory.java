@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.activities.CategoryAddActivity;
 import am.softlab.arfinance.databinding.RowCategoryBinding;
@@ -45,6 +47,8 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
     //resources
     private final Resources res;
 
+    private FirebaseAuth firebaseAuth;
+
     public AdapterCategory(Context context, ArrayList<ModelCategory> categoryArrayList) {
         this.context = context;
         this.categoryArrayList = categoryArrayList;
@@ -59,6 +63,8 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
     public HolderCategory onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // bind row_category.xml
         binding = RowCategoryBinding.inflate(LayoutInflater.from(context), parent, false);
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         return new HolderCategory(binding.getRoot());
     }
@@ -83,34 +89,42 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
 
         // handle click, delete category
         holder.deleteBtn.setOnClickListener(view -> {
-            //confirm delete dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle(res.getString(R.string.delete))
-                    .setMessage(res.getString(R.string.sure_delete_category))
-                    .setPositiveButton(
-                            res.getString(R.string.delete),
-                            (dialogInterface, i) -> {
-                                //begin delete
-                                Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
-                                checkAndDeleteCategory(model);
-                            }
-                    )
-                    .setNegativeButton(
-                            res.getString(R.string.cancel),
-                            (dialogInterface, i) -> dialogInterface.dismiss()
-                    )
-                    .show();
+            if (firebaseAuth.getCurrentUser() != null) {
+                //confirm delete dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(res.getString(R.string.delete))
+                        .setMessage(res.getString(R.string.sure_delete_category))
+                        .setPositiveButton(
+                                res.getString(R.string.delete),
+                                (dialogInterface, i) -> {
+                                    //begin delete
+                                    Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
+                                    checkAndDeleteCategory(model);
+                                }
+                        )
+                        .setNegativeButton(
+                                res.getString(R.string.cancel),
+                                (dialogInterface, i) -> dialogInterface.dismiss()
+                        )
+                        .show();
+            }
+            else
+                Toast.makeText(context, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
         });
 
         //handle item click
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, CategoryAddActivity.class);
-            intent.putExtra("categoryId", id);
-            intent.putExtra("categoryName", category);
-            intent.putExtra("categoryNotes", notes);
-            intent.putExtra("isIncome", isIncome);
-            intent.putExtra("categoryAmount", amount);
-            context.startActivity(intent);
+            if (firebaseAuth.getCurrentUser() != null) {
+                Intent intent = new Intent(context, CategoryAddActivity.class);
+                intent.putExtra("categoryId", id);
+                intent.putExtra("categoryName", category);
+                intent.putExtra("categoryNotes", notes);
+                intent.putExtra("isIncome", isIncome);
+                intent.putExtra("categoryAmount", amount);
+                context.startActivity(intent);
+            }
+            else
+                Toast.makeText(context, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
         });
     }
 

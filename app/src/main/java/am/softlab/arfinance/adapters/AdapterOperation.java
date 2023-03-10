@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -43,6 +45,10 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     //resources
     private Resources res;
 
+    private FirebaseAuth firebaseAuth;
+    //firebase current user
+    private FirebaseUser firebaseUser;
+
     public AdapterOperation(Context context, ArrayList<ModelOperation> operationArrayList) {
         this.context = context;
         this.operationArrayList = operationArrayList;
@@ -57,6 +63,10 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     public AdapterOperation.HolderOperation onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // bind row_operation.xml
         binding = RowOperationBinding.inflate(LayoutInflater.from(context), parent, false);
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        //get current user
+        firebaseUser = firebaseAuth.getCurrentUser();
 
         return new AdapterOperation.HolderOperation(binding.getRoot());
     }
@@ -84,25 +94,41 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
 
         // handle click, delete operation
         holder.deleteBtn.setOnClickListener(view -> {
-            //confirm delete dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle(res.getString(R.string.delete))
-                    .setMessage(res.getString(R.string.sure_delete_operation))
-                    .setPositiveButton(res.getString(R.string.delete), (dialogInterface, i) -> {
-                        //begin delete
-                        Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
-                        deleteOperation(model);
-                    })
-                    .setNegativeButton(res.getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
-                    .show();
+            if (firebaseAuth.getCurrentUser() != null) {
+                if (firebaseUser.isEmailVerified()) {
+                    //confirm delete dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle(res.getString(R.string.delete))
+                            .setMessage(res.getString(R.string.sure_delete_operation))
+                            .setPositiveButton(res.getString(R.string.delete), (dialogInterface, i) -> {
+                                //begin delete
+                                Toast.makeText(context, res.getString(R.string.deleting), Toast.LENGTH_SHORT).show();
+                                deleteOperation(model);
+                            })
+                            .setNegativeButton(res.getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
+                            .show();
+                }
+                else
+                    Toast.makeText(context, res.getString(R.string.not_verified_detailed), Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(context, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
         });
 
         //handle item click
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, OperationAddActivity.class);
-            intent.putExtra("operId", id);
-            intent.putExtra("isIncome", isIncome);
-            context.startActivity(intent);
+            if (firebaseAuth.getCurrentUser() != null) {
+                if (firebaseUser.isEmailVerified()) {
+                    Intent intent = new Intent(context, OperationAddActivity.class);
+                    intent.putExtra("operId", id);
+                    intent.putExtra("isIncome", isIncome);
+                    context.startActivity(intent);
+                }
+                else
+                    Toast.makeText(context, res.getString(R.string.not_verified_detailed), Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(context, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
         });
     }
 
