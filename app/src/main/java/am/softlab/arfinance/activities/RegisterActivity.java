@@ -42,14 +42,13 @@ public class RegisterActivity extends AppCompatActivity {
         //get resources
         res = this.getResources();
 
-        //init firebase auth
-        firebaseAuth = FirebaseAuth.getInstance();
-
         //setup progress dialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(res.getString(R.string.please_wait));
         progressDialog.setCanceledOnTouchOutside(false);
 
+        //init firebase auth
+        firebaseAuth = FirebaseAuth.getInstance();
 
         //handle click, go back
         binding.backBtn.setOnClickListener(view -> onBackPressed());
@@ -65,20 +64,20 @@ public class RegisterActivity extends AppCompatActivity {
         password = binding.passwordEt.getText().toString().trim();
         String cPassword = binding.cPasswordEt.getText().toString().trim();
 
-        if(TextUtils.isEmpty(name)){
+        if (TextUtils.isEmpty(name)) {
             Toast.makeText(this, res.getString(R.string.enter_your_name), Toast.LENGTH_SHORT).show();
         }
-        else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, res.getString(R.string.invalid_email), Toast.LENGTH_SHORT).show();
         }
 
-        else if(TextUtils.isEmpty(password)){
+        else if (TextUtils.isEmpty(password)) {
             Toast.makeText(this, res.getString(R.string.enter_password), Toast.LENGTH_SHORT).show();
         }
-        else if(TextUtils.isEmpty(cPassword)){
-            Toast.makeText(this, res.getString(R.string.confirm_password), Toast.LENGTH_SHORT).show();
+        else if (TextUtils.isEmpty(cPassword)) {
+            Toast.makeText(this, res.getString(R.string.confirm_password_msg), Toast.LENGTH_SHORT).show();
         }
-        else if(!password.equals(cPassword)){
+        else if (!password.equals(cPassword)) {
             Toast.makeText(this, res.getString(R.string.password_not_match), Toast.LENGTH_SHORT).show();
         }
         else{

@@ -87,6 +87,12 @@ public class ProfileActivity extends AppCompatActivity {
                 emailVerificationDialog();
             }
         });
+
+        //handle click, change password
+        binding.changePassBtn.setOnClickListener(view -> {
+            startActivity(new Intent(ProfileActivity.this, ChangePasswordActivity.class));
+            finish();
+        });
     }
 
     private void emailVerificationDialog() {

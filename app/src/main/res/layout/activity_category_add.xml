@@ -13,6 +13,7 @@
         android:layout_height="230dp"
         android:background="@drawable/shape_toolbar01">
 
+        <!--Back button-->
         <ImageButton
             android:id="@+id/backBtn"
             android:layout_width="wrap_content"
@@ -22,6 +23,7 @@
             android:layout_margin="10dp"
             android:padding="5dp"/>
 
+        <!--Logo-->
         <ImageView
             android:id="@+id/iconIv"
             android:layout_width="110dp"
@@ -30,6 +32,7 @@
             android:layout_marginTop="30dp"
             android:src="@drawable/logo"/>
 
+        <!--Title-->
         <TextView
             android:id="@+id/titleIv"
             android:layout_width="wrap_content"

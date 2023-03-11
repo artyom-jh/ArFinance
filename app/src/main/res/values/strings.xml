@@ -29,7 +29,7 @@
     <string name="enter_your_name">Enter your name…</string>
     <string name="invalid_email">Invalid email pattern…!</string>
     <string name="enter_password">Enter password…!</string>
-    <string name="confirm_password">Confirm password…!</string>
+    <string name="confirm_password_msg">Confirm password…!</string>
     <string name="password_not_match">Password doesn\'t match…!</string>
     <string name="creating_account">Creating account</string>
     <string name="saving_user_info">Saving user info…</string>
@@ -43,14 +43,19 @@
     <string name="instructions_sent">Instructions to reset password sent to</string>
     <string name="failed_to_send">Failed to send due to</string>
     <string name="initTables">Init categories table…</string>
+    <string name="register">Register</string>
+    <string name="create_new_account">Create New Account</string>
+    <string name="confirm_password">Confirm password</string>
 
-    <!--profile/editProfile activity-->
+
+    <!--profile/editProfile activities-->
     <string name="profile">Profile</string>
     <string name="account">Account</string>
     <string name="member">Member</string>
     <string name="account_status">Account Status</string>
     <string name="already_verified">Already verified…</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="change_pass">Change Password</string>
     <string name="updating_profile_image">Updating profile image</string>
     <string name="failed_to_upload_image">Failed to upload image due to</string>
     <string name="updating_user_profile">Updating user profile…</string>
@@ -62,6 +67,17 @@
     <string name="sending_email_verification">Sending email verification instructions to your email</string>
     <string name="verification_instructions_sent">Instructions sent, check your email</string>
 
+    <!--forgot/change password activities-->
+    <string name="old_password">Old password</string>
+    <string name="new_password">New password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="enter_old_password">Enter old password…!</string>
+    <string name="enter_new_password">Enter new password…!</string>
+    <string name="confirm_new_password_msg">Confirm new password…!</string>
+    <string name="no_current_user">No current user…</string>
+    <string name="password_updated">User password updated successfully…</string>
+    <string name="reauth_failed">Re-Authentication failed…</string>
+    <string name="creating_password">Changing user password</string>
 
     <!--main/dashboard activity-->
     <string name="dashboard">Dashboard</string>
