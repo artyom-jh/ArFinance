@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back01"
+    tools:context=".activities.WalletAddActivity">
+
+    <!--title bar-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:background="@drawable/shape_toolbar01">
+
+        <!--Back button-->
+        <ImageButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back_white"
+            android:background="@android:color/transparent"
+            android:layout_margin="10dp"
+            android:padding="5dp"/>
+
+        <!--Logo-->
+        <ImageView
+            android:id="@+id/iconIv"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/logo"/>
+
+        <!--Title-->
+        <TextView
+            android:id="@+id/titleIv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iconIv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/add_wallet"
+            android:textColor="@color/white"
+            android:textSize="28sp"/>
+    </RelativeLayout>
+
+    <!-- Scroll View -->
+    <ScrollView
+        android:layout_marginTop="205dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--wallet name-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/walletNameTil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hintEnabled="false"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp">
+
+                <EditText
+                    android:id="@+id/walletNameEt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_edittext01"
+                    android:drawableStart="@drawable/ic_wallet_gray"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/wallet_name"
+                    android:inputType="textPersonName|textCapWords"
+                    android:padding="10dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray01"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--pick currency from dialog-->
+            <TextView
+                android:id="@+id/currencyTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/walletNameTil"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/shape_edittext01"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:hint="@string/currency"
+                android:padding="10dp"
+                android:textColorHint="@color/gray01"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/ic_currency_gray"
+                app:drawableEndCompat="@drawable/ic_down_gray" />
+
+            <!--wallet notes-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/walletNotesTil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/currencyTv"
+                app:hintEnabled="false"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/walletNotesEt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_edittext01"
+                    android:drawableStart="@drawable/ic_notes_gray"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/wallet_notes"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:padding="10dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray01"
+                    android:textSize="16sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--Add wallet button-->
+            <Button
+                android:id="@+id/submitBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/shape_button01"
+                android:text="@string/submit"
+                android:layout_below="@id/walletNotesTil"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

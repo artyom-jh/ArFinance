@@ -99,6 +99,11 @@ public class DashboardActivity extends AppCompatActivity {
         binding.categoriesCv.setOnClickListener(v -> {
             startActivity((new Intent(DashboardActivity.this, CategoriesActivity.class)));
         });
+
+        //handle card click, Wallets
+        binding.walletsCv.setOnClickListener(v -> {
+            startActivity((new Intent(DashboardActivity.this, WalletsActivity.class)));
+        });
     }
 
     private void checkUser() {

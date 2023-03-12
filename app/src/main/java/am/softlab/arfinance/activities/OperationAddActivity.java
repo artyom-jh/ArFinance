@@ -25,6 +25,7 @@ import java.util.HashMap;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityOperationAddBinding;
+import am.softlab.arfinance.models.ModelCategory;
 
 public class OperationAddActivity extends AppCompatActivity {
 
@@ -123,23 +124,26 @@ public class OperationAddActivity extends AppCompatActivity {
 
         //db reference to load categories... db > Categories
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
-        ref.orderByChild("isIncome").equalTo(isIncome)
+        ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         categoryTitleArrayList.clear(); // clear before adding data
                         categoryIdArrayList.clear();
                         for (DataSnapshot ds : snapshot.getChildren()) {
-                            //get id and title of category
-                            String categoryId = "" + ds.child("id").getValue();
-                            String categoryTitle = "" + ds.child("category").getValue();
+                            ModelCategory model = ds.getValue(ModelCategory.class);
+                            if (model.getIsIncome() == isIncome) {
+                                //get id and title of category
+                                String categoryId = "" + model.getId(); // ds.child("id").getValue();
+                                String categoryTitle = "" + model.getCategory(); // ds.child("category").getValue();
 
-                            //add to respective arraylists
-                            categoryTitleArrayList.add(categoryTitle);
-                            categoryIdArrayList.add(categoryId);
+                                //add to respective arraylists
+                                categoryTitleArrayList.add(categoryTitle);
+                                categoryIdArrayList.add(categoryId);
 
-                            Log.d(TAG, "onDataChange: ID: " + categoryId);
-                            Log.d(TAG, "onDataChange: Category: " + categoryTitle);
+                                Log.d(TAG, "onDataChange: ID: " + categoryId);
+                                Log.d(TAG, "onDataChange: Category: " + categoryTitle);
+                            }
                         }
                     }
 

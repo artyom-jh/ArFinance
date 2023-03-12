@@ -1,5 +1,9 @@
 package am.softlab.arfinance;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Constants {
 
     public static final long MAX_BYTES_UPLOAD = 50000000;
@@ -7,4 +11,17 @@ public class Constants {
     public static final int PAGE_INCOME = 1;
     public static final int PAGE_EXPENSES = 2;
 
+    public static final List<List<String>> CURRENCY_ARRAY_LIST = Arrays.asList(
+            Arrays.asList("AMD", "Armenian Dram", "AMD"),
+            Arrays.asList("AUD", "Australian Dollar", "AU$"),
+            Arrays.asList("GBP", "British Pound Sterling", "£"),
+            Arrays.asList("CAD", "Canadian Dollar", "CA$"),
+            Arrays.asList("CNY", "Chinese Yuan", "CN¥"),
+            Arrays.asList("EUR", "Euro", "€"),
+            Arrays.asList("JPY", "Japanese Yen", "￥"),
+            Arrays.asList("RUB", "Russian Ruble", "₽"),
+            Arrays.asList("KRW", "South Korean Won", "₩"),
+            Arrays.asList("CHF", "Swiss Franc", "CHF"),
+            Arrays.asList("USD", "US Dollar", "$")
+    );
 }
