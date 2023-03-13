@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.activities.WalletAddActivity;
 import am.softlab.arfinance.databinding.RowWalletBinding;
@@ -78,11 +81,29 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
         String currencyName = model.getCurrencyName();
         String currencySymbol = model.getCurrencySymbol();
         String notes = model.getNotes();
+        double totalIncome = model.getTotalIncome();
+        double totalExpenses = model.getTotalExpenses();
+        double balance = model.getBalance();
 
         //set data
         holder.walletTv.setText(walletName);
         holder.currencyTv.setText(currencyName);
+        holder.currencyCodeTv.setText(currencyCode);
         holder.walletNotesTv.setText(notes);
+
+        //String amountStr = NumberFormat.getCurrencyInstance().format(amount);
+        String amountStr = MyApplication.formatterDecimal.format(totalIncome) + " " + currencySymbol;
+        holder.totalIncomeTv.setText(amountStr);
+
+        amountStr = MyApplication.formatterDecimal.format(totalExpenses) + " " + currencySymbol;
+        holder.totalExpensesTv.setText(amountStr);
+
+        amountStr = MyApplication.formatterDecimal.format(balance) + " " + currencySymbol;
+        holder.balanceTv.setText(amountStr);
+        if (balance < 0)
+            holder.balanceTv.setTextColor(Color.RED);
+        else
+            holder.balanceTv.setTextColor(Color.BLACK);
 
         // handle click, delete category
         holder.deleteBtn.setOnClickListener(view -> {
@@ -181,7 +202,7 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
     // View holder class to hold UI views for row_wallet.xml
     class HolderWallet extends RecyclerView.ViewHolder{
         //ui views of row_wallet.xml
-        TextView walletTv, walletNotesTv, currencyTv;
+        TextView walletTv, walletNotesTv, currencyTv, currencyCodeTv, totalIncomeTv, totalExpensesTv, balanceTv;
         ImageButton deleteBtn;
 
         public HolderWallet(@NonNull View itemView) {
@@ -190,6 +211,10 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
             // init ui views
             walletTv = binding.walletTv;
             currencyTv = binding.currencyTv;
+            currencyCodeTv = binding.currencyCodeTv;
+            totalIncomeTv = binding.totalIncomeTv;
+            totalExpensesTv = binding.totalExpensesTv;
+            balanceTv = binding.balanceTv;
             walletNotesTv = binding.walletNotesTv;
             deleteBtn = binding.deleteBtn;
         }

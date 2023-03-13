@@ -2,9 +2,10 @@ package am.softlab.arfinance.models;
 
 public class ModelOperation {
     // using same spellings for model variables as they appear in firebase
-    String id, categoryId, notes, uid;
+    String id, walletId, categoryId, notes, uid;
     boolean isIncome;
     double amount;
+    String uid_walletId;
     long operationTimestamp, timestamp;
 
     //constructor empty required for firebase
@@ -12,16 +13,19 @@ public class ModelOperation {
     }
 
     //constructor with parameters
-    public ModelOperation(String id, long operationTimestamp, String categoryId, String notes, String uid, boolean isIncome, double amount, long timestamp) {
+    public ModelOperation(String id, String walletId, String categoryId, String notes, String uid, boolean isIncome, double amount, String uid_walletId, long operationTimestamp, long timestamp) {
         this.id = id;
-        this.operationTimestamp = operationTimestamp;
+        this.walletId = walletId;
         this.categoryId = categoryId;
         this.notes = notes;
         this.uid = uid;
         this.isIncome = isIncome;
         this.amount = amount;
+        this.uid_walletId = uid_walletId;
+        this.operationTimestamp = operationTimestamp;
         this.timestamp = timestamp;
     }
+
 
     // GETTERS and SETTERS
 
@@ -40,6 +44,15 @@ public class ModelOperation {
     public void setOperationTimestamp(long operationTimestamp) {
         this.operationTimestamp = operationTimestamp;
     }
+
+    public String getWalletId() {
+        return walletId;
+    }
+
+    public void setWalletId(String walletId) {
+        this.walletId = walletId;
+    }
+
     public String getCategoryId() {
         return categoryId;
     }
@@ -78,6 +91,14 @@ public class ModelOperation {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public String getUid_walletId() {
+        return uid_walletId;
+    }
+
+    public void setUid_walletId(String uid_walletId) {
+        this.uid_walletId = uid_walletId;
     }
 
     public long getTimestamp() {

@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:contentPaddingTop="7dp"
-    app:contentPaddingBottom="7dp"
+    app:contentPaddingBottom="5dp"
     app:contentPaddingLeft="10dp"
     app:contentPaddingRight="10dp"
     app:cardUseCompatPadding="true"
@@ -15,7 +14,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:gravity="top"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -34,6 +33,7 @@
                 android:textStyle="bold"
                 android:maxLines="1"/>
 
+            <!--currency name and symbol-->
             <LinearLayout
                 android:id="@+id/currencyLl"
                 android:layout_width="match_parent"
@@ -44,9 +44,98 @@
 
                 <TextView
                     android:id="@+id/currencyTv"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Type"
+                    android:layout_weight="1"
+                    android:text="Currency"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/currencyCodeTv"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="USD"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+            <!--wallet total income-->
+            <LinearLayout
+                android:id="@+id/walletTotalIncomeLl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_below="@id/currencyLl"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/labelTotalIncomeTv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/total_income"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/totalIncomeTv"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="0.0"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+            <!--wallet total expenses-->
+            <LinearLayout
+                android:id="@+id/walletTotalExpensesLl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_below="@id/walletTotalIncomeLl"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/labelTotalExpensesTv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/total_expenses"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/totalExpensesTv"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="0.0"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+
+            <!--wallet balance-->
+            <LinearLayout
+                android:id="@+id/walletBalanceLl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_below="@id/walletTotalExpensesLl"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/labelBalanceTv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/balance"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/balanceTv"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="0.0"
+                    android:textStyle="bold"
                     android:textColor="@color/black"/>
             </LinearLayout>
 
@@ -55,7 +144,7 @@
                 android:id="@+id/walletNotesTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/currencyLl"
+                android:layout_below="@id/walletBalanceLl"
                 android:text="Notes"
                 android:textColor="@color/black"
                 android:maxLines="2"/>
@@ -64,7 +153,8 @@
         <ImageButton
             android:id="@+id/deleteBtn"
             android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_height="26dp"
+            android:layout_marginTop="0dp"
             android:src="@drawable/ic_delete_white"
             android:background="@drawable/shape_button03"/>
 

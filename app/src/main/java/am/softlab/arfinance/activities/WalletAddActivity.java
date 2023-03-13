@@ -167,7 +167,7 @@ public class WalletAddActivity extends AppCompatActivity {
         hashMap.put("walletName", ""+walletName);
         hashMap.put("notes", ""+notes);
         hashMap.put("timestamp", timestamp);
-        hashMap.put("uid", ""+firebaseAuth.getUid());
+        hashMap.put("uid", ""+firebaseAuth.getCurrentUser().getUid());
         hashMap.put("currencyName", selectedCurrencyName);
         hashMap.put("currencyCode", selectedCurrencyCode);
         hashMap.put("currencySymbol", selectedCurrencySymbol);
@@ -176,6 +176,8 @@ public class WalletAddActivity extends AppCompatActivity {
 
         if (walletId == null) {   // Add mode
             hashMap.put("balance", (double)0);
+            hashMap.put("totalIncome", (double)0);
+            hashMap.put("totalExpenses", (double)0);
             hashMap.put("usageCount", 0);
             hashMap.put("id", ""+timestamp);
 

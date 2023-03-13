@@ -5,7 +5,7 @@ public class ModelWallet {
     // using same spellings for model variables as they appear in firebase
     String id, walletName, notes, uid;
     String currencyName, currencyCode, currencySymbol;
-    double balance;
+    double balance, totalIncome, totalExpenses;
     int usageCount;
     long timestamp;
 
@@ -14,8 +14,7 @@ public class ModelWallet {
     }
 
     //constructor with parameters
-
-    public ModelWallet(String id, String walletName, String notes, String uid, String currencyName, String currencyCode, String currencySymbol, double balance, int usageCount, long timestamp) {
+    public ModelWallet(String id, String walletName, String notes, String uid, String currencyName, String currencyCode, String currencySymbol, double balance, double totalIncome, double totalExpenses, int usageCount, long timestamp) {
         this.id = id;
         this.walletName = walletName;
         this.notes = notes;
@@ -24,13 +23,14 @@ public class ModelWallet {
         this.currencyCode = currencyCode;
         this.currencySymbol = currencySymbol;
         this.balance = balance;
+        this.totalIncome = totalIncome;
+        this.totalExpenses = totalExpenses;
         this.usageCount = usageCount;
         this.timestamp = timestamp;
     }
 
 
     // GETTERS and SETTERS
-
 
     public String getId() {
         return id;
@@ -94,6 +94,22 @@ public class ModelWallet {
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public double getTotalIncome() {
+        return totalIncome;
+    }
+
+    public void setTotalIncome(double totalIncome) {
+        this.totalIncome = totalIncome;
+    }
+
+    public double getTotalExpenses() {
+        return totalExpenses;
+    }
+
+    public void setTotalExpenses(double totalExpenses) {
+        this.totalExpenses = totalExpenses;
     }
 
     public int getUsageCount() {

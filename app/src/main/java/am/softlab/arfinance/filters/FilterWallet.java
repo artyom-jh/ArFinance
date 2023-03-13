@@ -31,7 +31,10 @@ public class FilterWallet extends Filter {
 
             for (int i = 0; i < filterList.size(); i++){
                 //validate
-                if(filterList.get(i).getWalletName().toUpperCase().contains(charSequence)){
+                if ( filterList.get(i).getWalletName().toUpperCase().contains(charSequence) ||
+                     filterList.get(i).getCurrencyName().toUpperCase().contains(charSequence) ||
+                     filterList.get(i).getNotes().toUpperCase().contains(charSequence) )
+                {
                     //add to filtered list
                     filteredModels.add(filterList.get(i));
                 }

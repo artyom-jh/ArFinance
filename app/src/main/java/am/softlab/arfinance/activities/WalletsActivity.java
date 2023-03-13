@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.adapters.AdapterCategory;
 import am.softlab.arfinance.adapters.AdapterWallet;
@@ -98,32 +99,46 @@ public class WalletsActivity extends AppCompatActivity {
     private void loadWallets() {
         // init arraylist
         walletArrayList = new ArrayList<>();
-        if (firebaseAuth.getCurrentUser() != null) {
-            //get all wallets from firebase > Wallets
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
-            ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
-                    .addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            // clear arraylist before adding data into it
-                            walletArrayList.clear();
-                            for (DataSnapshot ds : snapshot.getChildren()) {
-                                // get data
-                                ModelWallet model = ds.getValue(ModelWallet.class);
-                                //add to arraylist
-                                walletArrayList.add(model);
-                            }
-                            //setup adapter
-                            adapterWallet = new AdapterWallet(WalletsActivity.this, walletArrayList);
-                            //set adapter tp recyclerview
-                            binding.walletsRv.setAdapter(adapterWallet);
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            //noop
-                        }
-                    });
+        if (firebaseAuth.getCurrentUser() != null) {
+            if (firebaseAuth.getCurrentUser() != null) {
+                //get all wallets from firebase > Wallets
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
+                ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                // clear arraylist before adding data into it
+                                walletArrayList.clear();
+
+                                for (DataSnapshot ds : snapshot.getChildren()) {
+                                    // get data
+                                    ModelWallet model = ds.getValue(ModelWallet.class);
+                                    //add to arraylist
+                                    walletArrayList.add(model);
+                                }
+
+                                //setup adapter
+                                adapterWallet = new AdapterWallet(WalletsActivity.this, walletArrayList);
+
+                                //set adapter tp recyclerview
+                                binding.walletsRv.setAdapter(adapterWallet);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                //noop
+                            }
+                        });
+            }
+        }
+        else {
+            // DEMO
+            walletArrayList.add(MyApplication.getDemoWallet());
+
+            //setup adapter
+            adapterWallet = new AdapterWallet(WalletsActivity.this, walletArrayList);
+            binding.walletsRv.setAdapter(adapterWallet);
         }
     }
 }

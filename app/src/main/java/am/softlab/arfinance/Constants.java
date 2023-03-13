@@ -11,6 +11,15 @@ public class Constants {
     public static final int PAGE_INCOME = 1;
     public static final int PAGE_EXPENSES = 2;
 
+    // DB Transaction Types - used in MyApplication.updateWalletBalance
+    public static final int ROW_ADDED = 1;
+    public static final int ROW_UPDATED = 2;
+    public static final int ROW_DELETED = 3;
+
+    public static final int PIE_MAX_ENTRIES = 6;
+
+    // ATTENTION - dont change elements order -
+    //             index of array elements used in LoginActivity.initTablesAndStartDashboard !!!
     public static final List<List<String>> CURRENCY_ARRAY_LIST = Arrays.asList(
             Arrays.asList("AMD", "Armenian Dram", "AMD"),
             Arrays.asList("AUD", "Australian Dollar", "AU$"),

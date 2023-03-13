@@ -4,7 +4,8 @@ public class ModelCategory {
     // using same spellings for model variables as they appear in firebase
     String id, category, notes, uid;
     boolean isIncome;
-    double amount;
+
+    int usageCount;
     long timestamp;
 
     //constructor empty required for firebase
@@ -12,13 +13,13 @@ public class ModelCategory {
     }
 
     //constructor with parameters
-    public ModelCategory(String id, String category, String notes, String uid, boolean isIncome, double amount, long timestamp) {
+    public ModelCategory(String id, String category, String notes, String uid, boolean isIncome, int usageCount, long timestamp) {
         this.id = id;
         this.category = category;
         this.notes = notes;
         this.uid = uid;
         this.isIncome = isIncome;
-        this.amount = amount;
+        this.usageCount = usageCount;
         this.timestamp = timestamp;
     }
 
@@ -64,12 +65,12 @@ public class ModelCategory {
         this.isIncome = isIncome;
     }
 
-    public double getAmount() {
-        return amount;
+    public int getUsageCount() {
+        return usageCount;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setUsageCount(int usageCount) {
+        this.usageCount = usageCount;
     }
 
     public long getTimestamp() {

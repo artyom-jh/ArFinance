@@ -20,8 +20,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityLoginBinding;
@@ -134,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private  void checkCategoriesTable() {
-        progressDialog.setMessage(res.getString(R.string.initTables));
+        progressDialog.setMessage(res.getString(R.string.initCategoriesTables));
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
         ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
@@ -144,11 +146,9 @@ public class LoginActivity extends AppCompatActivity {
                         int size = (int) snapshot.getChildrenCount();
                         if (size == 0) {
                             // progressDialog.dismiss(); // not here, dismiss in initTablesAndStartDashboard()
-                            initTablesAndStartDashboard();
+                            initCategoriesTables();
                         } else {
-                            progressDialog.dismiss();
-                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
-                            finish();
+                            checkWalletsTable();
                         }
                     }
 
@@ -159,12 +159,13 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private  void initTablesAndStartDashboard() {
+    private  void initCategoriesTables() {
         int incomeLastIndex = 2;  // ATTENTION
         String[] categoryTypesArray = new String[] {
                 "Salary",
                 "Scholarship",
                 "Other Income",     // !!! Last Income
+
                 "Household",
                 "Healthcare",
                 "Gifts",
@@ -178,7 +179,9 @@ public class LoginActivity extends AppCompatActivity {
                 "Entertainment"
         };
 
-        String uid = "" + firebaseAuth.getCurrentUser().getUid();
+        String uid = ""+firebaseAuth.getUid();
+
+        // add default categories
         HashMap<String, Object> hashMapMulti = new HashMap<>();
 
         for (int i=0; i < categoryTypesArray.length; i++) {
@@ -190,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
             hashMap.put("category", ""+categoryTypesArray[i]);
             hashMap.put("notes", "");
             hashMap.put("isIncome", isIncome);
-            hashMap.put("amount", (double)0);
+            hashMap.put("usageCount", 0);
             hashMap.put("timestamp", timestamp);
             hashMap.put("uid", uid);
 
@@ -207,10 +210,90 @@ public class LoginActivity extends AppCompatActivity {
         ref.updateChildren(
                 hashMapMulti,
                 (error, ref1) -> {
+                    checkWalletsTable();
+                }
+        );
+    }
+
+    private  void checkWalletsTable() {
+        progressDialog.setMessage(res.getString(R.string.initWalletsTables));
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
+        ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        int size = (int) snapshot.getChildrenCount();
+                        if (size == 0) {
+                            // progressDialog.dismiss(); // not here, dismiss in initTablesAndStartDashboard()
+                            initWalletTablesAndStartDashboard();
+                        } else {
+                            progressDialog.dismiss();
+                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        //noop
+                    }
+                });
+    }
+
+    private  void initWalletTablesAndStartDashboard() {
+        // default wallets - name
+        String[] walletsNameArray = new String[] {
+                "Wallet01 AMD",
+                "Wallet02 USD",
+                "Wallet03 EUR"
+        };
+        // default wallets - index for Constants.CURRENCY_ARRAY_LIST
+        int[] currencyIndexArray = new int[] {
+                0,  // AMD
+                10, // USD
+                5,  // EUR
+        };
+
+        String uid = ""+firebaseAuth.getUid();
+
+        // add default wallets
+        HashMap<String, Object> hashMapMulti = new HashMap<>();
+        for (int i=0; i < walletsNameArray.length; i++) {
+            long timestamp = System.currentTimeMillis();
+            List<String> currencyArray = Constants.CURRENCY_ARRAY_LIST.get(currencyIndexArray[i]);
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("walletName", ""+walletsNameArray[i]);
+            hashMap.put("notes", "");
+            hashMap.put("timestamp", timestamp);
+            hashMap.put("uid", uid);
+            hashMap.put("currencyName", currencyArray.get(1));
+            hashMap.put("currencyCode", currencyArray.get(0));
+            hashMap.put("currencySymbol", currencyArray.get(2));
+            hashMap.put("balance", (double)0);
+            hashMap.put("totalIncome", (double)0);
+            hashMap.put("totalExpenses", (double)0);
+            hashMap.put("usageCount", 0);
+            hashMap.put("id", ""+timestamp);
+
+            hashMapMulti.put(""+timestamp, hashMap);
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                //e.printStackTrace();
+            }
+        }
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
+        ref.updateChildren(
+                hashMapMulti,
+                (error, ref1) -> {
                     progressDialog.dismiss();
                     startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                     finish();
                 }
         );
+
     }
 }

@@ -1,5 +1,6 @@
 package am.softlab.arfinance.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -9,7 +10,15 @@ import androidx.viewpager.widget.ViewPager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -17,18 +26,24 @@ import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.PieFragment;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityStatisticsBinding;
+import am.softlab.arfinance.models.ModelCategory;
 
 public class StatisticsActivity extends AppCompatActivity {
 
     //view binding
     private ActivityStatisticsBinding binding;
 
+    private FirebaseAuth firebaseAuth;
+
     public ViewPagerAdapter viewPagerAdapter;
 
-    private static final String TAG = "STATISTICS_TAG";
+    private ArrayList<String> categoryTitleArrayList, categoryIdArrayList;
 
     //resources
     private Resources res;
+
+    private static final String TAG = "STATISTICS_TAG";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +51,13 @@ public class StatisticsActivity extends AppCompatActivity {
         binding = ActivityStatisticsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //init firebase auth
+        firebaseAuth = FirebaseAuth.getInstance();
+
         //get resources
         res = this.getResources();
+
+        loadCategories();
 
         setupViewPagerAdapter(binding.viewPager);
         binding.tabLayout.setupWithViewPager(binding.viewPager);
@@ -100,5 +120,46 @@ public class StatisticsActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return fragmentTitleList.get(position);
         }
+    }
+
+
+    private void loadCategories() {
+        categoryTitleArrayList = new ArrayList<>();
+        categoryIdArrayList = new ArrayList<>();
+
+        if (firebaseAuth.getCurrentUser() != null) {
+            Log.d(TAG, "loadCategories: Loading categories...");
+
+            //db reference to load categories... db > Categories
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
+            ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            categoryTitleArrayList.clear(); // clear before adding data
+                            categoryIdArrayList.clear();
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                ModelCategory model = ds.getValue(ModelCategory.class);
+
+                                categoryTitleArrayList.add(model.getCategory());
+                                categoryIdArrayList.add("" + model.getId());
+
+                                Log.d(TAG, "onDataChange: ID: " + model.getId());
+                                Log.d(TAG, "onDataChange: Category: " + model.getCategory());
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            //noop
+                        }
+                    });
+        }
+    }
+    public String getCategoryNameById(String categoryId) {
+        int i = categoryIdArrayList.indexOf(categoryId);
+        if (i >=0 )
+            return categoryTitleArrayList.get(i);
+        return "";
     }
 }

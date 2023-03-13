@@ -98,6 +98,7 @@ public class CategoriesActivity extends AppCompatActivity {
     private void loadCategories() {
         // init arraylist
         categoryArrayList = new ArrayList<>();
+
         if (firebaseAuth.getCurrentUser() != null) {
             //get all categories from firebase > Categories
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
@@ -124,6 +125,14 @@ public class CategoriesActivity extends AppCompatActivity {
                             //noop
                         }
                     });
+        }
+        else {
+            categoryArrayList.add(MyApplication.getDemoIncomeCategory());
+            categoryArrayList.add(MyApplication.getDemoExpensesCategory());
+
+            //setup adapter
+            adapterCategory = new AdapterCategory(CategoriesActivity.this, categoryArrayList);
+            binding.categoriesRv.setAdapter(adapterCategory);
         }
     }
 

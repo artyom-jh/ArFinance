@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.activities.OperationAddActivity;
@@ -76,6 +77,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         // get data
         ModelOperation model = operationArrayList.get(position);
         String id = model.getId();
+        String walletId = model.getWalletId();
         String category = MyApplication.getCategoryById(model.getCategoryId());
         String notes = model.getNotes();
         boolean isIncome = model.getIsIncome();
@@ -121,6 +123,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                 if (firebaseUser.isEmailVerified()) {
                     Intent intent = new Intent(context, OperationAddActivity.class);
                     intent.putExtra("operId", id);
+                    intent.putExtra("walletId", walletId);
                     intent.putExtra("isIncome", isIncome);
                     context.startActivity(intent);
                 }
@@ -132,13 +135,16 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         });
     }
 
-    private String deleteCategoryId;
+    private String deleteWalletId, deleteCategoryId;
     private double deleteAmount;
+    private boolean isIncome;
     private void deleteOperation(ModelOperation model) {
         //det id of operation to delete
         String id = model.getId();
+        deleteWalletId = model.getWalletId();
         deleteCategoryId = model.getCategoryId();
         deleteAmount = model.getAmount();
+        isIncome = model.getIsIncome();
 
         //Firebase DB > Operations > operationId >
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
@@ -146,7 +152,8 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                 .removeValue()
                 .addOnSuccessListener(unused -> {
                     // deleted successfully
-                    MyApplication.updateCategoryAmount(deleteCategoryId, 0-deleteAmount);
+                    MyApplication.updateWalletBalance(deleteWalletId, 0-deleteAmount, isIncome, Constants.ROW_DELETED);
+                    MyApplication.updateCategoryUsage(deleteCategoryId, -1);
                     Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {

@@ -21,6 +21,7 @@
     <string name="delete">Delete</string>
     <string name="deleted">Successfully deleted…</string>
     <string name="deleting">Deleting…</string>
+    <string name="usage_count">count</string>
 
     <!--login/register activity-->
     <string name="logging_in">Logging In…</string>
@@ -42,7 +43,8 @@
     <string name="sending_password">Sending password recovery instructions to</string>
     <string name="instructions_sent">Instructions to reset password sent to</string>
     <string name="failed_to_send">Failed to send due to</string>
-    <string name="initTables">Init categories table…</string>
+    <string name="initCategoriesTables">Init categories table…</string>
+    <string name="initWalletsTables">Init wallets table…</string>
     <string name="register">Register</string>
     <string name="create_new_account">Create New Account</string>
     <string name="confirm_password">Confirm password</string>
@@ -116,6 +118,9 @@
     <string name="income_category">Income Category</string>
     <string name="expenses_category">Expenses Category</string>
     <string name="spending_category">Spending by Category</string>
+    <string name="pick_wallet">Pick Wallet</string>
+    <string name="loading_operations">Loading Operations…</string>
+    <string name="other_categories">Other</string>
 
     <!--categories activity-->
     <string name="add_category">Add a new Category</string>
@@ -144,10 +149,16 @@
     <string name="adding_wallet">Adding wallet…</string>
     <string name="wallet_added">Wallet added successfully…</string>
     <string name="wallet_updated">Wallet updated successfully…</string>
+    <string name="total_income">Total Income</string>
+    <string name="total_expenses">Total Expenses</string>
+    <string name="balance">Balance</string>
+
 
     <!--errors-->
     <string name="failed_to_update_db">Failed to update db due to</string>
     <string name="not_logged_in_detailed">Not logged in ! Please log in and get verified first</string>
     <string name="not_verified_detailed">Not Verified ! Verify your email address first</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

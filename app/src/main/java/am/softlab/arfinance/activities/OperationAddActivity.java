@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityOperationAddBinding;
@@ -52,7 +53,7 @@ public class OperationAddActivity extends AppCompatActivity {
     //operation id get from intent started from AdapterOperation
 
     private boolean isIncome;
-    private String operId;
+    private String operId, walletId;
 
     private static final String TAG = "OPERATION_ADD_TAG";
 
@@ -79,6 +80,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
         //operation id get from intent started from AdapterOperation
         operId = getIntent().getStringExtra("operId");
+        walletId= getIntent().getStringExtra("walletId");
         isIncome = getIntent().getBooleanExtra("isIncome", false);
 
         if (operId == null) {       // Add mode
@@ -301,11 +303,13 @@ public class OperationAddActivity extends AppCompatActivity {
         //setup data to update to db
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("operationTimestamp", operationTimestamp);
+        hashMap.put("walletId", walletId);
         hashMap.put("categoryId", ""+selectedCategoryId);
         hashMap.put("notes", ""+notes);
         hashMap.put("uid", ""+firebaseAuth.getUid());
         hashMap.put("isIncome", isIncome);
         hashMap.put("amount", amount);
+        hashMap.put("uid_walletId", ""+firebaseAuth.getUid() + "_" + walletId);
         hashMap.put("timestamp", timestamp);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
@@ -319,7 +323,8 @@ public class OperationAddActivity extends AppCompatActivity {
                     .addOnSuccessListener(unused -> {
                         //category add success
                         Log.d(TAG, "onSuccess: Operation added...");
-                        MyApplication.updateCategoryAmount(selectedCategoryId, amount);
+                        MyApplication.updateWalletBalance(walletId, amount, isIncome, Constants.ROW_ADDED);
+                        MyApplication.updateCategoryUsage(selectedCategoryId, 1);
                         progressDialog.dismiss();
                         Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_added), Toast.LENGTH_SHORT).show();
                     })
@@ -338,11 +343,11 @@ public class OperationAddActivity extends AppCompatActivity {
                     .addOnSuccessListener(unused -> {
                         Log.d(TAG, "onSuccess: Operation updated...");
 
-                        if (selectedCategoryId.equals(oldSelectedCategoryId)) {
-                            MyApplication.updateCategoryAmount(selectedCategoryId, amount - oldAmount);
-                        } else {
-                            MyApplication.updateCategoryAmount(oldSelectedCategoryId, 0-oldAmount);
-                            MyApplication.updateCategoryAmount(selectedCategoryId, amount);
+                        MyApplication.updateWalletBalance(walletId, amount - oldAmount, isIncome, Constants.ROW_UPDATED);
+
+                        if (!selectedCategoryId.equals(oldSelectedCategoryId)) {
+                            MyApplication.updateCategoryUsage(oldSelectedCategoryId, -1);
+                            MyApplication.updateCategoryUsage(selectedCategoryId, 1);
                         }
 
                         progressDialog.dismiss();

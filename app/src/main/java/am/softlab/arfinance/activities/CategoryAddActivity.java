@@ -163,7 +163,7 @@ public class CategoryAddActivity extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
 
         if (categoryId == null) {   // Add mode
-            hashMap.put("amount", (double)0);
+            hashMap.put("usageCount", 0);
             hashMap.put("id", ""+timestamp);
 
             //add to firebase db... Database Root > Categories > categoryId > category info
