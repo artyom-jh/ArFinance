@@ -43,6 +43,8 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     //instance of our filter class
     private FilterOperation filter;
 
+    private String currencySymbol;
+
     //resources
     private Resources res;
 
@@ -50,9 +52,10 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     //firebase current user
     private FirebaseUser firebaseUser;
 
-    public AdapterOperation(Context context, ArrayList<ModelOperation> operationArrayList) {
+    public AdapterOperation(Context context, ArrayList<ModelOperation> operationArrayList, String currencySymbol) {
         this.context = context;
         this.operationArrayList = operationArrayList;
+        this.currencySymbol = currencySymbol;
         this.filterList = operationArrayList;
 
         //get resources
@@ -89,7 +92,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
 
         //set data
         holder.operDateTv.setText(dateStr);
-        String amountStr = NumberFormat.getCurrencyInstance().format(amount);
+        String amountStr = MyApplication.formatDouble(amount) + " " + currencySymbol;
         holder.operAmountTv.setText(amountStr);
         holder.categoryTv.setText(category);
         holder.operNotesTv.setText(notes);

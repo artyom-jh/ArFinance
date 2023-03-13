@@ -21,16 +21,16 @@ public class Constants {
     // ATTENTION - dont change elements order -
     //             index of array elements used in LoginActivity.initTablesAndStartDashboard !!!
     public static final List<List<String>> CURRENCY_ARRAY_LIST = Arrays.asList(
-            Arrays.asList("AMD", "Armenian Dram", "AMD"),
-            Arrays.asList("AUD", "Australian Dollar", "AU$"),
+            Arrays.asList("AMD", "Armenian Dram", "֏"),
+            Arrays.asList("AUD", "Australian Dollar", "A$"),
             Arrays.asList("GBP", "British Pound Sterling", "£"),
-            Arrays.asList("CAD", "Canadian Dollar", "CA$"),
-            Arrays.asList("CNY", "Chinese Yuan", "CN¥"),
+            Arrays.asList("CAD", "Canadian Dollar", "C$"),
+            Arrays.asList("CNY", "Chinese Yuan", "¥"),
             Arrays.asList("EUR", "Euro", "€"),
             Arrays.asList("JPY", "Japanese Yen", "￥"),
             Arrays.asList("RUB", "Russian Ruble", "₽"),
             Arrays.asList("KRW", "South Korean Won", "₩"),
-            Arrays.asList("CHF", "Swiss Franc", "CHF"),
+            Arrays.asList("CHF", "Swiss Franc", "₣"),
             Arrays.asList("USD", "US Dollar", "$")
     );
 }

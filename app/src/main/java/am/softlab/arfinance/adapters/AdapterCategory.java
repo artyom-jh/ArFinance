@@ -86,7 +86,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
         holder.categoryTypeTv.setText(isIncome ? res.getString(R.string.income) : res.getString(R.string.expenses) );
         holder.categoryNotesTv.setText(notes);
 
-        String amountStr = res.getString(R.string.usage_count) + " " + MyApplication.formatterInteger.format(usageCount);
+        String amountStr = res.getString(R.string.usage_count) + " " + MyApplication.formatInteger(usageCount);
         holder.usageCountTv.setText(amountStr);
 
         // handle click, delete category

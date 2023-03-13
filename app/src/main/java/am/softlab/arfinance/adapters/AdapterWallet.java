@@ -92,13 +92,13 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
         holder.walletNotesTv.setText(notes);
 
         //String amountStr = NumberFormat.getCurrencyInstance().format(amount);
-        String amountStr = MyApplication.formatterDecimal.format(totalIncome) + " " + currencySymbol;
+        String amountStr = MyApplication.formatDouble(totalIncome) + " " + currencySymbol;
         holder.totalIncomeTv.setText(amountStr);
 
-        amountStr = MyApplication.formatterDecimal.format(totalExpenses) + " " + currencySymbol;
+        amountStr = MyApplication.formatDouble(totalExpenses) + " " + currencySymbol;
         holder.totalExpensesTv.setText(amountStr);
 
-        amountStr = MyApplication.formatterDecimal.format(balance) + " " + currencySymbol;
+        amountStr = MyApplication.formatDouble(balance) + " " + currencySymbol;
         holder.balanceTv.setText(amountStr);
         if (balance < 0)
             holder.balanceTv.setTextColor(Color.RED);

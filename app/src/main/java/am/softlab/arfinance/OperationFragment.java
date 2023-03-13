@@ -39,7 +39,7 @@ import am.softlab.arfinance.models.ModelOperation;
 public class OperationFragment extends Fragment {
 
     //that we passed while creating instance of this fragment
-    private String walletId;
+    private String walletId, currencySymbol;
     private boolean isIncome;
 
     //view binding
@@ -62,10 +62,11 @@ public class OperationFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static OperationFragment newInstance(String walletId, boolean income) {
+    public static OperationFragment newInstance(String walletId, String currencySymbol, boolean income) {
         OperationFragment fragment = new OperationFragment();
         Bundle args = new Bundle();
         args.putString("walletId", walletId);
+        args.putString("currencySymbol", currencySymbol);
         args.putBoolean("isIncome", income);
 
         fragment.setArguments(args);
@@ -77,6 +78,7 @@ public class OperationFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             walletId = getArguments().getString("walletId");
+            currencySymbol = getArguments().getString("currencySymbol");
             isIncome = getArguments().getBoolean("isIncome");
         }
 
@@ -96,7 +98,7 @@ public class OperationFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentOperationBinding.inflate(LayoutInflater.from(context), container, false);
 
-        Log.d(TAG, "onCreateView: Pie: " + walletId);
+        Log.d(TAG, "onCreateView: OperationFragment: " + walletId);
         loadOperations();
 
         //edit text change listener, search
@@ -167,7 +169,7 @@ public class OperationFragment extends Fragment {
                                 }
                             }
                             //setup adapter
-                            adapterOperation = new AdapterOperation(context, operationArrayList);
+                            adapterOperation = new AdapterOperation(context, operationArrayList, currencySymbol);
                             //set adapter tp recyclerview
                             binding.operationsRv.setAdapter(adapterOperation);
                         }

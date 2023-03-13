@@ -37,13 +37,14 @@ public class OperationsActivity extends AppCompatActivity {
     public OperationsActivity.ViewPagerAdapter viewPagerAdapter;
 
     private boolean isIncome;
-    private static final String TAG = "OPERATIONS_TAG";
 
     //resources
     private Resources res;
 
     //firebase auth
     private FirebaseAuth firebaseAuth;
+
+    private static final String TAG = "OPERATIONS_TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,7 @@ public class OperationsActivity extends AppCompatActivity {
                                 ModelWallet model = ds.getValue(ModelWallet.class);
                                 //add data to view pager adapter
                                 viewPagerAdapter.addFragment(
-                                        OperationFragment.newInstance(model.getId(), isIncome),
+                                        OperationFragment.newInstance(model.getId(), model.getCurrencySymbol(), isIncome),
                                         model.getWalletName()
                                 );
                             }
@@ -108,7 +109,7 @@ public class OperationsActivity extends AppCompatActivity {
             // DEMO
             ModelWallet model = MyApplication.getDemoWallet();
             viewPagerAdapter.addFragment(
-                    OperationFragment.newInstance(model.getId(), isIncome),
+                    OperationFragment.newInstance(model.getId(), model.getCurrencySymbol(), isIncome),
                     model.getWalletName()
             );
 

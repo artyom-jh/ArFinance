@@ -67,7 +67,7 @@
                 android:layout_below="@id/typeAndAmountLl"
                 android:text="Notes"
                 android:textColor="@color/black"
-                android:maxLines="2"/>
+                android:maxLines="3"/>
         </RelativeLayout>
 
         <ImageButton

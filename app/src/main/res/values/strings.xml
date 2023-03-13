@@ -149,8 +149,8 @@
     <string name="adding_wallet">Adding wallet…</string>
     <string name="wallet_added">Wallet added successfully…</string>
     <string name="wallet_updated">Wallet updated successfully…</string>
-    <string name="total_income">Total Income</string>
-    <string name="total_expenses">Total Expenses</string>
+    <string name="total_income">- total Income</string>
+    <string name="total_expenses">- total Expenses</string>
     <string name="balance">Balance</string>
 
 

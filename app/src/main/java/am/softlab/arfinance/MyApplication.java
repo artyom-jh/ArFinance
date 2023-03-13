@@ -25,9 +25,6 @@ public class MyApplication extends Application {
 
     private static List<List<String>> categoryArrayList = new ArrayList<List<String>>();
 
-    public static final DecimalFormat formatterDecimal = new DecimalFormat("#,###,##0.00");
-    public static final DecimalFormat formatterInteger = new DecimalFormat("#,###,##0");
-
     private static final String TAG_DOWNLOAD = "DOWNLOAD_TAG";
 
     @Override
@@ -43,6 +40,16 @@ public class MyApplication extends Application {
 
         //formatting timestamp to dd/MM/yyyy
         return DateFormat.format("dd/MM/yyyy", cal).toString();
+    }
+
+    public static String formatDouble(double number){
+        DecimalFormat formatterDecimal = new DecimalFormat("#,###,##0.00");
+        return formatterDecimal.format(number);
+    }
+
+    public static String formatInteger(int number){
+        DecimalFormat formatterDecimal = new DecimalFormat("#,###,##0");
+        return formatterDecimal.format(number);
     }
 
     public static void loadCategoryList() {
