@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -213,21 +214,34 @@ public class ProfileEditActivity extends AppCompatActivity {
             int whichItemClicked = item.getItemId();
             if (whichItemClicked == 0) {
                 //camera clicked
-                if ( MyApplication.checkPermission (
+
+                String[] perms;
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)  // Android 10(Q) - API 29
+                    perms = new String[] { Manifest.permission.CAMERA };
+                else
+                    perms = new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE };
+
+                if ( MyApplication.checkPermission(
                         ProfileEditActivity.this,
-                        new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE },
-                        Constants.CAMERA_PERMISSION_CODE )
-                )
+                        perms,
+                        Constants.CAMERA_PERMISSION_CODE) )
+                {
                     pickImageCamera();
+                }
             }
             else if (whichItemClicked == 1) {
                 //gallery clicked
-                if (MyApplication.checkPermission(
+
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    pickImageGallery();
+                }
+                else if ( MyApplication.checkPermission(
                         ProfileEditActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Constants.WRITE_EXTERNAL_STORAGE)
-                )
+                        Constants.WRITE_EXTERNAL_STORAGE) )
+                {
                     pickImageGallery();
+                }
             }
             return false;
         });
