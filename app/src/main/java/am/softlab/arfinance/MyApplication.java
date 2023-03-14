@@ -1,9 +1,14 @@
 package am.softlab.arfinance;
 
+import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.text.format.DateFormat;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,6 +28,11 @@ import am.softlab.arfinance.models.ModelWallet;
 
 public class MyApplication extends Application {
 
+    private static Context context;
+    public static Context getContext() {
+        return context;
+    }
+
     private static List<List<String>> categoryArrayList = new ArrayList<List<String>>();
 
     private static final String TAG_DOWNLOAD = "DOWNLOAD_TAG";
@@ -30,6 +40,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        MyApplication.context = getApplicationContext();
     }
 
     //created a static method to convert timestamp to proper date format, so we can use
@@ -183,6 +194,37 @@ public class MyApplication extends Application {
                     }
                 });
     }
+
+
+    // Function to check and request permission
+    public static boolean checkPermission(Activity activity, String permission, int requestCode) {
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(MyApplication.context, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(activity, new String[] { permission }, requestCode);
+            return false;
+        }
+        return true;
+    }
+    public static boolean checkPermission(Activity activity, String[] permissions, int requestCode) {
+        boolean retVal = true;
+        ArrayList<String> permsList = new ArrayList<String>();
+
+        for( String oneItem : permissions ) {
+            // Checking if permission is not granted
+            if (ContextCompat.checkSelfPermission(MyApplication.context, oneItem) == PackageManager.PERMISSION_DENIED) {
+                permsList.add(oneItem);
+                retVal = false;
+            }
+        }
+
+        if (permsList.size() > 0) {
+            String[] perms = permsList.toArray(new String[permsList.size()]);
+            ActivityCompat.requestPermissions(activity, perms, requestCode);
+        }
+
+        return retVal;
+    }
+
 
     // ===== DEMOS =====
     public static ModelWallet getDemoWallet() {

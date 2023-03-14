@@ -22,6 +22,10 @@
     <string name="deleted">Successfully deleted…</string>
     <string name="deleting">Deleting…</string>
     <string name="usage_count">count</string>
+    <string name="camera_denied">Camera Permission Denied</string>
+    <string name="camera_granted">Camera Permission Granted</string>
+    <string name="write_external_granted">Write External Storage Permission Granted</string>
+    <string name="write_external_denied">Write External Storage Permission Denied</string>
 
     <!--login/register activity-->
     <string name="logging_in">Logging In…</string>

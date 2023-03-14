@@ -18,6 +18,9 @@ public class Constants {
 
     public static final int PIE_MAX_ENTRIES = 6;
 
+    public static final int CAMERA_PERMISSION_CODE = 100;
+    public static final int WRITE_EXTERNAL_STORAGE = 101;
+
     // ATTENTION - dont change elements order -
     //             index of array elements used in LoginActivity.initTablesAndStartDashboard !!!
     public static final List<List<String>> CURRENCY_ARRAY_LIST = Arrays.asList(

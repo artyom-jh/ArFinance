@@ -170,9 +170,6 @@ public class PieFragment extends Fragment {
         Log.d(TAG, "walletPickDialog: showing wallet pick dialog");
 
         if (firebaseAuth.getCurrentUser() != null) {
-            progressDialog.setMessage(res.getString(R.string.loading_operations));
-            progressDialog.show();
-
             //get string array of wallets from arraylist
             String[] walletsArray = new String[walletNameArrayList.size()];
             for (int i = 0; i < walletNameArrayList.size(); i++) {
@@ -185,6 +182,9 @@ public class PieFragment extends Fragment {
                     .setItems(
                             walletsArray,
                             (dialogInterface, which) -> {
+                                progressDialog.setMessage(res.getString(R.string.loading_operations));
+                                progressDialog.show();
+
                                 //handle item click
                                 //get clicked item from list
                                 selectedWalletName = walletNameArrayList.get(which);

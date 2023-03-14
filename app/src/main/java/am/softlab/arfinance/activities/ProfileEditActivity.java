@@ -6,11 +6,14 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +37,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 
+import am.softlab.arfinance.Constants;
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityProfileEditBinding;
 
@@ -205,14 +210,24 @@ public class ProfileEditActivity extends AppCompatActivity {
         //handle menu item click
         popupMenu.setOnMenuItemClickListener(item -> {
             //get id of item clicked
-            int which = item.getItemId();
-            if (which == 0) {
+            int whichItemClicked = item.getItemId();
+            if (whichItemClicked == 0) {
                 //camera clicked
-                pickImageCamera();
+                if ( MyApplication.checkPermission (
+                        ProfileEditActivity.this,
+                        new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                        Constants.CAMERA_PERMISSION_CODE )
+                )
+                    pickImageCamera();
             }
-            else if (which == 1) {
+            else if (whichItemClicked == 1) {
                 //gallery clicked
-                pickImageGallery();
+                if (MyApplication.checkPermission(
+                        ProfileEditActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Constants.WRITE_EXTERNAL_STORAGE)
+                )
+                    pickImageGallery();
             }
             return false;
         });
@@ -276,4 +291,40 @@ public class ProfileEditActivity extends AppCompatActivity {
                 }
             }
     );
+
+    // This function is called when user accept or decline the permission.
+    // Request Code is used to check which permission called this function.
+    // This request code is provided when user is prompt for permission.
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        boolean allIsOK = true;
+
+        for (int i=0; i<grantResults.length; i++) {
+            // Checking whether user granted the permission or not.
+            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                allIsOK = false;
+                break;
+            }
+        }
+
+        if (allIsOK) {
+            if (requestCode == Constants.CAMERA_PERMISSION_CODE) {
+                Toast.makeText(ProfileEditActivity.this, res.getString(R.string.camera_granted), Toast.LENGTH_SHORT).show();
+                pickImageCamera();
+            } else if (requestCode == Constants.WRITE_EXTERNAL_STORAGE) {
+                Toast.makeText(ProfileEditActivity.this, res.getString(R.string.write_external_granted), Toast.LENGTH_SHORT).show();
+                pickImageGallery();
+            }
+        } else {
+            if (requestCode == Constants.CAMERA_PERMISSION_CODE)
+                Toast.makeText(ProfileEditActivity.this, res.getString(R.string.camera_denied), Toast.LENGTH_SHORT).show();
+            else if (requestCode == Constants.WRITE_EXTERNAL_STORAGE)
+                Toast.makeText(ProfileEditActivity.this, res.getString(R.string.write_external_denied), Toast.LENGTH_SHORT).show();
+        }
+    }
 }
