@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,12 +38,9 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
-import am.softlab.arfinance.activities.DashboardActivity;
 import am.softlab.arfinance.activities.StatisticsActivity;
 import am.softlab.arfinance.databinding.FragmentPieBinding;
-import am.softlab.arfinance.models.ModelCategory;
 import am.softlab.arfinance.models.ModelOperation;
 import am.softlab.arfinance.models.ModelWallet;
 

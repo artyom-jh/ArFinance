@@ -3,6 +3,7 @@ package am.softlab.arfinance.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.text.TextWatcher;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,6 +42,9 @@ public class CategoriesActivity extends AppCompatActivity {
     //resources
     private Resources res;
 
+    //progress dialog
+    private ProgressDialog progressDialog;
+
     private static final String TAG = "CATEGORIES_TAG";
 
     @Override
@@ -52,6 +55,11 @@ public class CategoriesActivity extends AppCompatActivity {
 
         //get resources
         res = this.getResources();
+
+        //configure progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(res.getString(R.string.please_wait));
+        progressDialog.setCanceledOnTouchOutside(false);
 
         //init firebase auth
         firebaseAuth = FirebaseAuth.getInstance();
@@ -96,6 +104,9 @@ public class CategoriesActivity extends AppCompatActivity {
     }
 
     private void loadCategories() {
+        progressDialog.setMessage(res.getString(R.string.loading_categories));
+        progressDialog.show();
+
         // init arraylist
         categoryArrayList = new ArrayList<>();
 
@@ -118,11 +129,15 @@ public class CategoriesActivity extends AppCompatActivity {
                             adapterCategory = new AdapterCategory(CategoriesActivity.this, categoryArrayList);
                             //set adapter tp recyclerview
                             binding.categoriesRv.setAdapter(adapterCategory);
+
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            //noop
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
                     });
         }
@@ -133,6 +148,8 @@ public class CategoriesActivity extends AppCompatActivity {
             //setup adapter
             adapterCategory = new AdapterCategory(CategoriesActivity.this, categoryArrayList);
             binding.categoriesRv.setAdapter(adapterCategory);
+
+            progressDialog.dismiss();
         }
     }
 

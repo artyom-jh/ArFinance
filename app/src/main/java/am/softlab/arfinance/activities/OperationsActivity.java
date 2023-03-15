@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -20,13 +21,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.OperationFragment;
 import am.softlab.arfinance.R;
-import am.softlab.arfinance.adapters.AdapterOperation;
 import am.softlab.arfinance.databinding.ActivityOperationsBinding;
-import am.softlab.arfinance.models.ModelOperation;
 import am.softlab.arfinance.models.ModelWallet;
 
 public class OperationsActivity extends AppCompatActivity {
@@ -40,6 +38,9 @@ public class OperationsActivity extends AppCompatActivity {
 
     //resources
     private Resources res;
+
+    //progress dialog
+    private ProgressDialog progressDialog;
 
     //firebase auth
     private FirebaseAuth firebaseAuth;
@@ -57,12 +58,20 @@ public class OperationsActivity extends AppCompatActivity {
         //get resources
         res = this.getResources();
 
+        //configure progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(res.getString(R.string.please_wait));
+        progressDialog.setCanceledOnTouchOutside(false);
+
         //actType get from intent started from DashboardActivity
         String actType = getIntent().getStringExtra("actType");
+
         isIncome = actType.equals("income");
         if (isIncome) {
+            binding.operationsIv.setImageResource(R.drawable.ic_income_white);
             binding.titleTv.setText(res.getString(R.string.income));
         } else {
+            binding.operationsIv.setImageResource(R.drawable.ic_expenses_white);
             binding.titleTv.setText(res.getString(R.string.expenses));
         }
 
@@ -74,6 +83,9 @@ public class OperationsActivity extends AppCompatActivity {
     }
 
     private void setupViewPagerAdapter(ViewPager viewPager) {
+        progressDialog.setMessage(res.getString(R.string.loading_operations));
+        progressDialog.show();
+
         viewPagerAdapter = new OperationsActivity.ViewPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, this);
 
         if (firebaseAuth.getCurrentUser() != null) {
@@ -97,11 +109,15 @@ public class OperationsActivity extends AppCompatActivity {
 
                             //refresh list
                             viewPagerAdapter.notifyDataSetChanged();
+
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            //noop
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
                     });
         }
@@ -118,6 +134,8 @@ public class OperationsActivity extends AppCompatActivity {
 
             //refresh list
             viewPagerAdapter.notifyDataSetChanged();
+
+            progressDialog.dismiss();
         }
     }
 

@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityForgotPasswordBinding;
 
@@ -45,7 +46,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         progressDialog.setCanceledOnTouchOutside(false);
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> {
+            MyApplication.hideKeyboard(this);
+            onBackPressed();
+        });
 
         //handle click, begin recovery password
         binding.submitBtn.setOnClickListener(v -> validateData());
@@ -69,6 +73,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     }
 
     private void recoverPassword() {
+        MyApplication.hideKeyboard(this);
+
         //show progress
         progressDialog.setMessage(res.getString(R.string.sending_password) + " " + email);
         progressDialog.show();

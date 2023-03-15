@@ -18,6 +18,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityChangePasswordBinding;
 
@@ -55,7 +56,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(view -> finish());
+        binding.backBtn.setOnClickListener(view -> {
+            MyApplication.hideKeyboard(this);
+            finish();
+        });
 
         //handle click, change password
         binding.changeBtn.setOnClickListener(view -> validateData());
@@ -86,6 +90,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private void changeUserPassword() {
+        MyApplication.hideKeyboard(this);
+
         //show progress
         progressDialog.setMessage(res.getString(R.string.creating_password));
         progressDialog.show();

@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityCategoryAddBinding;
 
@@ -90,7 +91,10 @@ public class CategoryAddActivity extends AppCompatActivity {
         }
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(view -> onBackPressed());
+        binding.backBtn.setOnClickListener(view -> {
+            MyApplication.hideKeyboard(this);
+            onBackPressed();
+        });
 
         //handle click, begin upload category
         binding.submitBtn.setOnClickListener(view -> validateData());
@@ -143,6 +147,8 @@ public class CategoryAddActivity extends AppCompatActivity {
     }
 
     private void addCategoryFirebase() {
+        MyApplication.hideKeyboard(this);
+
         //show progress
         progressDialog.setMessage(res.getString(R.string.adding_category));
         progressDialog.show();

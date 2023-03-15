@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/back01"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     tools:context=".activities.DashboardActivity">
 
     <!-- Toolbar -->
@@ -147,47 +149,6 @@
                     android:textStyle="bold"/>
             </androidx.cardview.widget.CardView>
 
-            <!--Wallets-->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/walletsCv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="10dp"
-                app:cardCornerRadius="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:layout_below="@id/expensesCv"
-                app:cardBackgroundColor="@color/white"
-                app:cardMaxElevation="12dp"
-                app:cardPreventCornerOverlap="true"
-                app:cardUseCompatPadding="true">
-
-                <ImageView
-                    android:id="@+id/walletsIv"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_gravity="start"
-                    android:src="@drawable/ic_wallets_gray"
-                    android:layout_marginStart="14dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"/>
-
-                <TextView
-                    android:id="@+id/walletsTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|start"
-                    android:layout_marginStart="90dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/wallets"
-                    android:textSize="22sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
-            </androidx.cardview.widget.CardView>
-
             <!--Statistics-->
             <androidx.cardview.widget.CardView
                 android:id="@+id/statisticsCv"
@@ -199,7 +160,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="0dp"
-                android:layout_below="@id/walletsCv"
+                android:layout_below="@id/expensesCv"
                 app:cardBackgroundColor="@color/white"
                 app:cardMaxElevation="12dp"
                 app:cardPreventCornerOverlap="true"
@@ -229,6 +190,47 @@
                     android:textStyle="bold"/>
             </androidx.cardview.widget.CardView>
 
+            <!--Wallets-->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/walletsCv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="10dp"
+                app:cardCornerRadius="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_below="@id/statisticsCv"
+                app:cardBackgroundColor="@color/white"
+                app:cardMaxElevation="12dp"
+                app:cardPreventCornerOverlap="true"
+                app:cardUseCompatPadding="true">
+
+                <ImageView
+                    android:id="@+id/walletsIv"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="start"
+                    android:src="@drawable/ic_wallets_gray"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+                <TextView
+                    android:id="@+id/walletsTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="90dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/wallets"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"/>
+            </androidx.cardview.widget.CardView>
+
             <!--Categories-->
             <androidx.cardview.widget.CardView
                 android:id="@+id/categoriesCv"
@@ -240,7 +242,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="10dp"
-                android:layout_below="@id/statisticsCv"
+                android:layout_below="@id/walletsCv"
                 app:cardBackgroundColor="@color/white"
                 app:cardMaxElevation="12dp"
                 app:cardPreventCornerOverlap="true"

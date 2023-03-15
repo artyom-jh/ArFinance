@@ -5,10 +5,13 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.text.format.DateFormat;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -225,6 +228,32 @@ public class MyApplication extends Application {
         return retVal;
     }
 
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+        view.clearFocus();
+    }
+
+    public static void hideKeyboard(Fragment fragment) {
+        InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = fragment.getView().getRootView();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(fragment.getActivity());
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+        view.clearFocus();
+    }
 
     // ===== DEMOS =====
     public static ModelWallet getDemoWallet() {

@@ -60,9 +60,11 @@
             android:exported="false" />
         <activity
             android:name=".activities.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
             android:name=".activities.ForgotPasswordActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
             android:name=".activities.DashboardActivity"
@@ -73,12 +75,15 @@
             android:exported="false" />
         <activity
             android:name=".activities.RegisterActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
             android:name=".activities.MainActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="false" />
         <activity
             android:name=".activities.SplashActivity"
+            android:windowSoftInputMode="stateHidden"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

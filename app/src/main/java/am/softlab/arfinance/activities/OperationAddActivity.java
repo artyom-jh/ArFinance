@@ -107,7 +107,10 @@ public class OperationAddActivity extends AppCompatActivity {
         }
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(view -> onBackPressed());
+        binding.backBtn.setOnClickListener(view -> {
+            MyApplication.hideKeyboard(this);
+            onBackPressed();
+        });
 
         //handle click, begin upload category
         binding.submitBtn.setOnClickListener(view -> validateData());
@@ -286,6 +289,8 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void addOrUpdateOperationFirebase() {
+        MyApplication.hideKeyboard(this);
+
         if (operId == null) {       // Add mode
             Log.d(TAG, "addOrEditOperationFirebase: Starting adding operation info to db...");
             progressDialog.setMessage(res.getString(R.string.adding_operation));

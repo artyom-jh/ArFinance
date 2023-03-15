@@ -7,11 +7,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -42,6 +42,9 @@ public class StatisticsActivity extends AppCompatActivity {
     //resources
     private Resources res;
 
+    //progress dialog
+    private ProgressDialog progressDialog;
+
     private static final String TAG = "STATISTICS_TAG";
 
 
@@ -56,6 +59,11 @@ public class StatisticsActivity extends AppCompatActivity {
 
         //get resources
         res = this.getResources();
+
+        //configure progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(res.getString(R.string.please_wait));
+        progressDialog.setCanceledOnTouchOutside(false);
 
         loadCategories();
 
@@ -124,6 +132,9 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
     private void loadCategories() {
+        progressDialog.setMessage(res.getString(R.string.loading_categories));
+        progressDialog.show();
+
         categoryTitleArrayList = new ArrayList<>();
         categoryIdArrayList = new ArrayList<>();
 
@@ -147,13 +158,20 @@ public class StatisticsActivity extends AppCompatActivity {
                                 Log.d(TAG, "onDataChange: ID: " + model.getId());
                                 Log.d(TAG, "onDataChange: Category: " + model.getCategory());
                             }
+
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-                            //noop
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
                         }
                     });
+        }
+        else {
+            progressDialog.dismiss();
         }
     }
     public String getCategoryNameById(String categoryId) {

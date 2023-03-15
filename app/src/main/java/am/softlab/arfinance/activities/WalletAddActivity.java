@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import am.softlab.arfinance.Constants;
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityWalletAddBinding;
 
@@ -100,7 +101,10 @@ public class WalletAddActivity extends AppCompatActivity {
         }
 
         //handle click, go back
-        binding.backBtn.setOnClickListener(view -> onBackPressed());
+        binding.backBtn.setOnClickListener(view -> {
+            MyApplication.hideKeyboard(this);
+            onBackPressed();
+        });
 
         //handle click, begin upload category
         binding.submitBtn.setOnClickListener(view -> validateData());
@@ -155,6 +159,8 @@ public class WalletAddActivity extends AppCompatActivity {
     }
 
     private void addWalletFirebase() {
+        MyApplication.hideKeyboard(this);
+
         //show progress
         progressDialog.setMessage(res.getString(R.string.adding_wallet));
         progressDialog.show();

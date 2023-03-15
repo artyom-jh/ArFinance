@@ -3,6 +3,7 @@ package am.softlab.arfinance.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -21,11 +22,8 @@ import java.util.ArrayList;
 
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
-import am.softlab.arfinance.adapters.AdapterCategory;
 import am.softlab.arfinance.adapters.AdapterWallet;
-import am.softlab.arfinance.databinding.ActivityCategoriesBinding;
 import am.softlab.arfinance.databinding.ActivityWalletsBinding;
-import am.softlab.arfinance.models.ModelCategory;
 import am.softlab.arfinance.models.ModelWallet;
 
 public class WalletsActivity extends AppCompatActivity {
@@ -43,6 +41,9 @@ public class WalletsActivity extends AppCompatActivity {
     //resources
     private Resources res;
 
+    //progress dialog
+    private ProgressDialog progressDialog;
+
     private static final String TAG = "WALLETS_TAG";
 
     @Override
@@ -53,6 +54,11 @@ public class WalletsActivity extends AppCompatActivity {
 
         //get resources
         res = this.getResources();
+
+        //configure progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(res.getString(R.string.please_wait));
+        progressDialog.setCanceledOnTouchOutside(false);
 
         //init firebase auth
         firebaseAuth = FirebaseAuth.getInstance();
@@ -97,6 +103,9 @@ public class WalletsActivity extends AppCompatActivity {
     }
 
     private void loadWallets() {
+        progressDialog.setMessage(res.getString(R.string.loading_walletss));
+        progressDialog.show();
+
         // init arraylist
         walletArrayList = new ArrayList<>();
 
@@ -123,11 +132,15 @@ public class WalletsActivity extends AppCompatActivity {
 
                                 //set adapter tp recyclerview
                                 binding.walletsRv.setAdapter(adapterWallet);
+
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) {
-                                //noop
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
                             }
                         });
             }
@@ -139,6 +152,8 @@ public class WalletsActivity extends AppCompatActivity {
             //setup adapter
             adapterWallet = new AdapterWallet(WalletsActivity.this, walletArrayList);
             binding.walletsRv.setAdapter(adapterWallet);
+
+            progressDialog.dismiss();
         }
     }
 }

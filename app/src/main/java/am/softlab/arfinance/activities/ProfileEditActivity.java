@@ -6,7 +6,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
@@ -81,7 +80,10 @@ public class ProfileEditActivity extends AppCompatActivity {
         loadUserInfo();
 
         //handle click, goBack
-        binding.backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> {
+            MyApplication.hideKeyboard(this);
+            onBackPressed();
+        });
 
         //handle click, pick image
         binding.profileIv.setOnClickListener(v -> showImageAttachMenu());
@@ -172,6 +174,8 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     private void updateProfile(String imageUrl) {
+        MyApplication.hideKeyboard(this);
+
         Log.d(TAG, "updateProfile: Updating user profile");
         progressDialog.setMessage(res.getString(R.string.updating_user_profile));
         progressDialog.show();

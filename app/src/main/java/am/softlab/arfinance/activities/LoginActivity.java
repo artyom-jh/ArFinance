@@ -95,6 +95,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
+        MyApplication.hideKeyboard(this);
+
         //show progress
         progressDialog.setMessage(res.getString(R.string.logging_in));
         progressDialog.show();
