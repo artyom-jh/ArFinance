@@ -11,27 +11,57 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/chooseWalletTv"
+        <LinearLayout
+            android:id="@+id/buttonPanelLl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:background="@drawable/shape_button02"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            android:hint="@string/pick_wallet"
-            android:padding="10dp"
-            android:textColorHint="@color/black"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:drawableEndCompat="@drawable/ic_down_gray" />
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center">
 
+            <TextView
+                android:id="@+id/chooseWalletTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="3dp"
+                android:background="@drawable/shape_button02"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:hint="@string/pick_wallet"
+                android:padding="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="14sp"
+                app:drawableEndCompat="@drawable/ic_down_gray"/>
+
+            <TextView
+                android:id="@+id/selectDateRangeTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="3dp"
+                android:gravity="right"
+                android:background="@drawable/shape_button02"
+                android:drawablePadding="10dp"
+                android:hint="@string/for_all_time"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="14sp"/>
+        </LinearLayout>
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/categoryPieChart"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/chooseWalletTv"
+            android:layout_below="@id/buttonPanelLl"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"

@@ -125,6 +125,9 @@
     <string name="spending_category">Spending by Category</string>
     <string name="pick_wallet">Pick Wallet</string>
     <string name="other_categories">Other</string>
+    <string name="select_date_range">SELECT A DATE</string>
+    <string name="for_all_time">For All Time</string>
+    <string name="select_wallet">Now Select Wallet</string>
 
     <!--categories activity-->
     <string name="add_category">Add a new Category</string>

@@ -1,5 +1,7 @@
 package am.softlab.arfinance;
 
+import static com.google.android.material.datepicker.MaterialDatePicker.Builder.dateRangePicker;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -27,6 +30,9 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +43,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 
 import am.softlab.arfinance.activities.StatisticsActivity;
@@ -57,6 +64,8 @@ public class PieFragment extends Fragment {
 
     //progress dialog
     private ProgressDialog progressDialog;
+    private MaterialDatePicker materialDatePicker;
+    private Pair<Long, Long> dateRange = null;  // new Pair(-1, -1);
 
     //view binding
     private FragmentPieBinding binding;
@@ -70,7 +79,7 @@ public class PieFragment extends Fragment {
 
     //arraylist to hold odf wallets
     private ArrayList<String> walletNameArrayList, walletIdArrayList;
-    private String selectedWalletId, selectedWalletName;
+    private String selectedWalletId="", selectedWalletName="";
 
     private static final String TAG = "PIE_FRAGMENT_TAG";
 
@@ -99,6 +108,21 @@ public class PieFragment extends Fragment {
 
         //get resources
         res = this.getResources();
+
+        // create the calendar constraint builder
+        CalendarConstraints.Builder calendarConstraintBuilder = new CalendarConstraints.Builder();
+
+        // instantiate the Material date picker dialog
+        // builder
+        final MaterialDatePicker.Builder materialDatePickerBuilder = MaterialDatePicker.Builder.dateRangePicker();
+        materialDatePickerBuilder.setTitleText(res.getString(R.string.select_date_range));
+
+        // now pass the constrained calendar builder to
+        // material date picker Calendar constraints
+        materialDatePickerBuilder.setCalendarConstraints(calendarConstraintBuilder.build());
+
+        // now build the material date picker dialog
+        materialDatePicker = materialDatePickerBuilder.build();
     }
 
     @Override
@@ -118,15 +142,48 @@ public class PieFragment extends Fragment {
         setupCategoryPieChart();
 
         Log.d(TAG, "onCreateView: Pie: " + statPageId);
+
         loadWallets();
 
         binding.chooseWalletTv.setOnClickListener(view -> walletPickDialog());
+
+        //date range - materialDatePicker
+        materialDatePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>) selection -> {
+            MyApplication.hideKeyboard(materialDatePicker);
+            updateDateRangeButton(selection);
+        });
+        //date range - selectDateRangeTv
+        binding.selectDateRangeTv.setOnClickListener(view -> {
+            materialDatePicker.show(getActivity().getSupportFragmentManager(), "DATE_PICKER_RANGE");
+        });
+        binding.selectDateRangeTv.setOnLongClickListener(v -> {
+            updateDateRangeButton(null);
+            return true;  //it has a return value, which should be true if long-click events are handled
+        });
 
         if (firebaseAuth.getCurrentUser() == null) {
             showDemoPieChart();
         }
 
         return binding.getRoot();
+    }
+
+    private void updateDateRangeButton(Pair<Long, Long> selection) {
+        dateRange = selection;
+        if (dateRange == null)
+            binding.selectDateRangeTv.setText(res.getString(R.string.for_all_time));
+        else {
+            binding.selectDateRangeTv.setText(
+                    String.format("%s - %s",
+                            MyApplication.formatTimestampShort(dateRange.first),
+                            MyApplication.formatTimestampShort(dateRange.second)
+                    ));
+        }
+
+        if (selectedWalletId.isEmpty()) {
+            Toast.makeText(getContext(), res.getString(R.string.select_wallet), Toast.LENGTH_SHORT).show();
+        } else
+            loadCategoriesByWallet();
     }
 
     private void loadWallets() {
@@ -237,7 +294,7 @@ public class PieFragment extends Fragment {
 
     private void loadCategoriesByWallet() {
         //get all wallet operations from firebase > Operation
-        if (firebaseAuth.getCurrentUser() != null) {
+        if (firebaseAuth.getCurrentUser() != null && !selectedWalletId.isEmpty()) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
 
             ref.orderByChild("walletId").equalTo(selectedWalletId)
@@ -258,22 +315,27 @@ public class PieFragment extends Fragment {
                                 // get data
                                 ModelOperation model = ds.getValue(ModelOperation.class);
                                 if (model.getIsIncome() == isIncome) {
-                                    float fAmount = (float) model.getAmount();
-                                    if (fAmount > 0) {
-                                        //group by category id - search id and increase amount
-                                        boolean isFound = false;
-                                        for (int i=0; i <= lastIndex; i++) {
-                                            if (model.getCategoryId().equals(operArray[i][0])) {
-                                                operArray[i][1] = String.valueOf( Float.parseFloat(operArray[i][1]) + fAmount );
-                                                isFound = true;
-                                                break;
+                                    if ( dateRange == null ||
+                                         ((model.getOperationTimestamp() >= dateRange.first) &&
+                                          (model.getOperationTimestamp() <= dateRange.second)) )
+                                    {
+                                        float fAmount = (float) model.getAmount();
+                                        if (fAmount > 0) {
+                                            //group by category id - search id and increase amount
+                                            boolean isFound = false;
+                                            for (int i = 0; i <= lastIndex; i++) {
+                                                if (model.getCategoryId().equals(operArray[i][0])) {
+                                                    operArray[i][1] = String.valueOf(Float.parseFloat(operArray[i][1]) + fAmount);
+                                                    isFound = true;
+                                                    break;
+                                                }
                                             }
-                                        }
-                                        //if not found -> add
-                                        if (!isFound) {
-                                            lastIndex++;
-                                            operArray[lastIndex][0] = model.getCategoryId();
-                                            operArray[lastIndex][1] = String.valueOf(fAmount);
+                                            //if not found -> add
+                                            if (!isFound) {
+                                                lastIndex++;
+                                                operArray[lastIndex][0] = model.getCategoryId();
+                                                operArray[lastIndex][1] = String.valueOf(fAmount);
+                                            }
                                         }
                                     }
                                 }
@@ -374,4 +436,5 @@ public class PieFragment extends Fragment {
 
         loadPieChartData(entries, isIncome);
     }
+
 }

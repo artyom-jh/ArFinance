@@ -55,6 +55,13 @@ public class MyApplication extends Application {
         //formatting timestamp to dd/MM/yyyy
         return DateFormat.format("dd/MM/yyyy", cal).toString();
     }
+    public static String formatTimestampShort(long timestamp){
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(timestamp);
+
+        //formatting timestamp to dd/MM/yyyy
+        return DateFormat.format("dd/MM/yy", cal).toString();
+    }
 
     public static String formatDouble(double number){
         DecimalFormat formatterDecimal = new DecimalFormat("#,###,##0.00");
