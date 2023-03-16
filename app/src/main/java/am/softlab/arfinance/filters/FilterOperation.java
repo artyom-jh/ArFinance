@@ -4,6 +4,7 @@ import android.widget.Filter;
 
 import java.util.ArrayList;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.adapters.AdapterOperation;
 import am.softlab.arfinance.models.ModelOperation;
 
@@ -30,7 +31,9 @@ public class FilterOperation extends Filter {
 
             for (int i = 0; i < filterList.size(); i++){
                 //validate
-                if(filterList.get(i).getNotes().toUpperCase().contains(charSequence)){
+                if ( filterList.get(i).getNotes().toUpperCase().contains(charSequence) ||
+                     MyApplication.getCategoryById(filterList.get(i).getCategoryId()).toUpperCase().contains(charSequence) )
+                {
                     //add to filtered list
                     filteredModels.add(filterList.get(i));
                 }

@@ -100,7 +100,10 @@ public class CategoriesActivity extends AppCompatActivity {
         );
 
         //handle click, goback
-        binding.backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> {
+            MyApplication.hideKeyboard(this);
+            onBackPressed();
+        });
     }
 
     private void loadCategories() {

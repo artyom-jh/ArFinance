@@ -49,7 +49,7 @@
                     android:textColor="@color/black"/>
             </LinearLayout>
 
-            <!--Notes-->
+            <!--Category-->
             <TextView
                 android:id="@+id/categoryTv"
                 android:layout_width="match_parent"
@@ -59,6 +59,7 @@
                 android:text="Category Title"
                 android:textColor="@color/black" />
 
+            <!--Notes-->
             <TextView
                 android:id="@+id/operNotesTv"
                 android:layout_width="match_parent"

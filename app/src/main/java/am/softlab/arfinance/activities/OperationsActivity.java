@@ -79,7 +79,10 @@ public class OperationsActivity extends AppCompatActivity {
         binding.tabLayout.setupWithViewPager(binding.viewPager);
 
         //handle click, goBack
-        binding.backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> {
+            MyApplication.hideKeyboard(this);
+            onBackPressed();
+        });
     }
 
     private void setupViewPagerAdapter(ViewPager viewPager) {
@@ -101,7 +104,7 @@ public class OperationsActivity extends AppCompatActivity {
                                 //add data to view pager adapter
                                 viewPagerAdapter.addFragment(
                                         OperationFragment.newInstance(model.getId(), model.getCurrencySymbol(), isIncome),
-                                        model.getWalletName()
+                                        String.format("%s (%s)", model.getWalletName(), model.getCurrencySymbol())
                                 );
                             }
                             //set adapter to view pager

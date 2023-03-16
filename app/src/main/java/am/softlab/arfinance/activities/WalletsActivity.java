@@ -99,7 +99,10 @@ public class WalletsActivity extends AppCompatActivity {
         );
 
         //handle click, goback
-        binding.backBtn.setOnClickListener(v -> onBackPressed());
+        binding.backBtn.setOnClickListener(v -> {
+            MyApplication.hideKeyboard(this);
+            onBackPressed();
+        });
     }
 
     private void loadWallets() {

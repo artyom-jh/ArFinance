@@ -78,8 +78,8 @@ public class PieFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
 
     //arraylist to hold odf wallets
-    private ArrayList<String> walletNameArrayList, walletIdArrayList;
-    private String selectedWalletId="", selectedWalletName="";
+    private ArrayList<String> walletNameArrayList, walletIdArrayList, currencySymbolArrayList;
+    private String selectedWalletId="", selectedWalletName="", selectedCurrencySymbol="";
 
     private static final String TAG = "PIE_FRAGMENT_TAG";
 
@@ -190,6 +190,7 @@ public class PieFragment extends Fragment {
         Log.d(TAG, "loadWallets: Loading wallets...");
         walletNameArrayList = new ArrayList<>();
         walletIdArrayList = new ArrayList<>();
+        currencySymbolArrayList = new ArrayList<>();
 
         if (firebaseAuth.getCurrentUser() != null) {
             //db reference to load categories... db > Wallets
@@ -200,11 +201,13 @@ public class PieFragment extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             walletNameArrayList.clear(); // clear before adding data
                             walletIdArrayList.clear();
+                            currencySymbolArrayList.clear();
                             for (DataSnapshot ds : snapshot.getChildren()) {
                                 ModelWallet model = ds.getValue(ModelWallet.class);
 
                                 walletNameArrayList.add(model.getWalletName());
-                                walletIdArrayList.add("" + model.getId());
+                                walletIdArrayList.add(""+model.getId());
+                                currencySymbolArrayList.add(model.getCurrencySymbol());
 
                                 Log.d(TAG, "onDataChange: ID: " + model.getId());
                                 Log.d(TAG, "onDataChange: Wallet: " + model.getWalletName());
@@ -242,6 +245,8 @@ public class PieFragment extends Fragment {
                                 //get clicked item from list
                                 selectedWalletName = walletNameArrayList.get(which);
                                 selectedWalletId = walletIdArrayList.get(which);
+                                selectedCurrencySymbol = currencySymbolArrayList.get(which);
+
                                 //set to category textview
                                 binding.chooseWalletTv.setText(selectedWalletName);
 
@@ -261,8 +266,7 @@ public class PieFragment extends Fragment {
         categoryPieChart.setUsePercentValues(true);
         categoryPieChart.setEntryLabelTextSize(12);
         categoryPieChart.setEntryLabelColor(Color.BLACK);
-        categoryPieChart.setCenterText(res.getString(R.string.spending_category));
-        categoryPieChart.setCenterTextSize(24);
+        categoryPieChart.setCenterTextSize(22);
         categoryPieChart.getDescription().setEnabled(false);
 
         Legend legend = categoryPieChart.getLegend();
@@ -276,7 +280,8 @@ public class PieFragment extends Fragment {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 PieEntry pieEntry = (PieEntry)e;
-                String amountStr = NumberFormat.getCurrencyInstance().format(pieEntry.getValue());
+                String amountStr = MyApplication.formatDouble(pieEntry.getValue()) + " " + selectedCurrencySymbol; //NumberFormat.getCurrencyInstance().format(pieEntry.getValue());
+                //                   + System.getProperty("line.separator")
 
                 new AlertDialog.Builder(getContext())
                         .setTitle(pieEntry.getLabel())
@@ -304,6 +309,7 @@ public class PieFragment extends Fragment {
                             ArrayList<PieEntry> entries = new ArrayList<>();
                             int size = (int) snapshot.getChildrenCount();
                             int lastIndex = -1;
+                            double totalAmount = 0.0;
 
                             // operArray: 0-categoryId, 1-categoryTitle, 2-amount
                             String[][] operArray = new String[size][2];
@@ -351,6 +357,7 @@ public class PieFragment extends Fragment {
                             float otherAmountSum = 0;
                             for (int i=0; i <= lastIndex; i++) {
                                 if (i < Constants.PIE_MAX_ENTRIES) {
+                                    totalAmount += Double.parseDouble(operArray[i][1]);
                                     entries.add(
                                             new PieEntry(
                                                     Float.parseFloat(operArray[i][1]),
@@ -362,6 +369,7 @@ public class PieFragment extends Fragment {
                                     otherAmountSum += Float.parseFloat(operArray[i][1]);
                             }
                             if (otherAmountSum > 0) {
+                                totalAmount += otherAmountSum;
                                 entries.add(
                                         new PieEntry(
                                                 otherAmountSum,
@@ -370,7 +378,7 @@ public class PieFragment extends Fragment {
                                 );
                             }
                             progressDialog.dismiss();
-                            loadPieChartData(entries, isIncome);
+                            loadPieChartData(entries, isIncome, totalAmount);
                         }
 
                         @Override
@@ -385,7 +393,7 @@ public class PieFragment extends Fragment {
         }
     }
 
-    private void loadPieChartData(ArrayList<PieEntry> entries, boolean isIncome) {
+    private void loadPieChartData(ArrayList<PieEntry> entries, boolean isIncome, double totalAmount) {
         ArrayList<Integer> colors = new ArrayList<>();
         for (int color: ColorTemplate.MATERIAL_COLORS) {
             colors.add(color);
@@ -406,6 +414,12 @@ public class PieFragment extends Fragment {
         data.setValueTextSize(12f);
         data.setValueTextColor(Color.BLACK);
 
+        //categoryPieChart.setCenterText(res.getString(R.string.spending_category));
+        categoryPieChart.setCenterText(
+                res.getString(R.string.spending_category)
+                + System.getProperty("line.separator")
+                + MyApplication.formatDouble(totalAmount) + " " + selectedCurrencySymbol
+        );
         categoryPieChart.setData(data);
         categoryPieChart.invalidate();
 
@@ -434,7 +448,7 @@ public class PieFragment extends Fragment {
                     )
             );
 
-        loadPieChartData(entries, isIncome);
+        loadPieChartData(entries, isIncome, 4500);
     }
 
 }

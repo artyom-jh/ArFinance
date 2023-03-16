@@ -26,6 +26,8 @@
     <string name="camera_granted">Camera Permission Granted</string>
     <string name="write_external_granted">Write External Storage Permission Granted</string>
     <string name="write_external_denied">Write External Storage Permission Denied</string>
+    <string name="notification_channel_name">ArFinance</string>
+    <string name="notification_channel_desc">ArFinance notifications</string>
 
     <!--login/register activity-->
     <string name="logging_in">Logging In…</string>
@@ -72,6 +74,12 @@
     <string name="sure_send_email_verification">Are you sure you want to send email verification instructions to your email</string>
     <string name="sending_email_verification">Sending email verification instructions to your email</string>
     <string name="verification_instructions_sent">Instructions sent, check your email</string>
+
+    <!--scheduler activity-->
+    <string name="scheduler">Scheduler</string>
+    <string name="post_notification_denied">Post Notification Denied</string>
+    <string name="post_notification_granted">Post Notification Granted</string>
+    <string name="add_schedule_btn">+ Add Schedule</string>
 
     <!--forgot/change password activities-->
     <string name="old_password">Old password</string>
@@ -122,7 +130,7 @@
     <!--statistics activity-->
     <string name="income_category">Income Category</string>
     <string name="expenses_category">Expenses Category</string>
-    <string name="spending_category">Spending by Category</string>
+    <string name="spending_category">Total</string>
     <string name="pick_wallet">Pick Wallet</string>
     <string name="other_categories">Other</string>
     <string name="select_date_range">SELECT A DATE</string>

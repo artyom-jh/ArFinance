@@ -31,7 +31,9 @@ public class FilterCategory extends Filter {
             for (int i = 0; i < filterList.size(); i++){
                 //validate
                 if ( filterList.get(i).getCategory().toUpperCase().contains(charSequence) ||
-                     filterList.get(i).getNotes().toUpperCase().contains(charSequence) )
+                     filterList.get(i).getNotes().toUpperCase().contains(charSequence) ||
+                     (filterList.get(i).getIsIncome() && "INCOME".contains(charSequence)) ||
+                     (!filterList.get(i).getIsIncome() && "EXPENSES".contains(charSequence)) )
                 {
                     //add to filtered list
                     filteredModels.add(filterList.get(i));

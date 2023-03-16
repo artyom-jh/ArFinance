@@ -2,14 +2,23 @@ package am.softlab.arfinance;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -26,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import am.softlab.arfinance.activities.DashboardActivity;
 import am.softlab.arfinance.models.ModelCategory;
 import am.softlab.arfinance.models.ModelWallet;
 
@@ -261,6 +271,53 @@ public class MyApplication extends Application {
 
         view.clearFocus();
     }
+
+
+    public static void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is not in the Support Library.
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = context.getResources().getString(R.string.notification_channel_name);
+            String description = context.getResources().getString(R.string.notification_channel_desc);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system. You can't change the importance
+            // or other notification behaviors after this.
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public static void showNotification(String msg) {
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        Intent notifyIntent = new Intent(context, DashboardActivity.class);
+        // Set the Activity to start in a new, empty task
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        // Create the PendingIntent
+        PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                context, 0, notifyIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constants.CHANNEL_ID);
+        builder.setContentIntent(notifyPendingIntent);
+        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.logo));
+        builder.setSmallIcon(R.drawable.ic_notification_icon);
+        builder.setContentTitle(context.getResources().getString(R.string.notification_channel_name));
+        builder.setContentText(msg);
+        builder.setSubText("");
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        notificationManager.notify((int)System.currentTimeMillis(), builder.build());
+    }
+
 
     // ===== DEMOS =====
     public static ModelWallet getDemoWallet() {
