@@ -2,7 +2,7 @@ package am.softlab.arfinance.models;
 
 public class ModelOperation {
     // using same spellings for model variables as they appear in firebase
-    String id, walletId, categoryId, notes, uid;
+    String id, walletId, categoryId, notes, uid, imageUrl;
     boolean isIncome;
     double amount;
     String uid_walletId;
@@ -13,7 +13,7 @@ public class ModelOperation {
     }
 
     //constructor with parameters
-    public ModelOperation(String id, String walletId, String categoryId, String notes, String uid, boolean isIncome, double amount, String uid_walletId, long operationTimestamp, long timestamp) {
+    public ModelOperation(String id, String walletId, String categoryId, String notes, String uid, boolean isIncome, double amount, String uid_walletId, String imageUrl, long operationTimestamp, long timestamp) {
         this.id = id;
         this.walletId = walletId;
         this.categoryId = categoryId;
@@ -22,6 +22,7 @@ public class ModelOperation {
         this.isIncome = isIncome;
         this.amount = amount;
         this.uid_walletId = uid_walletId;
+        this.imageUrl = imageUrl;
         this.operationTimestamp = operationTimestamp;
         this.timestamp = timestamp;
     }
@@ -99,6 +100,14 @@ public class ModelOperation {
 
     public void setUid_walletId(String uid_walletId) {
         this.uid_walletId = uid_walletId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public long getTimestamp() {

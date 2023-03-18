@@ -5,14 +5,18 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Environment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -27,6 +31,8 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,7 +40,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -75,6 +85,13 @@ public class MyApplication extends Application {
 
         //formatting timestamp to dd/MM/yyyy
         return DateFormat.format("dd/MM/yyyy", cal).toString();
+    }
+    public static String formatTimestamp2(long timestamp){
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(timestamp);
+
+        //formatting timestamp to dd/MM/yyyy
+        return DateFormat.format("yyyy_MM_dd", cal).toString();
     }
     public static String formatTimestampShort(long timestamp){
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
@@ -487,6 +504,66 @@ public class MyApplication extends Application {
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
                 periodicWorkRequest);
     }
+
+
+    public static void downloadImage(Context context, String categoryName, long operationTimestamp, String imageUrl) {
+        Log.d(TAG_DOWNLOAD, "downloadImage: downloading image...");
+
+        String nameWithExtension = categoryName + "_" + formatTimestamp2(operationTimestamp) + ".jpg";
+
+        Log.d(TAG_DOWNLOAD, "downloadImage: NAME: " + nameWithExtension);
+
+        //progress dialog
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle(context.getResources().getString(R.string.please_wait));
+        progressDialog.setMessage("Downloading " + nameWithExtension + "...");  //e.g. Downloading ABC.jpg
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        //download from firebase storage using url
+        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+        storageReference.getBytes(Constants.MAX_BYTES_UPLOAD)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Log.d(TAG_DOWNLOAD, "onSuccess: Image Downloaded");
+                        Log.d(TAG_DOWNLOAD, "onSuccess: Saving image...");
+                        saveDownloadedImage(context, progressDialog, bytes, nameWithExtension);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG_DOWNLOAD, "onFailure: Failed to download due to " + e.getMessage());
+                        progressDialog.dismiss();
+                        Toast.makeText(context, "Failed to download due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private static void saveDownloadedImage(Context context, ProgressDialog progressDialog, byte[] bytes, String nameWithExtension) {
+        Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Saving downloaded image");
+        try {
+            File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            downloadsFolder.mkdirs();
+
+            String filePath = downloadsFolder.getPath() + "/" + nameWithExtension;
+
+            FileOutputStream out = new FileOutputStream(filePath);
+            out.write(bytes);
+            out.close();
+
+            Toast.makeText(context, "Saved to Download Folder", Toast.LENGTH_SHORT).show();
+            Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Saved to Download Folder");
+            progressDialog.dismiss();
+        }
+        catch (Exception e) {
+            Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Failed saving to Download Folder due to " + e.getMessage());
+            Toast.makeText(context, "Failed saving to Download Folder due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+        }
+    }
+
 
     // ===== DEMOS =====
     public static ModelWallet getDemoWallet() {

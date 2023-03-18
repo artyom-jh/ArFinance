@@ -86,6 +86,7 @@ public class MyWorker extends Worker {
                 hashMap.put("isIncome", model.getIsIncome());
                 hashMap.put("amount", model.getAmount());
                 hashMap.put("uid_walletId", "" + firebaseAuth.getUid() + "_" + model.getWalletId());
+                hashMap.put("imageUrl", "");
                 hashMap.put("timestamp", currentTimestamp);
 
                 hashMapMulti.put("" + currentTimestamp, hashMap);
@@ -108,13 +109,15 @@ public class MyWorker extends Worker {
             }
         }
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
-        ref.updateChildren(
-                hashMapMulti,
-                (error, ref1) -> {
-                    MyApplication.showNotification(res.getString(R.string.tasks_completed));
-                }
-        );
+        if (hashMapMulti.size() > 0) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
+            ref.updateChildren(
+                    hashMapMulti,
+                    (error, ref1) -> {
+                        MyApplication.showNotification(res.getString(R.string.tasks_completed));
+                    }
+            );
+        }
 
         return Result.success();
     }

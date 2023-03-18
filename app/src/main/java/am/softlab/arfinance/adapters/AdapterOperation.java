@@ -1,9 +1,11 @@
 package am.softlab.arfinance.adapters;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +18,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -27,6 +33,7 @@ import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.activities.OperationAddActivity;
+import am.softlab.arfinance.activities.OperationsActivity;
 import am.softlab.arfinance.databinding.RowOperationBinding;
 import am.softlab.arfinance.filters.FilterOperation;
 import am.softlab.arfinance.models.ModelOperation;
@@ -50,6 +57,9 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
 
     //resources
     private Resources res;
+
+    private static final String TAG_DOWNLOAD = "DOWNLOAD_TAG";
+    private static final String TAG = "OPERATION_ADAPTER_TAG";
 
     public AdapterOperation(Context context, ArrayList<ModelOperation> operationArrayList, String currencySymbol) {
         this.context = context;
@@ -85,6 +95,8 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         boolean isIncome = model.getIsIncome();
         double amount = model.getAmount();
         long operationTimestamp = model.getOperationTimestamp();
+        String imageUrl = model.getImageUrl();
+        boolean hasImage = (imageUrl != null) && !imageUrl.isEmpty();
 
         //format date, already made in function in MyApplication class
         String dateStr = MyApplication.formatTimestamp(operationTimestamp);
@@ -95,6 +107,40 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         holder.operAmountTv.setText(amountStr);
         holder.categoryTv.setText(category);
         holder.operNotesTv.setText(notes);
+
+        if (hasImage) {
+            holder.attachBtn.setVisibility(View.VISIBLE);
+            holder.attachBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (context instanceof OperationsActivity) {
+                        //confirm download dialog
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setTitle(res.getString(R.string.download))
+                                .setMessage(res.getString(R.string.sure_download_image))
+                                .setPositiveButton(res.getString(R.string.download), (dialogInterface, i) -> {
+                                    //begin download
+                                    Log.d(TAG_DOWNLOAD, "onClick: Checking permission");
+                                    if (MyApplication.checkPermission(
+                                            ((OperationsActivity) context),
+                                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                            Constants.WRITE_EXTERNAL_STORAGE))
+                                    {
+                                        Log.d(TAG_DOWNLOAD, "onClick: Permission already granted, can download image");
+                                        Toast.makeText(context, res.getString(R.string.downloading), Toast.LENGTH_SHORT).show();
+                                        MyApplication.downloadImage(((OperationsActivity) context), "" + id, operationTimestamp, "" + imageUrl);
+                                    }
+                                })
+                                .setNegativeButton(res.getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
+                                .show();
+                    }
+                }
+            });
+        }
+        else {
+            holder.attachBtn.setVisibility(View.INVISIBLE);
+            holder.attachBtn.setOnClickListener(null);
+        }
 
         // handle click, delete operation
         holder.deleteBtn.setOnClickListener(view -> {
@@ -147,6 +193,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         deleteCategoryId = model.getCategoryId();
         deleteAmount = model.getAmount();
         isIncome = model.getIsIncome();
+        String imageUrl = model.getImageUrl();
 
         //Firebase DB > Operations > operationId >
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
@@ -156,6 +203,27 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                     // deleted successfully
                     MyApplication.updateWalletBalance(deleteWalletId, deleteCategoryId, 0-deleteAmount, isIncome, Constants.ROW_DELETED);
                     Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
+
+                    String filePathAndName = "OperationImages/" + id;
+
+                    if (!imageUrl.isEmpty()) {
+                        //storage reference - delete File from FirebaseStorage
+                        StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
+                        reference
+                                .delete()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
+                                    }
+                                });
+                    }
                 })
                 .addOnFailureListener(e -> {
                     // failed to delete
@@ -181,7 +249,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     class HolderOperation extends RecyclerView.ViewHolder{
         //ui views of row_operation.xml
         TextView operDateTv, operAmountTv, categoryTv, operNotesTv;
-        ImageButton deleteBtn;
+        ImageButton deleteBtn, attachBtn;
 
         public HolderOperation(@NonNull View itemView) {
             super(itemView);
@@ -192,6 +260,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
             categoryTv = binding.categoryTv;
             operNotesTv = binding.operNotesTv;
             deleteBtn = binding.deleteBtn;
+            attachBtn = binding.attachBtn;
         }
     }
 }

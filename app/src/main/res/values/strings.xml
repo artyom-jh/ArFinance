@@ -15,10 +15,14 @@
     <string name="search">Search</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
+    <string name="view">View</string>
+    <string name="clear">Clear</string>
     <string name="canceled">Canceled</string>
     <string name="verified">Verified</string>
     <string name="not_verified">Not Verified</string>
     <string name="delete">Delete</string>
+    <string name="download">Download</string>
+    <string name="downloading">Downloading…</string>
     <string name="deleted">Successfully deleted…</string>
     <string name="deleting">Deleting…</string>
     <string name="usage_count">count</string>
@@ -154,6 +158,10 @@
     <string name="select_date">Select a date</string>
     <string name="category_used">Category is used, impossible to delete</string>
     <string name="loading_operations">Loading Operations…</string>
+    <string name="loading_operation">Loading Operation…</string>
+    <string name="updating_operation_image">Updating operation image</string>
+    <string name="loading_image">Loading Image…</string>
+    <string name="sure_download_image">Are you sure you want to download this image ?</string>
 
     <!--statistics activity-->
     <string name="income_category">Income Category</string>

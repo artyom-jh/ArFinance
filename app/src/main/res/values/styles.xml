@@ -6,4 +6,9 @@
         <item name="cornerSize">28%</item>
     </style>
 
+    <style name="styleRoundedSmallCornersImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8%</item>
+    </style>
+
 </resources>

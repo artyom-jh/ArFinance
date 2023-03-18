@@ -33,17 +33,26 @@
 
                 <TextView
                     android:id="@+id/operDateTv"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+
                     android:text="dd/MM/yyyy"
                     android:textStyle="bold"
                     android:textColor="@color/black"/>
 
+                <ImageButton
+                    android:id="@+id/attachBtn"
+                    android:layout_width="16dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/ic_attach_small"
+                    android:background="@drawable/shape_button03"/>
+
                 <TextView
                     android:id="@+id/operAmountTv"
-                    android:layout_width="150dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:gravity="right"
                     android:text="0.0"
                     android:textColor="@color/black"/>

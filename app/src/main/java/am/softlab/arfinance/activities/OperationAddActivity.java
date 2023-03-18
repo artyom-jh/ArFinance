@@ -1,16 +1,34 @@
 package am.softlab.arfinance.activities;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +36,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +73,12 @@ public class OperationAddActivity extends AppCompatActivity {
     //operation id get from intent started from AdapterOperation
 
     private boolean isIncome;
-    private String operId, walletId;
+    private String operId, walletId, oldImageUrl="";
+    private long currentOperationId = 0;
+
+    private boolean imageChanged = false;
+
+    private Uri imageUri = null;
 
     private static final String TAG = "OPERATION_ADD_TAG";
 
@@ -97,12 +122,14 @@ public class OperationAddActivity extends AppCompatActivity {
         }
 
         loadCategories();
+
         if (operId == null) {       // Add mode
             operationTimestamp = System.currentTimeMillis();
             String formattedDate = MyApplication.formatTimestamp(operationTimestamp);
             binding.operDateTv.setText(formattedDate);
         }
         else {                      // Edit mode
+            currentOperationId = Long.parseLong(operId);
             loadOperationInfo();
         }
 
@@ -111,6 +138,9 @@ public class OperationAddActivity extends AppCompatActivity {
             MyApplication.hideKeyboard(this);
             onBackPressed();
         });
+
+        //handle click, pick image
+        binding.operationImageIv.setOnClickListener(v -> showImageAttachMenu());
 
         //handle click, begin upload category
         binding.submitBtn.setOnClickListener(view -> validateData());
@@ -162,6 +192,9 @@ public class OperationAddActivity extends AppCompatActivity {
     private void loadOperationInfo() {
         Log.d(TAG, "loadOperationInfo: Loading operation info");
 
+        progressDialog.setMessage(res.getString(R.string.loading_operation));
+        progressDialog.show();
+
         DatabaseReference refOperations = FirebaseDatabase.getInstance().getReference("Operations");
         refOperations.child(operId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -181,7 +214,20 @@ public class OperationAddActivity extends AppCompatActivity {
                         binding.operAmountEt.setText( amountStr );
                         binding.operNotesEt.setText(notes);
 
+                        if (snapshot.child("imageUrl").getValue() != null)
+                            oldImageUrl = ""+snapshot.child("imageUrl").getValue();
+                        imageChanged = false;
+
+                        //set image, using glide
+                        if (!oldImageUrl.isEmpty())
+                            Glide.with(getApplicationContext())
+                                    .load(oldImageUrl)
+                                    .placeholder(R.drawable.ic_add_photo_gray)
+                                    .into(binding.operationImageIv);
+
                         Log.d(TAG, "onDataChange: Loading Operation Category Info");
+                        progressDialog.setMessage(res.getString(R.string.loading_categories));
+
                         DatabaseReference refOperationCategory = FirebaseDatabase.getInstance().getReference("Categories");
                         refOperationCategory.child(selectedCategoryId)
                                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -191,18 +237,20 @@ public class OperationAddActivity extends AppCompatActivity {
                                         String category = ""+snapshot.child("category").getValue();
                                         //set to category text view
                                         binding.categoryTv.setText(category);
+
+                                        progressDialog.dismiss();
                                     }
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError error) {
-
+                                        progressDialog.dismiss();
                                     }
                                 });
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
+                        progressDialog.dismiss();
                     }
                 });
     }
@@ -284,12 +332,26 @@ public class OperationAddActivity extends AppCompatActivity {
             Toast.makeText(this, res.getString(R.string.pick_category), Toast.LENGTH_SHORT).show();
         }
         else {
-            addOrUpdateOperationFirebase();
+            progressDialog.setMessage(res.getString(R.string.updating_operation));
+            progressDialog.show();
+
+            if (!imageChanged
+                    || (operId == null && imageUri == null) )
+            {
+                //need to update without image
+                addOrUpdateOperationFirebase(oldImageUrl);
+            }
+            else {
+                //need to update with image
+                uploadImage();
+            }
         }
     }
 
-    private void addOrUpdateOperationFirebase() {
+    private void addOrUpdateOperationFirebase(String uploadedImageUrl) {
         MyApplication.hideKeyboard(this);
+
+        long timestamp = System.currentTimeMillis();
 
         if (operId == null) {       // Add mode
             Log.d(TAG, "addOrEditOperationFirebase: Starting adding operation info to db...");
@@ -297,13 +359,10 @@ public class OperationAddActivity extends AppCompatActivity {
         } else {                    // Edit mode
             Log.d(TAG, "addOrEditOperationFirebase: Starting updating operation info to db...");
             progressDialog.setMessage(res.getString(R.string.updating_operation));
+            currentOperationId = timestamp;
         }
 
-        //show progress
-        progressDialog.show();
-
         String notes = binding.operNotesEt.getText().toString().trim();
-        long timestamp = System.currentTimeMillis();
 
         //setup data to update to db
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -316,19 +375,21 @@ public class OperationAddActivity extends AppCompatActivity {
         hashMap.put("amount", amount);
         hashMap.put("uid_walletId", ""+firebaseAuth.getUid() + "_" + walletId);
         hashMap.put("timestamp", timestamp);
+        hashMap.put("imageUrl", uploadedImageUrl);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
 
         if (operId == null) {   // Add mode
-            hashMap.put("id", ""+timestamp);
+            hashMap.put("id", ""+currentOperationId);
 
             //add to firebase db... Database Root > Operations > operId > operation info
             ref.child(""+timestamp)
                     .setValue(hashMap)
                     .addOnSuccessListener(unused -> {
-                        //category add success
+                        //operation add success
                         Log.d(TAG, "onSuccess: Operation added...");
                         MyApplication.updateWalletBalance(walletId, selectedCategoryId, amount, isIncome, Constants.ROW_ADDED);
+
                         progressDialog.dismiss();
                         Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_added), Toast.LENGTH_SHORT).show();
                     })
@@ -359,10 +420,231 @@ public class OperationAddActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+
                         progressDialog.dismiss();
                         Toast.makeText(OperationAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })
                     .addOnCompleteListener(task -> finish());
+        }
+    }
+
+
+    private void showImageAttachMenu() {
+        boolean bool = (!oldImageUrl.isEmpty() && !imageChanged)
+                || (imageChanged && imageUri != null);
+        //init/setup popup menu
+        PopupMenu popupMenu = new PopupMenu(this, binding.operationImageIv);
+        popupMenu.getMenu().add(Menu.NONE, 0, 0, res.getString(R.string.camera));
+        popupMenu.getMenu().add(Menu.NONE, 1, 1, res.getString(R.string.gallery));
+        popupMenu.getMenu().add(Menu.NONE, 2, 2, res.getString(R.string.view)).setEnabled(bool);
+        popupMenu.getMenu().add(Menu.NONE, 3, 3, res.getString(R.string.clear)).setEnabled(bool);
+
+        popupMenu.show();
+
+        //handle menu item click
+        popupMenu.setOnMenuItemClickListener(item -> {
+            //get id of item clicked
+            int whichItemClicked = item.getItemId();
+
+            if (whichItemClicked == 0) {        //Camera menu
+                //camera clicked
+                String[] perms;
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)  // Android 10(Q) - API 29
+                    perms = new String[] { Manifest.permission.CAMERA };
+                else
+                    perms = new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE };
+
+                if ( MyApplication.checkPermission(
+                        OperationAddActivity.this,
+                        perms,
+                        Constants.CAMERA_PERMISSION_CODE) )
+                {
+                    pickImageCamera();
+                }
+            }
+
+            else if (whichItemClicked == 1) {   //Gallery menu
+                //gallery clicked
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    pickImageGallery();
+                }
+                else if ( MyApplication.checkPermission(
+                        OperationAddActivity.this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Constants.WRITE_EXTERNAL_STORAGE) )
+                {
+                    pickImageGallery();
+                }
+            }
+
+            else if (whichItemClicked == 2) {   //View menu
+                //todo
+            }
+
+            else if (whichItemClicked == 3) {   //Clear menu
+                imageUri = null;
+                imageChanged = true;
+                binding.operationImageIv.setImageResource(R.drawable.ic_add_photo_gray);
+            }
+
+            return false;
+        });
+    }
+
+    private void pickImageCamera() {
+        //intent to pick image from camera
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, res.getString(R.string.new_pick));  //image title
+        values.put(MediaStore.Images.Media.DESCRIPTION, res.getString(R.string.sample_image_desc));
+        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        cameraActivityResultLauncher.launch(intent);
+    }
+
+    private void pickImageGallery() {
+        //intent to pick image from gallery
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        galleryActivityResultLauncher.launch(intent);
+    }
+
+    private ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    //used to handle result of camera intent
+                    //get uri of image
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Log.d(TAG, "onActivityResult: Picked From Camera " + imageUri);
+                        imageChanged = true;
+                        binding.operationImageIv.setImageURI(imageUri);
+                    }
+                    else {
+                        Toast.makeText(OperationAddActivity.this, res.getString(R.string.canceled), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
+
+    private ActivityResultLauncher<Intent> galleryActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    //used to handle result of gallery intent
+                    //get uri of image
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Log.d(TAG, "onActivityResult: " + imageUri);
+                        Intent data = result.getData();
+                        imageUri = data.getData();
+                        Log.d(TAG, "onActivityResult: Picked From Gallery " + imageUri);
+
+                        imageChanged = true;
+                        binding.operationImageIv.setImageURI(imageUri);
+                    }
+                    else {
+                        Toast.makeText(OperationAddActivity.this, res.getString(R.string.canceled), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
+
+    // This function is called when user accept or decline the permission.
+    // Request Code is used to check which permission called this function.
+    // This request code is provided when user is prompt for permission.
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        boolean allIsOK = true;
+
+        for (int i=0; i<grantResults.length; i++) {
+            // Checking whether user granted the permission or not.
+            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                allIsOK = false;
+                break;
+            }
+        }
+
+        if (allIsOK) {
+            if (requestCode == Constants.CAMERA_PERMISSION_CODE) {
+                Toast.makeText(OperationAddActivity.this, res.getString(R.string.camera_granted), Toast.LENGTH_SHORT).show();
+                pickImageCamera();
+            } else if (requestCode == Constants.WRITE_EXTERNAL_STORAGE) {
+                Toast.makeText(OperationAddActivity.this, res.getString(R.string.write_external_granted), Toast.LENGTH_SHORT).show();
+                pickImageGallery();
+            }
+        } else {
+            if (requestCode == Constants.CAMERA_PERMISSION_CODE)
+                Toast.makeText(OperationAddActivity.this, res.getString(R.string.camera_denied), Toast.LENGTH_SHORT).show();
+            else if (requestCode == Constants.WRITE_EXTERNAL_STORAGE)
+                Toast.makeText(OperationAddActivity.this, res.getString(R.string.write_external_denied), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void uploadImage() {
+        if (!oldImageUrl.isEmpty() && imageChanged && imageUri == null) {    // image changed to null - delete image from server
+            Log.d(TAG, "uploadImage: Deleting operation image from FirebaseStorage server...");
+
+            String filePathAndName = "OperationImages/" + currentOperationId;
+
+            //storage reference
+            StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
+            reference
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
+                            addOrUpdateOperationFirebase("");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
+                            addOrUpdateOperationFirebase("");
+                        }
+                    });
+        }
+
+        else if (imageUri != null) {
+            Log.d(TAG, "uploadImage: Uploading operation image...");
+
+            progressDialog.setMessage(res.getString(R.string.updating_operation_image));
+
+            if (currentOperationId <= 0)
+                currentOperationId = System.currentTimeMillis();
+
+            //image patch and name, use uid to replace previous
+            String filePathAndName = "OperationImages/" + currentOperationId;
+
+            //storage reference
+            StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
+            reference.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Log.d(TAG, "onSuccess: Operation image uploaded");
+                        Log.d(TAG, "onSuccess: Getting url of uploaded image");
+                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        //noinspection StatementWithEmptyBody
+                        while (!uriTask.isSuccessful()) ;
+                        String uploadedImageUrl = "" + uriTask.getResult();
+
+                        Log.d(TAG, "onSuccess: Uploaded Image URL: " + uploadedImageUrl);
+
+                        addOrUpdateOperationFirebase(uploadedImageUrl);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.d(TAG, "onFailure: Failed to upload image due to " + e.getMessage());
+                        addOrUpdateOperationFirebase(oldImageUrl);
+                        Toast.makeText(OperationAddActivity.this, res.getString(R.string.failed_to_upload_image) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         }
     }
 
