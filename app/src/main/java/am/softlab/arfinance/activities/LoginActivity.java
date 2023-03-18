@@ -162,37 +162,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private  void initCategoriesTables() {
-        int incomeLastIndex = 2;  // ATTENTION
-        String[] categoryTypesArray = new String[] {
-                "Salary",
-                "Scholarship",
-                "Other Income",     // !!! Last Income
-
-                "Household",
-                "Healthcare",
-                "Gifts",
-                "Vacation",
-                "Education",
-                "Clothing",
-                "Leisure",
-                "Groceries",
-                "Phones and Internet",
-                "Transport",
-                "Entertainment"
-        };
+        int incomeLastIndex = 2;  // ATTENTION - for value see categoryTypesArray
 
         String uid = ""+firebaseAuth.getUid();
 
         // add default categories
         HashMap<String, Object> hashMapMulti = new HashMap<>();
 
-        for (int i=0; i < categoryTypesArray.length; i++) {
+        for (int i=0; i < Constants.categoryTypesArray.length; i++) {
             long timestamp = System.currentTimeMillis();
             boolean isIncome = (i <= incomeLastIndex);
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("id", ""+timestamp);
-            hashMap.put("category", ""+categoryTypesArray[i]);
+            hashMap.put("category", Constants.categoryTypesArray[i]);
             hashMap.put("notes", "");
             hashMap.put("isIncome", isIncome);
             hashMap.put("usageCount", 0);

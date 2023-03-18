@@ -77,7 +77,7 @@ public class PieFragment extends Fragment {
     //firebase auth
     private FirebaseAuth firebaseAuth;
 
-    //arraylist to hold odf wallets
+    //arraylist to hold of wallets
     private ArrayList<String> walletNameArrayList, walletIdArrayList, currencySymbolArrayList;
     private String selectedWalletId="", selectedWalletName="", selectedCurrencySymbol="";
 

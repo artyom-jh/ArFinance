@@ -21,7 +21,8 @@ public class Constants {
     public static final int WRITE_EXTERNAL_STORAGE = 101;
     public static final int POST_NOTIFICATIONS = 102;
 
-    public static final String CHANNEL_ID = "SUPERIDINA";
+    public static final String CHANNEL_ID = "ARFINANCE_CHANNEL";
+    public static final String WORK_ID = "ARFINANCE_WORK";
 
     // ATTENTION - dont change elements order -
     //             index of array elements used in LoginActivity.initTablesAndStartDashboard !!!
@@ -38,4 +39,39 @@ public class Constants {
             Arrays.asList("CHF", "Swiss Franc", "₣"),
             Arrays.asList("USD", "US Dollar", "$")
     );
+
+    public static final String[] categoryTypesArray = new String[] {
+            "Salary",
+            "Scholarship",
+            "Other Income",     // !!! Last Income
+
+            "Household",
+            "Healthcare",
+            "Gifts",
+            "Vacation",
+            "Education",
+            "Clothing",
+            "Leisure",
+            "Groceries",
+            "Phones and Internet",
+            "Transport",
+            "Entertainment"
+    };
+
+    public static final long MILLIS_IN_DAY = 86400000L;
+    public static final long MILLIS_IN_WEEK = 604800000L;
+    public static final long MILLIS_IN_MONTH = 2629746000L;
+    public static final long MILLIS_IN_YEAR = 31556952000L;
+    public static final int PERIOD_UNKNOWN = -1;  // ATTENTION - see periodsArray
+    public static final int PERIOD_DAILY = 0;     // ATTENTION - see periodsArray
+    public static final int PERIOD_WEEKLY = 1;    // ATTENTION - see periodsArray
+    public static final int PERIOD_MONTHLY = 2;   // ATTENTION - see periodsArray
+    public static final int PERIOD_YEARLY = 3;    // ATTENTION - see periodsArray
+    public static final String[] periodsArray = new String[] {
+            "Unknown",
+            "Daily",
+            "Weekly",
+            "Monthly",
+            "Yearly"
+    };
 }

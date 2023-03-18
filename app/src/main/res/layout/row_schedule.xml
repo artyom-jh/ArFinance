@@ -26,30 +26,33 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:layout_marginEnd="2dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:paddingEnd="2dp"
-            android:paddingStart="4dp">
+            android:paddingStart="2dp"
+            android:background="@drawable/shape_button_above">
 
             <TextView
-                android:id="@+id/scheduleTitleTv"
+                android:id="@+id/scheduleNameTv"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="5dp"
                 android:text="Schedule Title"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:maxLines="1"/>
 
             <Switch
-                android:id="@+id/scheduleSwitch"
+                android:id="@+id/scheduleEnabledSw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="0dp"
-                android:checked="true"
                 android:textOff="No"
                 android:textOn="Yes"
+                android:checked="false"
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
         </LinearLayout>
 
@@ -68,6 +71,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="12dp"
                 android:text="Start date"
                 android:textColor="@color/black"/>
 
@@ -75,9 +79,10 @@
                 android:id="@+id/scheduleStartDateTv"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="7dp"
                 android:gravity="right"
                 android:text="dd/MM/yyyy"
+                android:textStyle="bold"
                 android:textColor="@color/black"/>
         </LinearLayout>
 
@@ -96,6 +101,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="12dp"
                 android:text="Wallet"
                 android:textColor="@color/black"/>
 
@@ -104,9 +110,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="7dp"
                 android:gravity="right"
                 android:text="Wallet 01"
+                android:textStyle="bold"
                 android:textColor="@color/black"/>
         </LinearLayout>
 
@@ -125,6 +132,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="12dp"
                 android:text="Type"
                 android:textColor="@color/black"/>
 
@@ -132,7 +140,7 @@
                 android:id="@+id/scheduleTypeTv"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="7dp"
                 android:gravity="right"
                 android:text="Income"
                 android:textColor="@color/black"/>
@@ -153,6 +161,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="12dp"
                 android:text="Category"
                 android:textColor="@color/black"/>
 
@@ -162,7 +171,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="7dp"
                 android:gravity="right"
                 android:text="Salary"
                 android:textColor="@color/black"/>
@@ -183,6 +192,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="12dp"
                 android:text="Amount"
                 android:textColor="@color/black"/>
 
@@ -190,9 +200,10 @@
                 android:id="@+id/scheduleAmountTv"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="7dp"
                 android:gravity="right"
                 android:text="0.0"
+                android:textStyle="bold"
                 android:textColor="@color/black"/>
         </LinearLayout>
 
@@ -211,6 +222,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="12dp"
                 android:text="Period"
                 android:textColor="@color/black"/>
 
@@ -220,9 +232,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="7dp"
                 android:gravity="right"
                 android:text="Monthly"
+                android:textStyle="bold"
                 android:textColor="@color/black"/>
         </LinearLayout>
 
@@ -234,8 +247,7 @@
             android:orientation="horizontal"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:paddingEnd="2dp"
-            android:paddingStart="4dp">
+            android:paddingEnd="2dp">
 
             <!--delete-->
             <ImageButton
@@ -243,7 +255,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:src="@drawable/ic_delete_white"
-                android:background="@drawable/shape_button03"/>
+                android:background="@drawable/shape_button_below"/>
         </LinearLayout>
 
     </LinearLayout>

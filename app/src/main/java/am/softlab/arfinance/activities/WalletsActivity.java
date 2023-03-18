@@ -113,40 +113,38 @@ public class WalletsActivity extends AppCompatActivity {
         walletArrayList = new ArrayList<>();
 
         if (firebaseAuth.getCurrentUser() != null) {
-            if (firebaseAuth.getCurrentUser() != null) {
-                //get all wallets from firebase > Wallets
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
-                ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                // clear arraylist before adding data into it
-                                walletArrayList.clear();
+            //get all wallets from firebase > Wallets
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
+            ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            // clear arraylist before adding data into it
+                            walletArrayList.clear();
 
-                                for (DataSnapshot ds : snapshot.getChildren()) {
-                                    // get data
-                                    ModelWallet model = ds.getValue(ModelWallet.class);
-                                    //add to arraylist
-                                    walletArrayList.add(model);
-                                }
-
-                                //setup adapter
-                                adapterWallet = new AdapterWallet(WalletsActivity.this, walletArrayList);
-
-                                //set adapter tp recyclerview
-                                binding.walletsRv.setAdapter(adapterWallet);
-
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
+                            for (DataSnapshot ds : snapshot.getChildren()) {
+                                // get data
+                                ModelWallet model = ds.getValue(ModelWallet.class);
+                                //add to arraylist
+                                walletArrayList.add(model);
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                if (progressDialog.isShowing())
-                                    progressDialog.dismiss();
-                            }
-                        });
-            }
+                            //setup adapter
+                            adapterWallet = new AdapterWallet(WalletsActivity.this, walletArrayList);
+
+                            //set adapter tp recyclerview
+                            binding.walletsRv.setAdapter(adapterWallet);
+
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
+                        }
+                    });
         }
         else {
             // DEMO

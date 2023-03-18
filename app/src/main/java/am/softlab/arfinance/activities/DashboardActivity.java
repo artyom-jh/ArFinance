@@ -212,7 +212,10 @@ public class DashboardActivity extends AppCompatActivity {
             //set in textview of toolbar
             binding.subTitleTv.setText(email);
 
-            MyApplication.loadCategoryList();
+            MyApplication.loadWalletList();
+            // ATTENTION 1: loadCategoryList() called from loadWalletList
+            // ATTENTION 2: loadSchedulers() called from loadCategoryList
+            // ATTENTION 3: periodicWork() called from loadSchedulers
         }
     }
 }

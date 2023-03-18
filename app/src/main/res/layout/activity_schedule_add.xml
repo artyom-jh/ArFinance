@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back01"
+    tools:context=".activities.CategoryAddActivity">
+
+    <!--title bar-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:background="@drawable/shape_toolbar01">
+
+        <ImageButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back_white"
+            android:background="@android:color/transparent"
+            android:layout_margin="10dp"
+            android:padding="5dp"/>
+
+        <ImageView
+            android:id="@+id/iconIv"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/logo"/>
+
+        <TextView
+            android:id="@+id/titleIv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iconIv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="00dp"
+            android:fontFamily="sans-serif-condensed"
+            android:text="@string/add_schedule"
+            android:textColor="@color/white"
+            android:textSize="28sp"/>
+    </RelativeLayout>
+
+    <!-- Scroll View -->
+    <ScrollView
+        android:layout_marginTop="205dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--schedule name-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/scheduleNameTil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hintEnabled="false"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp">
+
+                <EditText
+                    android:id="@+id/scheduleNameEt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_edittext01"
+                    android:drawableStart="@drawable/ic_schedule_gray"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/schedule_name"
+                    android:inputType="textPersonName|textCapWords"
+                    android:padding="10dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray01"
+                    android:textSize="16sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--operation date (timestamp)-->
+            <TextView
+                android:id="@+id/scheduleStartDateTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/scheduleNameTil"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_edittext01"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:hint="@string/schedule_start_date"
+                android:padding="10dp"
+                android:textColorHint="@color/gray01"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/ic_date_gray" />
+
+            <!--pick wallet from dialog-->
+            <TextView
+                android:id="@+id/walletTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/scheduleStartDateTv"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_edittext01"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:hint="@string/schedule_wallet"
+                android:padding="10dp"
+                android:textColorHint="@color/gray01"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/ic_wallet_gray"
+                app:drawableEndCompat="@drawable/ic_down_gray" />
+
+            <!--pick schedule type from dialog-->
+            <TextView
+                android:id="@+id/scheduleTypeTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/walletTv"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_edittext01"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:hint="@string/schedule_oper_type"
+                android:padding="10dp"
+                android:textColorHint="@color/gray01"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/ic_operation_type_gray"
+                app:drawableEndCompat="@drawable/ic_down_gray" />
+
+            <!--pick category from dialog-->
+            <TextView
+                android:id="@+id/categoryTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/scheduleTypeTv"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_edittext01"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:hint="@string/operation_category"
+                android:padding="10dp"
+                android:textColorHint="@color/gray01"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/ic_type_gray"
+                app:drawableEndCompat="@drawable/ic_down_gray" />
+
+            <!--schedule amount-->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/scheduleAmountTil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/categoryTv"
+                android:layout_marginTop="10dp"
+                app:hintEnabled="false"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp">
+
+                <EditText
+                    android:id="@+id/scheduleAmountEt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_edittext01"
+                    android:drawableStart="@drawable/ic_amount_gray"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/operAmount"
+                    android:inputType="numberDecimal|numberSigned"
+                    android:padding="10dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/gray01"
+                    android:textSize="16sp"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!--pick period from dialog-->
+            <TextView
+                android:id="@+id/periodTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/scheduleAmountTil"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/shape_edittext01"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:hint="@string/schedule_period"
+                android:padding="10dp"
+                android:textColorHint="@color/gray01"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/ic_schedule_gray"
+                app:drawableEndCompat="@drawable/ic_down_gray" />
+
+            <!--Add Schedule button-->
+            <Button
+                android:id="@+id/submitBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/periodTv"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/shape_button01"
+                android:text="@string/submit"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>

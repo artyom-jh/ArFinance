@@ -44,12 +44,12 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
 
     private String currencySymbol;
 
-    //resources
-    private Resources res;
-
     private FirebaseAuth firebaseAuth;
     //firebase current user
     private FirebaseUser firebaseUser;
+
+    //resources
+    private Resources res;
 
     public AdapterOperation(Context context, ArrayList<ModelOperation> operationArrayList, String currencySymbol) {
         this.context = context;
@@ -141,7 +141,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     private double deleteAmount;
     private boolean isIncome;
     private void deleteOperation(ModelOperation model) {
-        //det id of operation to delete
+        //get id of operation to delete
         String id = model.getId();
         deleteWalletId = model.getWalletId();
         deleteCategoryId = model.getCategoryId();
@@ -154,8 +154,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                 .removeValue()
                 .addOnSuccessListener(unused -> {
                     // deleted successfully
-                    MyApplication.updateWalletBalance(deleteWalletId, 0-deleteAmount, isIncome, Constants.ROW_DELETED);
-                    MyApplication.updateCategoryUsage(deleteCategoryId, -1);
+                    MyApplication.updateWalletBalance(deleteWalletId, deleteCategoryId, 0-deleteAmount, isIncome, Constants.ROW_DELETED);
                     Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {

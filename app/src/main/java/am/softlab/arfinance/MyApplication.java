@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.text.format.DateFormat;
@@ -21,7 +20,15 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,9 +41,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import am.softlab.arfinance.activities.DashboardActivity;
 import am.softlab.arfinance.models.ModelCategory;
+import am.softlab.arfinance.models.ModelSchedule;
 import am.softlab.arfinance.models.ModelWallet;
 
 public class MyApplication extends Application {
@@ -47,6 +56,8 @@ public class MyApplication extends Application {
     }
 
     private static List<List<String>> categoryArrayList = new ArrayList<List<String>>();
+    private static List<List<String>> walletArrayList = new ArrayList<List<String>>();
+    private static ArrayList<ModelSchedule> scheduleArrayList = new ArrayList<ModelSchedule>();
 
     private static final String TAG_DOWNLOAD = "DOWNLOAD_TAG";
 
@@ -104,6 +115,8 @@ public class MyApplication extends Application {
                     currentList.add(model.getCategory());
                     categoryArrayList.add(currentList);
                 }
+
+                loadSchedulers(true);
             }
 
             @Override
@@ -123,7 +136,120 @@ public class MyApplication extends Application {
         return "";
     }
 
-    public static void updateWalletBalance(String walletId, double addAmount, boolean isIncome, int transactionType) {
+    public static void loadWalletList() {
+        //get wallet using walletId
+        walletArrayList = new ArrayList<List<String>>();
+
+        //get all wallets from firebase > Wallets
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // clear arraylist before adding data into it
+                walletArrayList.clear();
+
+                for (DataSnapshot ds: snapshot.getChildren()){
+                    // get data
+                    ModelWallet model = ds.getValue(ModelWallet.class);
+                    //add to arraylist
+                    List<String> currentList = new ArrayList<String>();
+                    currentList.add(model.getId());
+                    currentList.add(model.getWalletName());
+                    currentList.add(model.getCurrencySymbol());
+                    walletArrayList.add(currentList);
+                }
+
+                loadCategoryList();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //noop
+            }
+        });
+    }
+    public static String getWalletById(String walletId) {
+        if (walletArrayList != null && walletArrayList.size() > 1) {
+            for (List<String> stringList : walletArrayList) {
+                if (stringList.get(0).equals(walletId)) {
+                    return stringList.get(1);
+                }
+            }
+        }
+        return "";
+    }
+
+    public static String getWalletSymbolById(String walletId) {
+        if (walletArrayList != null && walletArrayList.size() > 1) {
+            for (List<String> stringList : walletArrayList) {
+                if (stringList.get(0).equals(walletId)) {
+                    return stringList.get(2);
+                }
+            }
+        }
+        return "";
+    }
+
+    public static void loadSchedulers(boolean runPeriodicWork) {
+        //get schedullers from firebase > Schedulers
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Schedulers");
+        ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        // clear arraylist before adding data into it
+                        scheduleArrayList.clear();
+
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            ModelSchedule model = ds.getValue(ModelSchedule.class);
+                            if (model.getEnabled())
+                                scheduleArrayList.add(model);
+                        }
+
+                        if (runPeriodicWork)
+                            periodicWork();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        //noop
+                    }
+                });
+    }
+    public static ArrayList<ModelSchedule> getScheduleArrayList() {
+        return scheduleArrayList;
+    }
+
+    public static String getPeriodById(int periodId) {
+        switch(periodId) {
+            case Constants.PERIOD_DAILY: return Constants.periodsArray[Constants.PERIOD_DAILY];
+            case Constants.PERIOD_WEEKLY: return Constants.periodsArray[Constants.PERIOD_WEEKLY];
+            case Constants.PERIOD_MONTHLY: return Constants.periodsArray[Constants.PERIOD_MONTHLY];
+            case Constants.PERIOD_YEARLY: return Constants.periodsArray[Constants.PERIOD_YEARLY];
+            default: return Constants.periodsArray[Constants.PERIOD_UNKNOWN];
+        }
+    }
+
+    public static void updateLastRunAndBalance(
+            String scheduleId,
+            long lastStartDateTime,
+            String walletId,
+            String categoryId,
+            double addAmount,
+            boolean isIncome,
+            int transactionType )
+    {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("lastStartDateTime", lastStartDateTime);
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Schedulers");
+        reference.child(scheduleId)
+                .updateChildren(hashMap)
+                .addOnCompleteListener(task -> updateWalletBalance(walletId, categoryId, addAmount, isIncome, transactionType));
+    }
+
+    public static void updateWalletBalance(String walletId, String categoryId, double addAmount, boolean isIncome, int transactionType) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
         ref.child(walletId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -175,7 +301,15 @@ public class MyApplication extends Application {
 
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Wallets");
                         reference.child(walletId)
-                                .updateChildren(hashMap);
+                                .updateChildren(hashMap)
+                                .addOnCompleteListener(task -> {
+                                    if (!categoryId.isEmpty() && (transactionType == Constants.ROW_ADDED)) {
+                                        updateCategoryUsage(categoryId, 1);
+                                    }
+                                    else if (!categoryId.isEmpty() && (transactionType == Constants.ROW_DELETED)) {
+                                        updateCategoryUsage(categoryId, -1);
+                                    }
+                                });
                     }
 
                     @Override
@@ -215,11 +349,10 @@ public class MyApplication extends Application {
                 });
     }
 
-
     // Function to check and request permission
     public static boolean checkPermission(Activity activity, String permission, int requestCode) {
         // Checking if permission is not granted
-        if (ContextCompat.checkSelfPermission(MyApplication.context, permission) == PackageManager.PERMISSION_DENIED) {
+        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(activity, new String[] { permission }, requestCode);
             return false;
         }
@@ -231,7 +364,7 @@ public class MyApplication extends Application {
 
         for( String oneItem : permissions ) {
             // Checking if permission is not granted
-            if (ContextCompat.checkSelfPermission(MyApplication.context, oneItem) == PackageManager.PERMISSION_DENIED) {
+            if (ContextCompat.checkSelfPermission(context, oneItem) == PackageManager.PERMISSION_DENIED) {
                 permsList.add(oneItem);
                 retVal = false;
             }
@@ -279,12 +412,12 @@ public class MyApplication extends Application {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = context.getResources().getString(R.string.notification_channel_name);
             String description = context.getResources().getString(R.string.notification_channel_desc);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;  //.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system. You can't change the importance
             // or other notification behaviors after this.
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(channel);
         }
     }
@@ -311,13 +444,49 @@ public class MyApplication extends Application {
         builder.setSmallIcon(R.drawable.ic_notification_icon);
         builder.setContentTitle(context.getResources().getString(R.string.notification_channel_name));
         builder.setContentText(msg);
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         builder.setSubText("");
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-        notificationManager.notify((int)System.currentTimeMillis(), builder.build());
+        notificationManager.notify(Constants.POST_NOTIFICATIONS, builder.build());
     }
 
+
+    // !!! oneTimeWork example !!!
+//    private  void oneTimeWork() {
+//        WorkRequest workRequest = new OneTimeWorkRequest.Builder(MyWorker.class)
+//                .setConstraints(new Constraints.Builder()
+//                        .setRequiredNetworkType(NetworkType.CONNECTED)
+//                        .build())
+//                .build();
+//
+//        WorkManager.getInstance(this)
+//                .enqueue(workRequest);
+//    }
+
+    public static void periodicWork() {
+        WorkManager workManager = WorkManager.getInstance(context);
+        //workManager.cancelUniqueWork(Constants.WORK_ID);
+        workManager.cancelAllWorkByTag(Constants.WORK_ID);
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                //.setRequiresCharging(true)        // dont work on virtual android !!!
+                .build();
+
+        PeriodicWorkRequest periodicWorkRequest = new PeriodicWorkRequest.Builder(
+                MyWorker.class,
+                PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
+                TimeUnit.MILLISECONDS
+            ).setConstraints(constraints)
+                .build();
+
+        workManager.enqueueUniquePeriodicWork(
+                Constants.WORK_ID,
+                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+                periodicWorkRequest);
+    }
 
     // ===== DEMOS =====
     public static ModelWallet getDemoWallet() {
@@ -356,6 +525,23 @@ public class MyApplication extends Application {
                 false,
                 0,
                 1678658900003L
+        );
+    }
+
+    public static ModelSchedule getDemoSchedule() {
+        return new ModelSchedule(
+                "1234567000044",
+                "Demo Schedule",
+                "",
+                false,
+                1678658900002L,
+                "1234567000001",
+                true,
+                "1234567000003",
+                1000,
+                Constants.PERIOD_MONTHLY,
+                0L,
+                1678658900002L
         );
     }
 }

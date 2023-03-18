@@ -80,6 +80,34 @@
     <string name="post_notification_denied">Post Notification Denied</string>
     <string name="post_notification_granted">Post Notification Granted</string>
     <string name="add_schedule_btn">+ Add Schedule</string>
+    <string name="add_schedule">Add a new Schedule</string>
+    <string name="edit_schedule">Edit Schedule</string>
+    <string name="schedule_name">Schedule Name</string>
+    <string name="schedule_start_date">Start Date</string>
+    <string name="schedule_wallet">Wallet</string>
+    <string name="schedule_oper_type">Operation Type</string>
+    <string name="schedule_period">Period</string>
+    <string name="sure_delete_schedule">Are you sure you want to delete this schedule ?</string>
+    <string name="loading_schedulers">Loading Schedulers…</string>
+    <string name="pick_schedule_type">Pick Schedule Type</string>
+    <string name="enter_schedule_name">Please enter schedule name…!</string>
+    <string name="pick_period">Pick Period</string>
+    <string name="adding_schedule">Adding schedule…</string>
+    <string name="updating_schedule">Updating schedule…</string>
+    <string name="schedule_added">Schedule added successfully…</string>
+    <string name="schedule_updated">Schedule updated successfully…</string>
+    <string name="sure_start_schedule">Are you sure you want to start this schedule ?</string>
+    <string name="sure_stop_schedule">Are you sure you want to stop this schedule ?</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="started">Started !</string>
+    <string name="stopped">Stopped !</string>
+    <string name="enable_schedule">Enable Schedule</string>
+    <string name="disable_schedule">Disable Schedule</string>
+    <string name="deny_change_schedule">Schedule is enabled, no changes allowed</string>
+    <string name="starting">Starting…</string>
+    <string name="stopping">Stopping…</string>
+    <string name="tasks_completed">Scheduler tasks completed</string>
 
     <!--forgot/change password activities-->
     <string name="old_password">Old password</string>
@@ -170,12 +198,9 @@
     <string name="balance">Balance</string>
     <string name="loading_walletss">Loading Wallets…</string>
 
-
     <!--errors-->
     <string name="failed_to_update_db">Failed to update db due to</string>
     <string name="not_logged_in_detailed">Not logged in ! Please log in and get verified first</string>
     <string name="not_verified_detailed">Not Verified ! Verify your email address first</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

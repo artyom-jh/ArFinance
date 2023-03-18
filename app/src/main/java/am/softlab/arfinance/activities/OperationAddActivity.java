@@ -328,8 +328,7 @@ public class OperationAddActivity extends AppCompatActivity {
                     .addOnSuccessListener(unused -> {
                         //category add success
                         Log.d(TAG, "onSuccess: Operation added...");
-                        MyApplication.updateWalletBalance(walletId, amount, isIncome, Constants.ROW_ADDED);
-                        MyApplication.updateCategoryUsage(selectedCategoryId, 1);
+                        MyApplication.updateWalletBalance(walletId, selectedCategoryId, amount, isIncome, Constants.ROW_ADDED);
                         progressDialog.dismiss();
                         Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_added), Toast.LENGTH_SHORT).show();
                     })
@@ -348,7 +347,7 @@ public class OperationAddActivity extends AppCompatActivity {
                     .addOnSuccessListener(unused -> {
                         Log.d(TAG, "onSuccess: Operation updated...");
 
-                        MyApplication.updateWalletBalance(walletId, amount - oldAmount, isIncome, Constants.ROW_UPDATED);
+                        MyApplication.updateWalletBalance(walletId, "",amount - oldAmount, isIncome, Constants.ROW_UPDATED);
 
                         if (!selectedCategoryId.equals(oldSelectedCategoryId)) {
                             MyApplication.updateCategoryUsage(oldSelectedCategoryId, -1);
