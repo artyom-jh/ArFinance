@@ -448,15 +448,9 @@ public class OperationAddActivity extends AppCompatActivity {
 
             if (whichItemClicked == 0) {        //Camera menu
                 //camera clicked
-                String[] perms;
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)  // Android 10(Q) - API 29
-                    perms = new String[] { Manifest.permission.CAMERA };
-                else
-                    perms = new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE };
-
                 if ( MyApplication.checkPermission(
                         OperationAddActivity.this,
-                        perms,
+                        new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE },
                         Constants.CAMERA_PERMISSION_CODE) )
                 {
                     pickImageCamera();
@@ -465,11 +459,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
             else if (whichItemClicked == 1) {   //Gallery menu
                 //gallery clicked
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    pickImageGallery();
-                }
-                else if ( MyApplication.checkPermission(
-                        OperationAddActivity.this,
+                if ( MyApplication.checkPermission(OperationAddActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Constants.WRITE_EXTERNAL_STORAGE) )
                 {

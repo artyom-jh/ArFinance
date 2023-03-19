@@ -218,16 +218,9 @@ public class ProfileEditActivity extends AppCompatActivity {
             int whichItemClicked = item.getItemId();
             if (whichItemClicked == 0) {
                 //camera clicked
-
-                String[] perms;
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)  // Android 10(Q) - API 29
-                    perms = new String[] { Manifest.permission.CAMERA };
-                else
-                    perms = new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE };
-
                 if ( MyApplication.checkPermission(
                         ProfileEditActivity.this,
-                        perms,
+                        new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE },
                         Constants.CAMERA_PERMISSION_CODE) )
                 {
                     pickImageCamera();
@@ -235,12 +228,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
             else if (whichItemClicked == 1) {
                 //gallery clicked
-
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    pickImageGallery();
-                }
-                else if ( MyApplication.checkPermission(
-                        ProfileEditActivity.this,
+                if ( MyApplication.checkPermission(ProfileEditActivity.this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Constants.WRITE_EXTERNAL_STORAGE) )
                 {

@@ -1,6 +1,5 @@
 package am.softlab.arfinance.adapters;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -32,8 +31,8 @@ import java.util.ArrayList;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
+import am.softlab.arfinance.activities.AttachmentViewActivity;
 import am.softlab.arfinance.activities.OperationAddActivity;
-import am.softlab.arfinance.activities.OperationsActivity;
 import am.softlab.arfinance.databinding.RowOperationBinding;
 import am.softlab.arfinance.filters.FilterOperation;
 import am.softlab.arfinance.models.ModelOperation;
@@ -58,7 +57,6 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     //resources
     private Resources res;
 
-    private static final String TAG_DOWNLOAD = "DOWNLOAD_TAG";
     private static final String TAG = "OPERATION_ADAPTER_TAG";
 
     public AdapterOperation(Context context, ArrayList<ModelOperation> operationArrayList, String currencySymbol) {
@@ -113,27 +111,12 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
             holder.attachBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (context instanceof OperationsActivity) {
-                        //confirm download dialog
-                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle(res.getString(R.string.download))
-                                .setMessage(res.getString(R.string.sure_download_image))
-                                .setPositiveButton(res.getString(R.string.download), (dialogInterface, i) -> {
-                                    //begin download
-                                    Log.d(TAG_DOWNLOAD, "onClick: Checking permission");
-                                    if (MyApplication.checkPermission(
-                                            ((OperationsActivity) context),
-                                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                            Constants.WRITE_EXTERNAL_STORAGE))
-                                    {
-                                        Log.d(TAG_DOWNLOAD, "onClick: Permission already granted, can download image");
-                                        Toast.makeText(context, res.getString(R.string.downloading), Toast.LENGTH_SHORT).show();
-                                        MyApplication.downloadImage(((OperationsActivity) context), "" + id, operationTimestamp, "" + imageUrl);
-                                    }
-                                })
-                                .setNegativeButton(res.getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
-                                .show();
-                    }
+                    Intent intent = new Intent(context, AttachmentViewActivity.class);
+                    intent.putExtra("operId", id);
+                    intent.putExtra("categoryName", category);
+                    intent.putExtra("operationTimestamp", operationTimestamp);
+                    intent.putExtra("imageUrl", imageUrl);
+                    context.startActivity(intent);
                 }
             });
         }

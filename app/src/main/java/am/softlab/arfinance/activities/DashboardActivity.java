@@ -161,7 +161,7 @@ public class DashboardActivity extends AppCompatActivity {
             else if (position == 1) {
                 if (MyApplication.checkPermission(
                         DashboardActivity.this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        new String[] {Manifest.permission.POST_NOTIFICATIONS},
                         Constants.POST_NOTIFICATIONS))
                 {
                     startSchedulerActivity();

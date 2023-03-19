@@ -163,6 +163,9 @@
     <string name="loading_image">Loading Image…</string>
     <string name="sure_download_image">Are you sure you want to download this image ?</string>
 
+    <!--attachment view activity-->
+    <string name="loading_attachment">Loading Attachment…</string>
+
     <!--statistics activity-->
     <string name="income_category">Income Category</string>
     <string name="expenses_category">Expenses Category</string>

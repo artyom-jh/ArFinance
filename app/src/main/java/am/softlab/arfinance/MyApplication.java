@@ -1,5 +1,6 @@
 package am.softlab.arfinance;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
@@ -54,6 +55,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import am.softlab.arfinance.activities.DashboardActivity;
+import am.softlab.arfinance.activities.ProfileEditActivity;
 import am.softlab.arfinance.models.ModelCategory;
 import am.softlab.arfinance.models.ModelSchedule;
 import am.softlab.arfinance.models.ModelWallet;
@@ -368,18 +370,33 @@ public class MyApplication extends Application {
 
     // Function to check and request permission
     public static boolean checkPermission(Activity activity, String permission, int requestCode) {
+        // Android 10(Q) - API 29 and later - dont check EXTERNAL_STORAGE
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                && (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) || permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) )
+        {
+            return true;
+        }
         // Checking if permission is not granted
-        if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
+        else if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(activity, new String[] { permission }, requestCode);
             return false;
         }
+
         return true;
     }
+
     public static boolean checkPermission(Activity activity, String[] permissions, int requestCode) {
         boolean retVal = true;
         ArrayList<String> permsList = new ArrayList<String>();
 
         for( String oneItem : permissions ) {
+            // Android 10(Q) - API 29
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                    && (oneItem.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) || oneItem.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) )
+            {
+                continue;
+            }
+
             // Checking if permission is not granted
             if (ContextCompat.checkSelfPermission(context, oneItem) == PackageManager.PERMISSION_DENIED) {
                 permsList.add(oneItem);

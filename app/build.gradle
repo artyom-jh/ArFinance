@@ -84,6 +84,9 @@ dependencies {
 
     //skydoves/PowerMenu
     implementation "com.github.skydoves:powermenu:2.2.2"
+
+    //PhotoView - https://github.com/Baseflow/PhotoView
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }
 
 // ADD THIS AT THE BOTTOM
