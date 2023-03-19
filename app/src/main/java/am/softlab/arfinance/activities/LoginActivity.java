@@ -176,7 +176,7 @@ public class LoginActivity extends AppCompatActivity {
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("id", ""+timestamp);
             hashMap.put("category", Constants.categoryTypesArray[i]);
-            hashMap.put("notes", "");
+            hashMap.put("notes", Constants.categoryNotesArray[i]);
             hashMap.put("isIncome", isIncome);
             hashMap.put("usageCount", 0);
             hashMap.put("timestamp", timestamp);
@@ -233,6 +233,11 @@ public class LoginActivity extends AppCompatActivity {
                 "Wallet02 USD",
                 "Wallet03 EUR"
         };
+        String[] walletsNotesArray = new String[] {
+                "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor dolore magna aliqua.",
+                "Ut enim ad minim veniam, quis nostrud ullamco laboris nisi ut aliquip commodo consequat.",
+                "Duis aute irure dolor in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+        };
         // default wallets - index for Constants.CURRENCY_ARRAY_LIST
         int[] currencyIndexArray = new int[] {
                 0,  // AMD
@@ -250,7 +255,7 @@ public class LoginActivity extends AppCompatActivity {
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("walletName", ""+walletsNameArray[i]);
-            hashMap.put("notes", "");
+            hashMap.put("notes", walletsNotesArray[i]);
             hashMap.put("timestamp", timestamp);
             hashMap.put("uid", uid);
             hashMap.put("currencyName", currencyArray.get(1));

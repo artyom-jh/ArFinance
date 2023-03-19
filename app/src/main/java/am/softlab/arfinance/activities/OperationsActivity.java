@@ -104,6 +104,7 @@ public class OperationsActivity extends AppCompatActivity {
                             for (DataSnapshot ds : snapshot.getChildren()) {
                                 // get data
                                 ModelWallet model = ds.getValue(ModelWallet.class);
+
                                 //add data to view pager adapter
                                 viewPagerAdapter.addFragment(
                                         OperationFragment.newInstance(model.getId(), model.getCurrencySymbol(), isIncome),

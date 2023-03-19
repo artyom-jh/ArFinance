@@ -125,6 +125,11 @@ public class OperationFragment extends Fragment {
         });
 
         //handle click, start operation add screen
+        if (isIncome)
+            binding.addOperationBtn.setText("+ " + res.getString(R.string.add_income));
+        else
+            binding.addOperationBtn.setText("+ " + res.getString(R.string.add_expense));
+
         binding.addOperationBtn.setOnClickListener(view -> {
             if (firebaseAuth.getCurrentUser() != null) {
                 if (firebaseAuth.getCurrentUser() != null) {

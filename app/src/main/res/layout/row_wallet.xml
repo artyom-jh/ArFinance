@@ -3,30 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:contentPaddingBottom="5dp"
-    app:contentPaddingLeft="10dp"
-    app:contentPaddingRight="10dp"
+    xmlns:card_view="http://schemas.android.com/tools"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="8dp"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="@color/white">
+    card_view:cardBackgroundColor="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:paddingEnd="2dp"
-        android:paddingStart="4dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="7dp"
+        android:paddingEnd="9dp"
+        android:paddingStart="11dp"
         android:background="@drawable/background_with_shadow">
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp">
+            android:layout_marginEnd="5dp">
 
             <!--Wallet Name-->
             <TextView
@@ -160,7 +158,7 @@
         <ImageButton
             android:id="@+id/deleteBtn"
             android:layout_width="30dp"
-            android:layout_height="26dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_delete_white"
             android:background="@drawable/shape_button03"/>
 

@@ -144,7 +144,7 @@
     <string name="sure_delete_operation">Are you sure you want to delete this operation ?</string>
     <string name="add_operation_btn">+ Add Operation</string>
     <string name="add_income">Add a new Income</string>
-    <string name="add_expenses">Add a new Expenses</string>
+    <string name="add_expense">Add a new Expense</string>
     <string name="edit_income">Edit Income</string>
     <string name="edit_expenses">Edit Expenses</string>
     <string name="operation_notes">Notes</string>

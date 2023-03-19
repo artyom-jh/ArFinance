@@ -41,21 +41,38 @@ public class Constants {
     );
 
     public static final String[] categoryTypesArray = new String[] {
-            "Salary",
+            "Salary",           //Basic salary
             "Scholarship",
             "Other Income",     // !!! Last Income
 
             "Household",
             "Healthcare",
-            "Gifts",
+            "Gifts",            //Gifts for friends and family
             "Vacation",
-            "Education",
+            "Education",        //Expenses for education - tuition fees, books, courses, etc.
             "Clothing",
             "Leisure",
-            "Groceries",
+            "Groceries",        //Food expenses
             "Phones and Internet",
             "Transport",
             "Entertainment"
+    };
+    public static final String[] categoryNotesArray = new String[] {
+            "Basic salary",         //Salary
+            "",                     //Scholarship
+            "",                     //Other Income
+
+            "",                     //Household
+            "",                     //Healthcare
+            "Gifts for friends and family",     //Gifts
+            "",                     //Vacation
+            "Expenses for education - tuition fees, books, courses, etc.",      //Education
+            "",                     //Clothing
+            "",                     //Leisure
+            "Food expenses",        //Groceries
+            "",                     //Phones and Internet
+            "",                     //Transport
+            ""                      //Entertainment
     };
 
     public static final long MILLIS_IN_DAY = 86400000L;

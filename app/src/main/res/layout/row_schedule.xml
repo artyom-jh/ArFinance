@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
     app:contentPaddingTop="7dp"
     app:contentPaddingBottom="7dp"
     app:contentPaddingLeft="10dp"
-    app:contentPaddingRight="10dp"
+    app:contentPaddingRight="9dp"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="8dp"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="@color/white">
+    card_view:cardBackgroundColor="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
         <!--Schedule Title-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:layout_marginEnd="2dp"
@@ -49,7 +50,10 @@
                 android:id="@+id/scheduleEnabledSw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="0dp"
+                android:layout_marginEnd="2dp"
+                android:button="@drawable/selector_switch"
+                android:thumb="@android:color/transparent"
+                android:background="@android:color/transparent"
                 android:textOff="No"
                 android:textOn="Yes"
                 android:checked="false"

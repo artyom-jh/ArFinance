@@ -112,7 +112,7 @@ public class OperationAddActivity extends AppCompatActivity {
             if (isIncome)
                 binding.titleIv.setText(res.getString(R.string.add_income));
             else
-                binding.titleIv.setText(res.getString(R.string.add_expenses));
+                binding.titleIv.setText(res.getString(R.string.add_expense));
 
         } else {                    // Edit mode
             if (isIncome)
