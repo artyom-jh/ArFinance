@@ -92,6 +92,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
 
         if (scheduleId == null) {   // Add mode
             mStartDateTime = System.currentTimeMillis();
+            mOldStartDateTime = 0L;
             String formattedDate = MyApplication.formatTimestamp(mStartDateTime);
             binding.scheduleStartDateTv.setText(formattedDate);
 
@@ -129,7 +130,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
 
 
     private String mScheduleName = "";
-    private long mStartDateTime=0;
+    private long mStartDateTime=0, mOldStartDateTime=0;
     private double mAmount=0.0;
     private void validateData() {
         //before adding validate data
@@ -453,6 +454,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
                         mScheduleName = ""+snapshot.child("name").getValue();
 
                         mStartDateTime = Long.parseLong(snapshot.child("startDateTime").getValue().toString());
+                        mOldStartDateTime = mStartDateTime;
                         String formattedDate = MyApplication.formatTimestamp(mStartDateTime);
 
                         selectedWalletId = ""+snapshot.child("walletId").getValue();
@@ -559,6 +561,10 @@ public class ScheduleAddActivity extends AppCompatActivity {
         }
         else {          // Edit mode
             hashMap.put("id", scheduleId);
+
+            //if mStartDateTime changed - reset lastStartDateTime
+            if (mStartDateTime != mOldStartDateTime)
+                hashMap.put("lastStartDateTime", 0L);
 
             ref.child(scheduleId)
                     .updateChildren(hashMap)

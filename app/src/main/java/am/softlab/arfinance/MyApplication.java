@@ -370,8 +370,9 @@ public class MyApplication extends Application {
 
     // Function to check and request permission
     public static boolean checkPermission(Activity activity, String permission, int requestCode) {
-        // Android 10(Q) - API 29 and later - dont check EXTERNAL_STORAGE
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        // Android 10(Q) - API 29
+        // Android 10(R) - API 30 and later - dont check EXTERNAL_STORAGE
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
                 && (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) || permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) )
         {
             return true;
@@ -391,7 +392,8 @@ public class MyApplication extends Application {
 
         for( String oneItem : permissions ) {
             // Android 10(Q) - API 29
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            // Android 10(R) - API 30 and later - dont check EXTERNAL_STORAGE
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
                     && (oneItem.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) || oneItem.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) )
             {
                 continue;
