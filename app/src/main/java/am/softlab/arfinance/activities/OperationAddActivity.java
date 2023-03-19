@@ -219,7 +219,7 @@ public class OperationAddActivity extends AppCompatActivity {
                         imageChanged = false;
 
                         //set image, using glide
-                        if (!oldImageUrl.isEmpty())
+                        if ((oldImageUrl != null) && !oldImageUrl.isEmpty())
                             Glide.with(getApplicationContext())
                                     .load(oldImageUrl)
                                     .placeholder(R.drawable.ic_add_photo_gray)
@@ -430,7 +430,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
 
     private void showImageAttachMenu() {
-        boolean bool = (!oldImageUrl.isEmpty() && !imageChanged)
+        boolean bool = ((oldImageUrl != null) && !oldImageUrl.isEmpty() && !imageChanged)
                 || (imageChanged && imageUri != null);
         //init/setup popup menu
         PopupMenu popupMenu = new PopupMenu(this, binding.operationImageIv);
@@ -579,7 +579,7 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void uploadImage() {
-        if (!oldImageUrl.isEmpty() && imageChanged && imageUri == null) {    // image changed to null - delete image from server
+        if ((oldImageUrl != null) && !oldImageUrl.isEmpty() && imageChanged && imageUri == null) {    // image changed to null - delete image from server
             Log.d(TAG, "uploadImage: Deleting operation image from FirebaseStorage server...");
 
             String filePathAndName = "OperationImages/" + currentOperationId;

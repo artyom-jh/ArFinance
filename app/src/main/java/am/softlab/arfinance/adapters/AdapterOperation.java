@@ -189,7 +189,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
 
                     String filePathAndName = "OperationImages/" + id;
 
-                    if (!imageUrl.isEmpty()) {
+                    if ((imageUrl != null) && !imageUrl.isEmpty()) {
                         //storage reference - delete File from FirebaseStorage
                         StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
                         reference
