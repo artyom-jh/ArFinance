@@ -26,15 +26,35 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp">
 
-            <!--Wallet Name-->
-            <TextView
-                android:id="@+id/walletTv"
+            <LinearLayout
+                android:id="@+id/walletLl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Wallet Name"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:maxLines="1"/>
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/flagBtn"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="4dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/flag_empty"
+                    android:background="@drawable/shape_button03"/>
+
+                <!--Wallet Name-->
+                <TextView
+                    android:id="@+id/walletTv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxWidth="260dp"
+                    android:text="Wallet Name"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:maxLines="1"/>
+
+            </LinearLayout>
 
             <!--currency name and symbol-->
             <LinearLayout
@@ -42,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:layout_below="@id/walletTv"
+                android:layout_below="@id/walletLl"
                 android:orientation="horizontal">
 
                 <TextView

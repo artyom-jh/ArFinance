@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">ArFinance</string>
+    <string name="app_description">Personal Finance Management</string>
+    <string name="app_site">www.softlab.am</string>
+    <string name="app_copyright">© 2023 Artyom Jhangiryan</string>
+    <string name="app_samsung">Samsung Innovation Campus</string>
 
     <!--General strings-->
     <string name="please_wait">Please wait</string>
@@ -130,10 +134,15 @@
     <string name="signout">Sign out</string>
     <string name="sure_signout">Are you sure you want to sign out ?</string>
     <string name="income">Income</string>
+    <string name="income_by_wallet">Receipts by wallets and categories</string>
     <string name="expenses">Expenses</string>
+    <string name="expenses_by_wallet">Expenses by wallets and categories</string>
     <string name="statistics">Statistics</string>
+    <string name="statistics_desc">Statistics, reports and chart</string>
     <string name="categories">Categories</string>
+    <string name="categories_desc">Categories of income and expenses</string>
     <string name="wallets">Wallets</string>
+    <string name="wallets_desc">Wallets, Currencies and Balance</string>
     <string name="operdate">Date</string>
     <string name="operation_category">Category</string>
     <string name="operAmount">Amount</string>

@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
 import android.text.format.DateFormat;
@@ -24,6 +25,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -48,6 +50,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -583,6 +586,23 @@ public class MyApplication extends Application {
         }
     }
 
+
+    public static Drawable getCountryFlag(String currencyCode) {
+        switch(currencyCode) {
+            case "AMD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_armenia, null);
+            case "AUD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_australia, null);
+            case "GBP": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_uk, null);
+            case "CAD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_canada, null);
+            case "CNY": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_china, null);
+            case "EUR": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_eu, null);
+            case "JPY": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_japan, null);
+            case "RUB": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_russia, null);
+            case "KRW": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_south_korea, null);
+            case "CHF": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_switzerland, null);
+            case "USD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_us, null);
+            default: return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_empty, null);
+        }
+    }
 
     // ===== DEMOS =====
     public static ModelWallet getDemoWallet() {

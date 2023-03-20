@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +87,7 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
 
         //set data
         holder.walletTv.setText(walletName);
+        holder.flagBtn.setImageDrawable(MyApplication.getCountryFlag(currencyCode));
         holder.currencyTv.setText(currencyName);
         holder.currencyCodeTv.setText(currencyCode);
         holder.walletNotesTv.setText(notes);
@@ -203,6 +205,7 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
         //ui views of row_wallet.xml
         TextView walletTv, walletNotesTv, currencyTv, currencyCodeTv, totalIncomeTv, totalExpensesTv, balanceTv;
         ImageButton deleteBtn;
+        ImageView flagBtn;
 
         public HolderWallet(@NonNull View itemView) {
             super(itemView);
@@ -216,6 +219,7 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
             balanceTv = binding.balanceTv;
             walletNotesTv = binding.walletNotesTv;
             deleteBtn = binding.deleteBtn;
+            flagBtn = binding.flagBtn;
         }
     }
 }

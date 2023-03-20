@@ -107,8 +107,10 @@ public class OperationsActivity extends AppCompatActivity {
 
                                 //add data to view pager adapter
                                 viewPagerAdapter.addFragment(
-                                        OperationFragment.newInstance(model.getId(), model.getCurrencySymbol(), isIncome),
-                                        String.format("%s (%s)", model.getWalletName(), model.getCurrencySymbol())
+                                        OperationFragment.newInstance(
+                                                model.getId(),
+                                                model.getCurrencySymbol(), isIncome),
+                                        String.format("%s(%s)", model.getWalletName(), model.getCurrencySymbol())
                                 );
                             }
                             //set adapter to view pager

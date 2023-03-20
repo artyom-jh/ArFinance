@@ -94,18 +94,29 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:id="@+id/incomeTv"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|start"
-                    android:layout_marginStart="90dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/income"
-                    android:textSize="22sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="87dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/incomeTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/income"
+                        android:textSize="22sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/incomeDescTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/income_by_wallet"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+
             </androidx.cardview.widget.CardView>
 
             <!--Expenses-->
@@ -135,18 +146,29 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:id="@+id/expensesTv"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|start"
-                    android:layout_marginStart="90dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/expenses"
-                    android:textSize="22sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="87dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/expensesTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/expenses"
+                        android:textSize="22sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/expensesDescTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/expenses_by_wallet"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!--Statistics-->
@@ -176,18 +198,28 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:id="@+id/statisticsTv"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|start"
-                    android:layout_marginStart="90dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/statistics"
-                    android:textSize="22sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="87dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/statisticsTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/statistics"
+                        android:textSize="22sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/statisticsDescTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/statistics_desc"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!--Wallets-->
@@ -217,18 +249,28 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:id="@+id/walletsTv"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|start"
-                    android:layout_marginStart="90dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/wallets"
-                    android:textSize="22sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="87dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/walletsTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/wallets"
+                        android:textSize="22sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/walletsDescTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/wallets_desc"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!--Categories-->
@@ -258,18 +300,28 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"/>
 
-                <TextView
-                    android:id="@+id/categoriesTv"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|start"
-                    android:layout_marginStart="90dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/categories"
-                    android:textSize="22sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="87dp"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/categoriesTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/categories"
+                        android:textSize="22sp"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/categoriesDescTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/categories_desc"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
         </RelativeLayout>

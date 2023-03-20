@@ -83,9 +83,6 @@ public class DashboardActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         checkUser();
 
-        //todo setupViewPagerAdapter(binding.viewPager);
-        //todo binding.tabLayout.setupWithViewPager(binding.viewPager);
-
         //handle click, logout
         binding.logoutBtn.setOnClickListener(view -> {
             //confirm delete dialog

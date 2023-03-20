@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -107,6 +108,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         holder.operNotesTv.setText(notes);
 
         if (hasImage) {
+            holder.operDateTv.setTextColor(ContextCompat.getColor(context, R.color.blue));
             holder.attachBtn.setVisibility(View.VISIBLE);
             holder.attachBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,6 +123,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
             });
         }
         else {
+            holder.operDateTv.setTextColor(ContextCompat.getColor(context, R.color.black));
             holder.attachBtn.setVisibility(View.INVISIBLE);
             holder.attachBtn.setOnClickListener(null);
         }

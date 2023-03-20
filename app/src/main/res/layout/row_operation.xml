@@ -37,7 +37,6 @@
                     android:id="@+id/operDateTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-
                     android:text="dd/MM/yyyy"
                     android:textStyle="bold"
                     android:textColor="@color/black"/>
@@ -46,7 +45,7 @@
                     android:id="@+id/attachBtn"
                     android:layout_width="24dp"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="3dp"
                     android:src="@drawable/ic_attach_small"
                     android:background="@drawable/shape_button03"/>
 
