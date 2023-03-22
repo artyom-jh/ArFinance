@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -15,13 +16,19 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Rect;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseIntArray;
 import android.view.Menu;
+import android.view.Surface;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -38,12 +45,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.text.Text;
+import com.google.mlkit.vision.text.TextRecognition;
+import com.google.mlkit.vision.text.TextRecognizer;
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
+import am.softlab.arfinance.MyPair;
+import am.softlab.arfinance.MyStringUtils;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityOperationAddBinding;
 import am.softlab.arfinance.models.ModelCategory;
@@ -141,6 +158,9 @@ public class OperationAddActivity extends AppCompatActivity {
 
         //handle click, pick image
         binding.operationImageIv.setOnClickListener(v -> showImageAttachMenu());
+
+        //handle click, recognize amount
+        binding.recognizeIb.setOnClickListener(view -> checkForAttachment());
 
         //handle click, begin upload category
         binding.submitBtn.setOnClickListener(view -> validateData());
@@ -311,6 +331,35 @@ public class OperationAddActivity extends AppCompatActivity {
                 )
                 .show();
     }
+
+
+    private void checkForAttachment() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(OperationAddActivity.this);
+
+        if (imageUri != null) {
+            //confirm recognize amount dialog
+            builder.setTitle(res.getString(R.string.recognition))
+                    .setMessage(res.getString(R.string.recognition_start))
+                    .setPositiveButton(
+                            res.getString(R.string.recognize),
+                            (dialogInterface, i) -> {
+                                recognizeAmountFromImage();
+                            }
+                    )
+                    .setNegativeButton(
+                            res.getString(R.string.cancel),
+                            (dialogInterface, i) -> dialogInterface.dismiss()
+                    )
+                    .show();
+        }
+        else {
+            builder.setTitle(res.getString(R.string.warning))
+                    .setMessage(res.getString(R.string.select_image))
+                    .setPositiveButton(res.getString(R.string.close),null)
+                    .show();
+        }
+    }
+
 
     private double amount=0.0;
     private void validateData() {
@@ -638,4 +687,243 @@ public class OperationAddActivity extends AppCompatActivity {
         }
     }
 
+
+    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    static {
+        ORIENTATIONS.append(Surface.ROTATION_0, 0);
+        ORIENTATIONS.append(Surface.ROTATION_90, 90);
+        ORIENTATIONS.append(Surface.ROTATION_180, 180);
+        ORIENTATIONS.append(Surface.ROTATION_270, 270);
+    }
+    /**
+     * Get the angle by which an image must be rotated given the device's current
+     * orientation.
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private int getRotationCompensation(boolean isFrontFacing)
+            throws CameraAccessException {
+        // Get the device's current rotation relative to its "native" orientation.
+        // Then, from the ORIENTATIONS table, look up the angle the image must be
+        // rotated to compensate for the device's rotation.
+        int deviceRotation = OperationAddActivity.this.getWindowManager().getDefaultDisplay().getRotation();
+        int rotationCompensation = ORIENTATIONS.get(deviceRotation);
+
+        // Get the device's sensor orientation.
+        CameraManager cameraManager = (CameraManager) OperationAddActivity.this.getSystemService(CAMERA_SERVICE);
+        String cameraId = cameraManager.getCameraIdList()[0];
+        int sensorOrientation = cameraManager
+                .getCameraCharacteristics(cameraId)
+                .get(CameraCharacteristics.SENSOR_ORIENTATION);
+
+        if (isFrontFacing) {
+            rotationCompensation = (sensorOrientation + rotationCompensation) % 360;
+        } else { // back-facing
+            rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360;
+        }
+        return rotationCompensation;
+    }
+
+    private void recognizeAmountFromImage() {
+        if (imageUri == null) {
+            // no bitmap
+            Log.d(TAG, "recognizeAmountFromImage: empty image Uri");
+            Toast.makeText(OperationAddActivity.this, res.getString(R.string.select_image_short), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d(TAG, "recognizeAmountFromImage: Preparing Image...");
+        progressDialog.setMessage(res.getString(R.string.preparing_image));
+        progressDialog.show();
+
+        InputImage image;
+        try {
+            image = InputImage.fromFilePath(OperationAddActivity.this, imageUri);
+
+            Log.d(TAG, "recognizeAmountFromImage: Recognizing Text...");
+            progressDialog.setMessage(res.getString(R.string.recognizing_text));
+
+            //init TextRecognizer
+            TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+
+            Task<Text> textTaskResult =
+                    recognizer.process(image)
+                            .addOnSuccessListener(new OnSuccessListener<Text>() {
+                                @Override
+                                public void onSuccess(Text visionText) {
+                                    // Task completed successfully
+                                    performTextAnalysis(visionText);
+                                }
+                            })
+                            .addOnFailureListener(
+                                    new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Task failed with an exception
+                                            progressDialog.dismiss();
+                                            Log.d(TAG, "recognizeAmountFromImage: Failed to recognize text due to " + e.getMessage());
+                                            Toast.makeText(OperationAddActivity.this, res.getString(R.string.failed_to_recognize) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+        }
+        catch (Exception e) {
+            progressDialog.dismiss();
+            Log.d(TAG, "recognizeAmountFromImage: Failed to get rotation compensation " + e.getMessage());
+            Toast.makeText(OperationAddActivity.this, res.getString(R.string.failed_to_get_rotation) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void performTextAnalysis(Text visionText) {
+        List<Text.TextBlock> textBlock = visionText.getTextBlocks();
+        if (textBlock.size() == 0) {
+            Log.d(TAG, "performTextAnalysis: recognition failed, empty textBlock");
+            progressDialog.dismiss();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(OperationAddActivity.this);
+            builder.setTitle(res.getString(R.string.failure))
+                    .setMessage(res.getString(R.string.recognition_failed))
+                    .setPositiveButton(res.getString(R.string.close),null)
+                    .show();
+            return;
+        }
+        //Log.d(TAG, "recognizedText: " + visionText.getText());
+
+        //start text analysis
+        progressDialog.setMessage(res.getString(R.string.perform_text_analysis));
+
+        List<MyPair> amountsMyPairList = new ArrayList<>();
+
+        //extract integers or decimals from a string
+        for (Text.TextBlock block : visionText.getTextBlocks()) {
+            for (Text.Line line : block.getLines()) {
+                String lineText = MyStringUtils.removeDateTimeFromString(block.getText());
+
+                Pattern pattern = Pattern.compile(".*\\d.*");
+                // find match between given string and pattern
+                Matcher matcherText = pattern.matcher(lineText);
+                // return true if the string matched the regex
+                if (!matcherText.matches())
+                    continue;
+
+                for (Text.Element element : line.getElements()) {
+                    String elementText = element.getText();
+                    elementText = MyStringUtils.removeDateTimeFromString(elementText);
+
+                    Rect frame = element.getBoundingBox();
+                    int fontSize = 0;
+                    if (frame != null)
+                        fontSize = frame.bottom - frame.top;
+
+                    //extract integer or decimal number using regex
+                    Pattern regex = Pattern.compile("(\\d+(?:\\.\\d+)?)");
+                    Matcher matcher = regex.matcher(elementText);
+                    while (matcher.find()) {
+                        String matchedStr;
+                        double dAmount=0;
+
+                        try {
+                            matchedStr = matcher.group(1);
+                            if (matchedStr != null)
+                                dAmount = Double.parseDouble(matchedStr);
+                        } catch (NumberFormatException e) {
+                            dAmount = 0;
+                        }
+
+                        //add only unique amount <0 or >9
+                        if (dAmount < 0
+                                || (dAmount > 9 && dAmount <= Constants.MAX_RECOGNIZED_AMOUNT))
+                        {
+                            boolean found = false;
+                            for (MyPair myPair: amountsMyPairList) {
+                                //if amount already exists in array
+                                if (myPair.getAmount() == dAmount) {
+                                    //if element size is less in array - update size
+                                    if (myPair.getFontSize() < fontSize)
+                                        myPair.setFontSize(fontSize);
+
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                                amountsMyPairList.add(new MyPair(dAmount, fontSize));
+                        }
+                    }
+                }
+            }
+        }
+//        //example from google - https://developers.google.com/ml-kit/vision/text-recognition/android
+//        //------------------------------------------------------------------------------------------
+//        String resultText = result.getText();
+//        for (Text.TextBlock block : result.getTextBlocks()) {
+//            String blockText = block.getText();
+//            Point[] blockCornerPoints = block.getCornerPoints();
+//            Rect blockFrame = block.getBoundingBox();
+//            for (Text.Line line : block.getLines()) {
+//                String lineText = line.getText();
+//                Point[] lineCornerPoints = line.getCornerPoints();
+//                Rect lineFrame = line.getBoundingBox();
+//                for (Text.Element element : line.getElements()) {
+//                    String elementText = element.getText();
+//                    Point[] elementCornerPoints = element.getCornerPoints();
+//                    Rect elementFrame = element.getBoundingBox();
+//                    for (Text.Symbol symbol : element.getSymbols()) {
+//                        String symbolText = symbol.getText();
+//                        Point[] symbolCornerPoints = symbol.getCornerPoints();
+//                        Rect symbolFrame = symbol.getBoundingBox();
+//                    }
+//                }
+//            }
+//        }
+
+        progressDialog.dismiss();
+
+        //show alert dialog if no amount found in recognized strings
+        if (amountsMyPairList.size() <= 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(OperationAddActivity.this);
+            builder.setTitle(res.getString(R.string.failure))
+                    .setMessage(res.getString(R.string.recognition_amount_failed))
+                    .setPositiveButton(res.getString(R.string.close),null)
+                    .show();
+        }
+        //show amount selection dialog for recognized amounts
+        else {
+            //sort amountsMyPairList in descending order by FontSize field
+            amountsMyPairList.sort((a, b) -> Double.compare(b.getFontSize(), a.getFontSize()));
+
+            int toIndex = 0;
+            int firstFontSize = amountsMyPairList.get(0).getFontSize();
+            // ignore elements with FontSize less than 50% than the size of the first element
+            for (MyPair myPair: amountsMyPairList) {
+                if (myPair.getFontSize() >= (firstFontSize * 0.5))
+                    toIndex++;
+            }
+
+            amountsMyPairList = amountsMyPairList.subList(0, toIndex-1);
+            amountPickDialog(amountsMyPairList);
+        }
+    }
+
+    private void amountPickDialog(List<MyPair> amountsMyPairList) {
+        Log.d(TAG, "amountPickDialog: showing amount pick dialog");
+
+        //get string array of amounts from amountsList
+        String[] amountsArray = new String[amountsMyPairList.size()];
+        for(int i = 0; i < amountsMyPairList.size(); i++){
+            amountsArray[i] = MyApplication.formatDouble(amountsMyPairList.get(i).getAmount());
+        }
+
+        //alert dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(res.getString(R.string.pick_amount))
+                .setItems(
+                        amountsArray,
+                        (dialogInterface, which) -> {
+                            //handle item click
+                            //get clicked item from list and set to amount edittext
+                            binding.operAmountEt.setText(amountsArray[which]);
+                            Log.d(TAG, "onClick: Selected Amount: " + amountsArray[which]);
+                        }
+                )
+                .show();
+    }
 }

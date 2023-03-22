@@ -32,8 +32,8 @@ public class SplashActivity extends AppCompatActivity {
         FirebaseApp.initializeApp( getApplicationContext() );
         firebaseAuth = FirebaseAuth.getInstance();
 
-        //start main screen after 2 seconds
-        new Handler().postDelayed(this::checkUser, 2000);
+        //start main screen after 1 seconds
+        new Handler().postDelayed(this::checkUser, 1000);
     }
 
     private void checkUser() {

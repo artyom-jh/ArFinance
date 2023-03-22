@@ -10,7 +10,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Environment;
@@ -26,6 +28,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
@@ -33,10 +36,8 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -58,7 +59,6 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import am.softlab.arfinance.activities.DashboardActivity;
-import am.softlab.arfinance.activities.ProfileEditActivity;
 import am.softlab.arfinance.models.ModelCategory;
 import am.softlab.arfinance.models.ModelSchedule;
 import am.softlab.arfinance.models.ModelWallet;
@@ -602,6 +602,25 @@ public class MyApplication extends Application {
             case "USD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_us, null);
             default: return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_empty, null);
         }
+    }
+
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        return getBitmapFromVectorDrawable(context, drawable);
+    }
+
+    public static Bitmap getBitmapFromVectorDrawable(Context context, Drawable drawable) {
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 
     // ===== DEMOS =====

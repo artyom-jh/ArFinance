@@ -36,6 +36,9 @@
     <string name="write_external_denied">Write External Storage Permission Denied</string>
     <string name="notification_channel_name">ArFinance</string>
     <string name="notification_channel_desc">ArFinance notifications</string>
+    <string name="warning">Warning</string>
+    <string name="close">Close</string>
+    <string name="failure">Failure</string>
 
     <!--login/register activity-->
     <string name="logging_in">Logging In…</string>
@@ -171,6 +174,19 @@
     <string name="updating_operation_image">Updating operation image</string>
     <string name="loading_image">Loading Image…</string>
     <string name="sure_download_image">Are you sure you want to download this image ?</string>
+    <string name="recognition">Recognition</string>
+    <string name="recognition_start">Start amount recognition from picture ?</string>
+    <string name="recognize">Recognize</string>
+    <string name="select_image">To recognize the amount, select an image from the gallery or from the camera at the top of the screen.</string>
+    <string name="select_image_short">Select an image from the gallery or from the camera at the top of the screen.</string>
+    <string name="failed_to_get_rotation">Failed to get rotation compensation due to</string>
+    <string name="failed_to_recognize">Failed to recognize text due to</string>
+    <string name="preparing_image">Preparing Image…</string>
+    <string name="recognizing_text">Recognizing Text…</string>
+    <string name="perform_text_analysis">Perform Text Analysis, detecting amount…</string>
+    <string name="recognition_failed">Sorry, recognition failed…</string>
+    <string name="recognition_amount_failed">Text recognized but no amount found…</string>
+    <string name="pick_amount">Pick Amount</string>
 
     <!--attachment view activity-->
     <string name="loading_attachment">Loading Attachment…</string>

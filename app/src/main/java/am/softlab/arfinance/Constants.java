@@ -21,6 +21,8 @@ public class Constants {
     public static final int WRITE_EXTERNAL_STORAGE = 101;
     public static final int POST_NOTIFICATIONS = 102;
 
+    public static final double MAX_RECOGNIZED_AMOUNT = 10000000;
+
     public static final String CHANNEL_ID = "ARFINANCE_CHANNEL";
     public static final String WORK_ID = "ARFINANCE_WORK";
 

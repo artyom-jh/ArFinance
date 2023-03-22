@@ -12,8 +12,8 @@ android {
         applicationId "am.softlab.arfinance"
         minSdk 24
         targetSdk 33
-        versionCode 5
-        versionName "3.1"
+        versionCode 6
+        versionName "4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -87,6 +87,9 @@ dependencies {
 
     //PhotoView - https://github.com/Baseflow/PhotoView
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
+    //Recognize text in images with ML Kit on Android
+    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
 }
 
 // ADD THIS AT THE BOTTOM

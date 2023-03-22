@@ -110,20 +110,25 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         if (hasImage) {
             holder.operDateTv.setTextColor(ContextCompat.getColor(context, R.color.blue));
             holder.attachBtn.setVisibility(View.VISIBLE);
+
+            holder.operDateTv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startAttachmentViewActivity(id, category, operationTimestamp, imageUrl);
+                }
+            });
+
             holder.attachBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, AttachmentViewActivity.class);
-                    intent.putExtra("operId", id);
-                    intent.putExtra("categoryName", category);
-                    intent.putExtra("operationTimestamp", operationTimestamp);
-                    intent.putExtra("imageUrl", imageUrl);
-                    context.startActivity(intent);
+                    startAttachmentViewActivity(id, category, operationTimestamp, imageUrl);
                 }
             });
         }
         else {
             holder.operDateTv.setTextColor(ContextCompat.getColor(context, R.color.black));
+            holder.operDateTv.setOnClickListener(null);
+
             holder.attachBtn.setVisibility(View.INVISIBLE);
             holder.attachBtn.setOnClickListener(null);
         }
@@ -167,6 +172,15 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
             else
                 Toast.makeText(context, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
         });
+    }
+
+    private void startAttachmentViewActivity(String id, String category, long operationTimestamp, String imageUrl) {
+        Intent intent = new Intent(context, AttachmentViewActivity.class);
+        intent.putExtra("operId", id);
+        intent.putExtra("categoryName", category);
+        intent.putExtra("operationTimestamp", operationTimestamp);
+        intent.putExtra("imageUrl", imageUrl);
+        context.startActivity(intent);
     }
 
     private String deleteWalletId, deleteCategoryId;
