@@ -18,6 +18,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityChangePasswordBinding;
@@ -109,13 +110,18 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Log.d(TAG, "changeUserPassword: user re-authentication success");
+                                if (BuildConfig.DEBUG)
+                                    Log.d(TAG, "changeUserPassword: user re-authentication success");
+
                                 user.updatePassword(newPassword)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
-                                                    Log.d(TAG, "changeUserPassword: User password updated");
+
+                                                    if (BuildConfig.DEBUG)
+                                                        Log.d(TAG, "changeUserPassword: User password updated");
+
                                                     progressDialog.dismiss();
                                                     Toast.makeText(ChangePasswordActivity.this, res.getString(R.string.password_updated), Toast.LENGTH_SHORT).show();
                                                     firebaseAuth.signOut();
@@ -126,7 +132,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                         });
                             } else {
                                 progressDialog.dismiss();
-                                Log.d(TAG, "changeUserPassword: user re-authentication failed");
+
+                                if (BuildConfig.DEBUG)
+                                    Log.d(TAG, "changeUserPassword: user re-authentication failed");
+
                                 Toast.makeText(ChangePasswordActivity.this, res.getString(R.string.reauth_failed), Toast.LENGTH_SHORT).show();
                             }
                         }

@@ -22,23 +22,36 @@
             android:layout_margin="10dp"
             android:padding="5dp"/>
 
-        <!-- Shapeable image view with rounded corners for image -->
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/operationImageIv"
+        <RelativeLayout
+            android:id="@+id/operationImageRl"
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
-            android:scaleType="centerCrop"
-            android:background="@color/white"
-            android:src="@drawable/ic_add_photo_gray"
-            app:shapeAppearance="@style/styleRoundedSmallCornersImage"/>
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
+            <!-- Shapeable image view with rounded corners for image -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/operationImageIv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:background="@color/white"
+                android:src="@drawable/ic_add_photo_gray"
+                app:shapeAppearance="@style/styleRoundedSmallCornersImage"/>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/titleIv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/operationImageIv"
+            android:layout_below="@id/operationImageRl"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             android:fontFamily="sans-serif-condensed"

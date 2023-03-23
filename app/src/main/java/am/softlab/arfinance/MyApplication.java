@@ -70,7 +70,7 @@ public class MyApplication extends Application {
         return context;
     }
 
-    private static List<List<String>> categoryArrayList = new ArrayList<List<String>>();
+    private static List<ModelCategory> categoryArrayList = new ArrayList<ModelCategory>();
     private static List<List<String>> walletArrayList = new ArrayList<List<String>>();
     private static ArrayList<ModelSchedule> scheduleArrayList = new ArrayList<ModelSchedule>();
 
@@ -82,7 +82,7 @@ public class MyApplication extends Application {
         MyApplication.context = getApplicationContext();
     }
 
-    public static List<List<String>> getCategoryArrayList() {
+    public static List<ModelCategory> getCategoryArrayList() {
         return categoryArrayList;
     }
 
@@ -121,8 +121,8 @@ public class MyApplication extends Application {
     }
 
     public static void loadCategoryList(ProgressDialog progressDialog) {
-        //get category using categoryId
-        categoryArrayList = new ArrayList<List<String>>();
+        // clear arraylist before adding data into it
+        categoryArrayList.clear();
 
         if (progressDialog != null)
             progressDialog.setMessage(context.getResources().getString(R.string.loading_categories));
@@ -132,17 +132,11 @@ public class MyApplication extends Application {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // clear arraylist before adding data into it
-                categoryArrayList.clear();
-
                 for (DataSnapshot ds: snapshot.getChildren()){
                     // get data
                     ModelCategory model = ds.getValue(ModelCategory.class);
                     //add to arraylist
-                    List<String> currentList = new ArrayList<String>();
-                    currentList.add(model.getId());
-                    currentList.add(model.getCategory());
-                    categoryArrayList.add(currentList);
+                    categoryArrayList.add(model);
                 }
 
                 loadSchedulers(progressDialog, true);
@@ -156,10 +150,10 @@ public class MyApplication extends Application {
         });
     }
     public static String getCategoryById(String catId) {
-        if (categoryArrayList != null && categoryArrayList.size() > 1) {
-            for (List<String> stringList : categoryArrayList) {
-                if (stringList.get(0).equals(catId)) {
-                    return stringList.get(1);
+        if (categoryArrayList != null && categoryArrayList.size() > 0) {
+            for (ModelCategory model : categoryArrayList) {
+                if (model.getId().equals(catId)) {
+                    return model.getCategory();
                 }
             }
         }
@@ -550,11 +544,13 @@ public class MyApplication extends Application {
 
 
     public static void downloadImage(Context context, String categoryName, long operationTimestamp, String imageUrl) {
-        Log.d(TAG_DOWNLOAD, "downloadImage: downloading image...");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG_DOWNLOAD, "downloadImage: downloading image...");
 
         String nameWithExtension = categoryName + "_" + formatTimestamp2(operationTimestamp) + ".jpg";
 
-        Log.d(TAG_DOWNLOAD, "downloadImage: NAME: " + nameWithExtension);
+        if (BuildConfig.DEBUG)
+            Log.d(TAG_DOWNLOAD, "downloadImage: NAME: " + nameWithExtension);
 
         //progress dialog
         ProgressDialog progressDialog = new ProgressDialog(context);
@@ -569,15 +565,18 @@ public class MyApplication extends Application {
                 .addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
-                        Log.d(TAG_DOWNLOAD, "onSuccess: Image Downloaded");
-                        Log.d(TAG_DOWNLOAD, "onSuccess: Saving image...");
+                        if (BuildConfig.DEBUG) {
+                            Log.d(TAG_DOWNLOAD, "onSuccess: Image Downloaded");
+                            Log.d(TAG_DOWNLOAD, "onSuccess: Saving image...");
+                        }
                         saveDownloadedImage(context, progressDialog, bytes, nameWithExtension);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG_DOWNLOAD, "onFailure: Failed to download due to " + e.getMessage());
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG_DOWNLOAD, "onFailure: Failed to download due to " + e.getMessage());
                         progressDialog.dismiss();
                         Toast.makeText(context, "Failed to download due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -585,7 +584,9 @@ public class MyApplication extends Application {
     }
 
     private static void saveDownloadedImage(Context context, ProgressDialog progressDialog, byte[] bytes, String nameWithExtension) {
-        Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Saving downloaded image");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Saving downloaded image");
+
         try {
             File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             downloadsFolder.mkdirs();
@@ -597,11 +598,15 @@ public class MyApplication extends Application {
             out.close();
 
             Toast.makeText(context, "Saved to Download Folder", Toast.LENGTH_SHORT).show();
-            Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Saved to Download Folder");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Saved to Download Folder");
+
             progressDialog.dismiss();
         }
         catch (Exception e) {
-            Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Failed saving to Download Folder due to " + e.getMessage());
+            if (BuildConfig.DEBUG)
+                Log.d(TAG_DOWNLOAD, "saveDownloadedImage: Failed saving to Download Folder due to " + e.getMessage());
+
             Toast.makeText(context, "Failed saving to Download Folder due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
             progressDialog.dismiss();
         }

@@ -37,6 +37,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
@@ -93,7 +94,8 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     private void loadUserInfo() {
-        Log.d(TAG, "loadUserInfo: Loading user info of user " + firebaseAuth.getUid());
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "loadUserInfo: Loading user info of user " + firebaseAuth.getUid());
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.child(firebaseAuth.getUid())
@@ -144,7 +146,9 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     private void uploadImage() {
-        Log.d(TAG, "uploadImage: Uploading profile image...");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "uploadImage: Uploading profile image...");
+
         progressDialog.setMessage(res.getString(R.string.updating_profile_image));
         progressDialog.show();
 
@@ -155,19 +159,24 @@ public class ProfileEditActivity extends AppCompatActivity {
         StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
         reference.putFile(imageUri)
                 .addOnSuccessListener(taskSnapshot -> {
-                    Log.d(TAG, "onSuccess: Profile image uploaded");
-                    Log.d(TAG, "onSuccess: Getting url of uploaded image");
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "onSuccess: Profile image uploaded");
+                        Log.d(TAG, "onSuccess: Getting url of uploaded image");
+                    }
                     Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                     //noinspection StatementWithEmptyBody
                     while (!uriTask.isSuccessful());
                     String uploadedImageUrl = ""+uriTask.getResult();
 
-                    Log.d(TAG, "onSuccess: Uploaded Image URL: " + uploadedImageUrl);
+                    if (BuildConfig.DEBUG)
+                        Log.d(TAG, "onSuccess: Uploaded Image URL: " + uploadedImageUrl);
 
                     updateProfile(uploadedImageUrl);
                 })
                 .addOnFailureListener(e -> {
-                    Log.d(TAG, "onFailure: Failed to upload image due to " + e.getMessage());
+                    if (BuildConfig.DEBUG)
+                        Log.d(TAG, "onFailure: Failed to upload image due to " + e.getMessage());
+
                     progressDialog.dismiss();
                     Toast.makeText(ProfileEditActivity.this, res.getString(R.string.failed_to_upload_image) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
@@ -176,7 +185,9 @@ public class ProfileEditActivity extends AppCompatActivity {
     private void updateProfile(String imageUrl) {
         MyApplication.hideKeyboard(this);
 
-        Log.d(TAG, "updateProfile: Updating user profile");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "updateProfile: Updating user profile");
+
         progressDialog.setMessage(res.getString(R.string.updating_user_profile));
         progressDialog.show();
 
@@ -192,12 +203,16 @@ public class ProfileEditActivity extends AppCompatActivity {
         databaseReference.child(firebaseAuth.getUid())
                 .updateChildren(hashMap)
                 .addOnSuccessListener(unused -> {
-                    Log.d(TAG, "onSuccess: Profile updated...");
+                    if (BuildConfig.DEBUG)
+                        Log.d(TAG, "onSuccess: Profile updated...");
+
                     progressDialog.dismiss();
                     Toast.makeText(ProfileEditActivity.this, res.getString(R.string.profile_updated), Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Log.d(TAG, "onFailure: Failed to update db due to " + e.getMessage());
+                    if (BuildConfig.DEBUG)
+                        Log.d(TAG, "onFailure: Failed to update db due to " + e.getMessage());
+
                     progressDialog.dismiss();
                     Toast.makeText(ProfileEditActivity.this, res.getString(R.string.failed_to_update_db) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 })
@@ -266,7 +281,9 @@ public class ProfileEditActivity extends AppCompatActivity {
                     //used to handle result of camera intent
                     //get uri of image
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Log.d(TAG, "onActivityResult: Picked From Camera " + imageUri);
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onActivityResult: Picked From Camera " + imageUri);
+
                         binding.profileIv.setImageURI(imageUri);
                     }
                     else {
@@ -284,10 +301,14 @@ public class ProfileEditActivity extends AppCompatActivity {
                     //used to handle result of gallery intent
                     //get uri of image
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Log.d(TAG, "onActivityResult: " + imageUri);
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onActivityResult: " + imageUri);
+
                         Intent data = result.getData();
                         imageUri = data.getData();
-                        Log.d(TAG, "onActivityResult: Picked From Gallery " + imageUri);
+
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onActivityResult: Picked From Gallery " + imageUri);
 
                         binding.profileIv.setImageURI(imageUri);
                     }

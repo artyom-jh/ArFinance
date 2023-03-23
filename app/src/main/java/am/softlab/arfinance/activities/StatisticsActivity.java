@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.PieFragment;
 import am.softlab.arfinance.R;
@@ -139,7 +140,8 @@ public class StatisticsActivity extends AppCompatActivity {
         categoryIdArrayList = new ArrayList<>();
 
         if (firebaseAuth.getCurrentUser() != null) {
-            Log.d(TAG, "loadCategories: Loading categories...");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "loadCategories: Loading categories...");
 
             //db reference to load categories... db > Categories
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
@@ -155,8 +157,10 @@ public class StatisticsActivity extends AppCompatActivity {
                                 categoryTitleArrayList.add(model.getCategory());
                                 categoryIdArrayList.add("" + model.getId());
 
-                                Log.d(TAG, "onDataChange: ID: " + model.getId());
-                                Log.d(TAG, "onDataChange: Category: " + model.getCategory());
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(TAG, "onDataChange: ID: " + model.getId());
+                                    Log.d(TAG, "onDataChange: Category: " + model.getCategory());
+                                }
                             }
 
                             if (progressDialog.isShowing())

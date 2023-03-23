@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
@@ -49,7 +50,10 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     //instance of our filter class
     private FilterOperation filter;
 
-    private String currencySymbol;
+    private String mCurrencySymbol;
+    private String mDeleteWalletId, mDeleteCategoryId;
+    private double mDeleteAmount;
+    private boolean mIsIncome;
 
     private FirebaseAuth firebaseAuth;
     //firebase current user
@@ -63,7 +67,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     public AdapterOperation(Context context, ArrayList<ModelOperation> operationArrayList, String currencySymbol) {
         this.context = context;
         this.operationArrayList = operationArrayList;
-        this.currencySymbol = currencySymbol;
+        this.mCurrencySymbol = currencySymbol;
         this.filterList = operationArrayList;
 
         //get resources
@@ -102,7 +106,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
 
         //set data
         holder.operDateTv.setText(dateStr);
-        String amountStr = MyApplication.formatDouble(amount) + " " + currencySymbol;
+        String amountStr = MyApplication.formatDouble(amount) + " " + mCurrencySymbol;
         holder.operAmountTv.setText(amountStr);
         holder.categoryTv.setText(category);
         holder.operNotesTv.setText(notes);
@@ -127,7 +131,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         }
         else {
             holder.operDateTv.setTextColor(ContextCompat.getColor(context, R.color.black));
-            holder.operDateTv.setOnClickListener(null);
+            holder.operDateTv.setOnClickListener(v -> startOperationAddActivity(context, id, walletId, isIncome));
 
             holder.attachBtn.setVisibility(View.INVISIBLE);
             holder.attachBtn.setOnClickListener(null);
@@ -157,21 +161,23 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         });
 
         //handle item click
-        holder.itemView.setOnClickListener(v -> {
-            if (firebaseAuth.getCurrentUser() != null) {
-                if (firebaseUser.isEmailVerified()) {
-                    Intent intent = new Intent(context, OperationAddActivity.class);
-                    intent.putExtra("operId", id);
-                    intent.putExtra("walletId", walletId);
-                    intent.putExtra("isIncome", isIncome);
-                    context.startActivity(intent);
-                }
-                else
-                    Toast.makeText(context, res.getString(R.string.not_verified_detailed), Toast.LENGTH_SHORT).show();
+        holder.itemView.setOnClickListener(v -> startOperationAddActivity(context, id, walletId, isIncome));
+    }
+
+    private void startOperationAddActivity(Context context, String id, String walletId, boolean isIncome) {
+        if (firebaseAuth.getCurrentUser() != null) {
+            if (firebaseUser.isEmailVerified()) {
+                Intent intent = new Intent(context, OperationAddActivity.class);
+                intent.putExtra("operId", id);
+                intent.putExtra("walletId", walletId);
+                intent.putExtra("isIncome", isIncome);
+                context.startActivity(intent);
             }
             else
-                Toast.makeText(context, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
-        });
+                Toast.makeText(context, res.getString(R.string.not_verified_detailed), Toast.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(context, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
     }
 
     private void startAttachmentViewActivity(String id, String category, long operationTimestamp, String imageUrl) {
@@ -183,16 +189,13 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         context.startActivity(intent);
     }
 
-    private String deleteWalletId, deleteCategoryId;
-    private double deleteAmount;
-    private boolean isIncome;
     private void deleteOperation(ModelOperation model) {
         //get id of operation to delete
         String id = model.getId();
-        deleteWalletId = model.getWalletId();
-        deleteCategoryId = model.getCategoryId();
-        deleteAmount = model.getAmount();
-        isIncome = model.getIsIncome();
+        mDeleteWalletId = model.getWalletId();
+        mDeleteCategoryId = model.getCategoryId();
+        mDeleteAmount = model.getAmount();
+        mIsIncome = model.getIsIncome();
         String imageUrl = model.getImageUrl();
 
         //Firebase DB > Operations > operationId >
@@ -201,7 +204,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                 .removeValue()
                 .addOnSuccessListener(unused -> {
                     // deleted successfully
-                    MyApplication.updateWalletBalance(deleteWalletId, deleteCategoryId, 0-deleteAmount, isIncome, Constants.ROW_DELETED);
+                    MyApplication.updateWalletBalance(mDeleteWalletId, mDeleteCategoryId, 0-mDeleteAmount, mIsIncome, Constants.ROW_DELETED);
                     Toast.makeText(context, res.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
 
                     String filePathAndName = "OperationImages/" + id;
@@ -214,13 +217,15 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                        Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
+                                        if (BuildConfig.DEBUG)
+                                            Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
+                                        if (BuildConfig.DEBUG)
+                                            Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
                                     }
                                 });
                     }

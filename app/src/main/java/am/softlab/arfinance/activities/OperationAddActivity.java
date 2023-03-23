@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +18,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -29,10 +31,15 @@ import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Menu;
 import android.view.Surface;
+import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -57,6 +64,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.MyPair;
@@ -173,44 +181,35 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void loadCategories() {
-        Log.d(TAG, "loadCategories: Loading categories...");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "loadCategories: Loading from MyApplication.getCategoryArrayList()...");
+
         categoryTitleArrayList = new ArrayList<>();
         categoryIdArrayList = new ArrayList<>();
 
-        //db reference to load categories... db > Categories
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
-        ref.orderByChild("uid").equalTo(firebaseAuth.getCurrentUser().getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        categoryTitleArrayList.clear(); // clear before adding data
-                        categoryIdArrayList.clear();
-                        for (DataSnapshot ds : snapshot.getChildren()) {
-                            ModelCategory model = ds.getValue(ModelCategory.class);
-                            if (model.getIsIncome() == isIncome) {
-                                //get id and title of category
-                                String categoryId = "" + model.getId(); // ds.child("id").getValue();
-                                String categoryTitle = "" + model.getCategory(); // ds.child("category").getValue();
+        if (MyApplication.getCategoryArrayList() != null && MyApplication.getCategoryArrayList().size() > 0) {
+            for (ModelCategory model : MyApplication.getCategoryArrayList()) {
+                if (model.getIsIncome() == isIncome) {
+                    //get id and title of category
+                    String categoryId = "" + model.getId(); // ds.child("id").getValue();
+                    String categoryTitle = "" + model.getCategory(); // ds.child("category").getValue();
 
-                                //add to respective arraylists
-                                categoryTitleArrayList.add(categoryTitle);
-                                categoryIdArrayList.add(categoryId);
+                    //add to respective arraylists
+                    categoryTitleArrayList.add(categoryTitle);
+                    categoryIdArrayList.add(categoryId);
 
-                                Log.d(TAG, "onDataChange: ID: " + categoryId);
-                                Log.d(TAG, "onDataChange: Category: " + categoryTitle);
-                            }
-                        }
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "onDataChange: ID: " + categoryId);
+                        Log.d(TAG, "onDataChange: Category: " + categoryTitle);
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        //noop
-                    }
-                });
+                }
+            }
+        }
     }
 
     private void loadOperationInfo() {
-        Log.d(TAG, "loadOperationInfo: Loading operation info");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "loadOperationInfo: Loading operation info");
 
         progressDialog.setMessage(res.getString(R.string.loading_operation));
         progressDialog.show();
@@ -239,13 +238,37 @@ public class OperationAddActivity extends AppCompatActivity {
                         imageChanged = false;
 
                         //set image, using glide
-                        if ((oldImageUrl != null) && !oldImageUrl.isEmpty())
+                        if ((oldImageUrl != null) && !oldImageUrl.isEmpty()) {
+                            binding.progressBar.setVisibility(View.VISIBLE);
+                            binding.operationImageIv.setVisibility(View.INVISIBLE);
                             Glide.with(getApplicationContext())
                                     .load(oldImageUrl)
+                                    .listener(new RequestListener<Drawable>() {
+                                        @Override
+                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                            binding.progressBar.setVisibility(View.GONE);
+                                            binding.operationImageIv.setVisibility(View.VISIBLE);
+                                            return false;
+                                        }
+
+                                        @Override
+                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                            binding.progressBar.setVisibility(View.GONE);
+                                            binding.operationImageIv.setVisibility(View.VISIBLE);
+                                            return false;
+                                        }
+                                    })
                                     .placeholder(R.drawable.ic_add_photo_gray)
                                     .into(binding.operationImageIv);
+                        }
+                        else {
+                            binding.progressBar.setVisibility(View.GONE);
+                            binding.operationImageIv.setVisibility(View.VISIBLE);
+                        }
 
-                        Log.d(TAG, "onDataChange: Loading Operation Category Info");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onDataChange: Loading Operation Category Info");
+
                         progressDialog.setMessage(res.getString(R.string.loading_categories));
 
                         DatabaseReference refOperationCategory = FirebaseDatabase.getInstance().getReference("Categories");
@@ -276,7 +299,8 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void datePickDialog() {
-        Log.d(TAG, "datePickDialog: showing date pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "datePickDialog: showing date pick dialog");
 
         long selectedDate;
         if (operId == null) {       // Add mode
@@ -305,7 +329,8 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void categoryPickDialog() {
-        Log.d(TAG, "categoryPickDialog: showing category pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "categoryPickDialog: showing category pick dialog");
 
         //get string array of categories from arraylist
         String[] categoriesArray = new String[categoryTitleArrayList.size()];
@@ -326,7 +351,8 @@ public class OperationAddActivity extends AppCompatActivity {
                             //set to category textview
                             binding.categoryTv.setText(selectedCategoryTitle);
 
-                            Log.d(TAG, "onClick: Selected Category: " + selectedCategoryId + " " + selectedCategoryTitle);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "onClick: Selected Category: " + selectedCategoryId + " " + selectedCategoryTitle);
                         }
                 )
                 .show();
@@ -403,10 +429,12 @@ public class OperationAddActivity extends AppCompatActivity {
         long timestamp = System.currentTimeMillis();
 
         if (operId == null) {       // Add mode
-            Log.d(TAG, "addOrEditOperationFirebase: Starting adding operation info to db...");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "addOrEditOperationFirebase: Starting adding operation info to db...");
             progressDialog.setMessage(res.getString(R.string.adding_operation));
         } else {                    // Edit mode
-            Log.d(TAG, "addOrEditOperationFirebase: Starting updating operation info to db...");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "addOrEditOperationFirebase: Starting updating operation info to db...");
             progressDialog.setMessage(res.getString(R.string.updating_operation));
             currentOperationId = timestamp;
         }
@@ -436,7 +464,8 @@ public class OperationAddActivity extends AppCompatActivity {
                     .setValue(hashMap)
                     .addOnSuccessListener(unused -> {
                         //operation add success
-                        Log.d(TAG, "onSuccess: Operation added...");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Operation added...");
                         MyApplication.updateWalletBalance(walletId, selectedCategoryId, amount, isIncome, Constants.ROW_ADDED);
 
                         progressDialog.dismiss();
@@ -455,7 +484,8 @@ public class OperationAddActivity extends AppCompatActivity {
             ref.child(""+operId)
                     .updateChildren(hashMap)
                     .addOnSuccessListener(unused -> {
-                        Log.d(TAG, "onSuccess: Operation updated...");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Operation updated...");
 
                         MyApplication.updateWalletBalance(walletId, "",amount - oldAmount, isIncome, Constants.ROW_UPDATED);
 
@@ -468,7 +498,8 @@ public class OperationAddActivity extends AppCompatActivity {
                         Toast.makeText(OperationAddActivity.this, res.getString(R.string.operation_updated), Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
 
                         progressDialog.dismiss();
                         Toast.makeText(OperationAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -557,7 +588,8 @@ public class OperationAddActivity extends AppCompatActivity {
                     //used to handle result of camera intent
                     //get uri of image
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Log.d(TAG, "onActivityResult: Picked From Camera " + imageUri);
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onActivityResult: Picked From Camera " + imageUri);
                         imageChanged = true;
                         binding.operationImageIv.setImageURI(imageUri);
                     }
@@ -576,10 +608,14 @@ public class OperationAddActivity extends AppCompatActivity {
                     //used to handle result of gallery intent
                     //get uri of image
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Log.d(TAG, "onActivityResult: " + imageUri);
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onActivityResult: " + imageUri);
+
                         Intent data = result.getData();
                         imageUri = data.getData();
-                        Log.d(TAG, "onActivityResult: Picked From Gallery " + imageUri);
+
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onActivityResult: Picked From Gallery " + imageUri);
 
                         imageChanged = true;
                         binding.operationImageIv.setImageURI(imageUri);
@@ -629,7 +665,8 @@ public class OperationAddActivity extends AppCompatActivity {
 
     private void uploadImage() {
         if ((oldImageUrl != null) && !oldImageUrl.isEmpty() && imageChanged && imageUri == null) {    // image changed to null - delete image from server
-            Log.d(TAG, "uploadImage: Deleting operation image from FirebaseStorage server...");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "uploadImage: Deleting operation image from FirebaseStorage server...");
 
             String filePathAndName = "OperationImages/" + currentOperationId;
 
@@ -640,21 +677,24 @@ public class OperationAddActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
-                            Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
                             addOrUpdateOperationFirebase("");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
                             addOrUpdateOperationFirebase("");
                         }
                     });
         }
 
         else if (imageUri != null) {
-            Log.d(TAG, "uploadImage: Uploading operation image...");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "uploadImage: Uploading operation image...");
 
             progressDialog.setMessage(res.getString(R.string.updating_operation_image));
 
@@ -668,19 +708,24 @@ public class OperationAddActivity extends AppCompatActivity {
             StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
             reference.putFile(imageUri)
                     .addOnSuccessListener(taskSnapshot -> {
-                        Log.d(TAG, "onSuccess: Operation image uploaded");
-                        Log.d(TAG, "onSuccess: Getting url of uploaded image");
+                        if (BuildConfig.DEBUG) {
+                            Log.d(TAG, "onSuccess: Operation image uploaded");
+                            Log.d(TAG, "onSuccess: Getting url of uploaded image");
+                        }
                         Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                         //noinspection StatementWithEmptyBody
                         while (!uriTask.isSuccessful()) ;
                         String uploadedImageUrl = "" + uriTask.getResult();
 
-                        Log.d(TAG, "onSuccess: Uploaded Image URL: " + uploadedImageUrl);
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Uploaded Image URL: " + uploadedImageUrl);
 
                         addOrUpdateOperationFirebase(uploadedImageUrl);
                     })
                     .addOnFailureListener(e -> {
-                        Log.d(TAG, "onFailure: Failed to upload image due to " + e.getMessage());
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onFailure: Failed to upload image due to " + e.getMessage());
+
                         addOrUpdateOperationFirebase(oldImageUrl);
                         Toast.makeText(OperationAddActivity.this, res.getString(R.string.failed_to_upload_image) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
@@ -726,12 +771,16 @@ public class OperationAddActivity extends AppCompatActivity {
     private void recognizeAmountFromImage() {
         if (imageUri == null) {
             // no bitmap
-            Log.d(TAG, "recognizeAmountFromImage: empty image Uri");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "recognizeAmountFromImage: empty image Uri");
+
             Toast.makeText(OperationAddActivity.this, res.getString(R.string.select_image_short), Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Log.d(TAG, "recognizeAmountFromImage: Preparing Image...");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "recognizeAmountFromImage: Preparing Image...");
+
         progressDialog.setMessage(res.getString(R.string.preparing_image));
         progressDialog.show();
 
@@ -739,7 +788,9 @@ public class OperationAddActivity extends AppCompatActivity {
         try {
             image = InputImage.fromFilePath(OperationAddActivity.this, imageUri);
 
-            Log.d(TAG, "recognizeAmountFromImage: Recognizing Text...");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "recognizeAmountFromImage: Recognizing Text...");
+
             progressDialog.setMessage(res.getString(R.string.recognizing_text));
 
             //init TextRecognizer
@@ -760,14 +811,19 @@ public class OperationAddActivity extends AppCompatActivity {
                                         public void onFailure(@NonNull Exception e) {
                                             // Task failed with an exception
                                             progressDialog.dismiss();
-                                            Log.d(TAG, "recognizeAmountFromImage: Failed to recognize text due to " + e.getMessage());
+
+                                            if (BuildConfig.DEBUG)
+                                                Log.d(TAG, "recognizeAmountFromImage: Failed to recognize text due to " + e.getMessage());
+
                                             Toast.makeText(OperationAddActivity.this, res.getString(R.string.failed_to_recognize) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
         }
         catch (Exception e) {
             progressDialog.dismiss();
-            Log.d(TAG, "recognizeAmountFromImage: Failed to get rotation compensation " + e.getMessage());
+
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "recognizeAmountFromImage: Failed to get rotation compensation " + e.getMessage());
             Toast.makeText(OperationAddActivity.this, res.getString(R.string.failed_to_get_rotation) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -775,7 +831,9 @@ public class OperationAddActivity extends AppCompatActivity {
     private void performTextAnalysis(Text visionText) {
         List<Text.TextBlock> textBlock = visionText.getTextBlocks();
         if (textBlock.size() == 0) {
-            Log.d(TAG, "performTextAnalysis: recognition failed, empty textBlock");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "performTextAnalysis: recognition failed, empty textBlock");
+
             progressDialog.dismiss();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(OperationAddActivity.this);

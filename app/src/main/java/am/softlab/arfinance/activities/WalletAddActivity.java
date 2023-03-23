@@ -17,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.List;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
@@ -135,7 +136,8 @@ public class WalletAddActivity extends AppCompatActivity {
     }
 
     private void currencyPickDialog() {
-        Log.d(TAG, "currencyPickDialog: showing currency pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "currencyPickDialog: showing currency pick dialog");
 
         //alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -152,7 +154,8 @@ public class WalletAddActivity extends AppCompatActivity {
                             //set to currency textview
                             binding.currencyTv.setText(selectedCurrencyName);
 
-                            Log.d(TAG, "onClick: Selected Currency: " + selectedCurrencyIndex + " " + selectedCurrencyName);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "onClick: Selected Currency: " + selectedCurrencyIndex + " " + selectedCurrencyName);
                         }
                 )
                 .show();
@@ -192,7 +195,8 @@ public class WalletAddActivity extends AppCompatActivity {
                     .setValue(hashMap)
                     .addOnSuccessListener(unused -> {
                         //category add success
-                        Log.d(TAG, "onSuccess: Wallet added...");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Wallet added...");
                         progressDialog.dismiss();
                         Toast.makeText(WalletAddActivity.this, res.getString(R.string.wallet_added), Toast.LENGTH_SHORT).show();
                     })
@@ -209,12 +213,14 @@ public class WalletAddActivity extends AppCompatActivity {
             ref.child(""+walletId)
                     .updateChildren(hashMap)
                     .addOnSuccessListener(unused -> {
-                        Log.d(TAG, "onSuccess: Wallet updated...");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Wallet updated...");
                         progressDialog.dismiss();
                         Toast.makeText(WalletAddActivity.this, res.getString(R.string.wallet_updated), Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
                         progressDialog.dismiss();
                         Toast.makeText(WalletAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })

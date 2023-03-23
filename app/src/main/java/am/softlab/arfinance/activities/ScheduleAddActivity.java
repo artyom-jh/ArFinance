@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
@@ -173,7 +174,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
 
 
     private void datePickDialog() {
-        Log.d(TAG, "datePickDialog: showing date pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "datePickDialog: showing date pick dialog");
 
         long selectedDate;
         if (scheduleId == null) {       // Add mode
@@ -206,7 +208,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
     private ArrayList<String> walletNameArrayList, walletIdArrayList, currencySymbolArrayList;
     private String selectedWalletId="", selectedWalletName="", selectedCurrencySymbol="", oldSelectedWalletId="";
     private void loadWallets() {
-        Log.d(TAG, "loadWallets: Loading wallets...");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "loadWallets: Loading wallets...");
 
         progressDialog.setMessage(res.getString(R.string.loading_wallets));
         progressDialog.show();
@@ -232,8 +235,10 @@ public class ScheduleAddActivity extends AppCompatActivity {
                                 walletIdArrayList.add(""+model.getId());
                                 currencySymbolArrayList.add(model.getCurrencySymbol());
 
-                                Log.d(TAG, "onDataChange: ID: " + model.getId());
-                                Log.d(TAG, "onDataChange: Wallet: " + model.getWalletName());
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(TAG, "onDataChange: ID: " + model.getId());
+                                    Log.d(TAG, "onDataChange: Wallet: " + model.getWalletName());
+                                }
                             }
 
                             loadCategories();
@@ -247,7 +252,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
         }
     }
     private void walletPickDialog() {
-        Log.d(TAG, "walletPickDialog: showing wallet pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "walletPickDialog: showing wallet pick dialog");
 
         if (firebaseAuth.getCurrentUser() != null) {
             //get string array of wallets from arraylist
@@ -271,7 +277,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
                                 //set to wallet textview
                                 binding.walletTv.setText(selectedWalletName);
 
-                                Log.d(TAG, "onClick: Selected Wallet: " + selectedWalletId + " " + selectedWalletName);
+                                if (BuildConfig.DEBUG)
+                                    Log.d(TAG, "onClick: Selected Wallet: " + selectedWalletId + " " + selectedWalletName);
                             }
                     )
                     .show();
@@ -289,7 +296,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
     private String selectedCategoryId="", selectedCategoryTitle="", oldSelectedCategoryId="";
 
     private void loadCategories() {
-        Log.d(TAG, "loadCategories: Loading categories...");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "loadCategories: Loading categories...");
 
         progressDialog.setMessage(res.getString(R.string.loading_operations));
 
@@ -325,8 +333,10 @@ public class ScheduleAddActivity extends AppCompatActivity {
                                 categoryExpenseIdArrayList.add(categoryId);
                             }
 
-                            Log.d(TAG, "onDataChange: ID: " + categoryId);
-                            Log.d(TAG, "onDataChange: Category: " + categoryTitle);
+                            if (BuildConfig.DEBUG) {
+                                Log.d(TAG, "onDataChange: ID: " + categoryId);
+                                Log.d(TAG, "onDataChange: Category: " + categoryTitle);
+                            }
                         }
                         progressDialog.dismiss();
                     }
@@ -339,7 +349,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
     }
 
     private void categoryPickDialog() {
-        Log.d(TAG, "categoryPickDialog: showing category pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "categoryPickDialog: showing category pick dialog");
 
         String[] categoriesArray;
 
@@ -381,7 +392,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
                             //set to category textview
                             binding.categoryTv.setText(selectedCategoryTitle);
 
-                            Log.d(TAG, "onClick: Selected Category: " + selectedCategoryId + " " + selectedCategoryTitle);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "onClick: Selected Category: " + selectedCategoryId + " " + selectedCategoryTitle);
                         }
                 )
                 .show();
@@ -389,7 +401,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
 
 
     private void scheduleTypePickDialog() {
-        Log.d(TAG, "scheduleTypePickDialog: showing schedule type pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "scheduleTypePickDialog: showing schedule type pick dialog");
 
         //alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -409,14 +422,16 @@ public class ScheduleAddActivity extends AppCompatActivity {
                             binding.scheduleTypeTv.setText(selectedScheduleTypeTitle);
                             binding.categoryTv.setText(selectedCategoryTitle);
 
-                            Log.d(TAG, "onClick: Selected Category: " + selectedScheduleTypeIndex + " " + selectedScheduleTypeTitle);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "onClick: Selected Category: " + selectedScheduleTypeIndex + " " + selectedScheduleTypeTitle);
                         }
                 )
                 .show();
     }
 
     private void periodPickDialog() {
-        Log.d(TAG, "periodPickDialog: showing period pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "periodPickDialog: showing period pick dialog");
 
         //alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -431,7 +446,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
                             //set to category textview
                             binding.periodTv.setText(selectedPeriodTitle);
 
-                            Log.d(TAG, "onClick: Selected Period: " + selectedPeriodIndex + " " + selectedPeriodTitle);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "onClick: Selected Period: " + selectedPeriodIndex + " " + selectedPeriodTitle);
                         }
                 )
                 .show();
@@ -440,7 +456,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
 
 
     private void loadScheduleInfo() {
-        Log.d(TAG, "loadScheduleInfo: Loading schedule info");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "loadScheduleInfo: Loading schedule info");
 
         //show progress
         progressDialog.show();
@@ -510,10 +527,12 @@ public class ScheduleAddActivity extends AppCompatActivity {
         MyApplication.hideKeyboard(this);
 
         if (scheduleId == null) {       // Add mode
-            Log.d(TAG, "addOrUpdateScheduleFirebase: Starting adding schedule info to db...");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "addOrUpdateScheduleFirebase: Starting adding schedule info to db...");
             progressDialog.setMessage(res.getString(R.string.adding_schedule));
         } else {                    // Edit mode
-            Log.d(TAG, "addOrUpdateScheduleFirebase: Starting updating schedule info to db...");
+            if (BuildConfig.DEBUG)
+                Log.d(TAG, "addOrUpdateScheduleFirebase: Starting updating schedule info to db...");
             progressDialog.setMessage(res.getString(R.string.updating_schedule));
         }
 
@@ -547,7 +566,9 @@ public class ScheduleAddActivity extends AppCompatActivity {
                     .setValue(hashMap)
                     .addOnSuccessListener(unused -> {
                         //schedule add success
-                        Log.d(TAG, "onSuccess: Schedule added...");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Schedule added...");
+
                         MyApplication.updateWalletBalance(selectedWalletId, selectedCategoryId, 0, isIncome, Constants.ROW_ADDED);
                         progressDialog.dismiss();
                         Toast.makeText(ScheduleAddActivity.this, res.getString(R.string.schedule_added), Toast.LENGTH_SHORT).show();
@@ -569,7 +590,8 @@ public class ScheduleAddActivity extends AppCompatActivity {
             ref.child(scheduleId)
                     .updateChildren(hashMap)
                     .addOnSuccessListener(unused -> {
-                        Log.d(TAG, "onSuccess: Schedule updated...");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Schedule updated...");
 
                         if (!selectedWalletId.equals(oldSelectedWalletId)) {
                             MyApplication.updateWalletBalance(oldSelectedWalletId, "",0, isIncome, Constants.ROW_DELETED);
@@ -585,7 +607,9 @@ public class ScheduleAddActivity extends AppCompatActivity {
                         Toast.makeText(ScheduleAddActivity.this, res.getString(R.string.schedule_updated), Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+
                         progressDialog.dismiss();
                         Toast.makeText(ScheduleAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })

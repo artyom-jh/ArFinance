@@ -141,7 +141,8 @@ public class PieFragment extends Fragment {
         categoryPieChart = binding.categoryPieChart;
         setupCategoryPieChart();
 
-        Log.d(TAG, "onCreateView: Pie: " + statPageId);
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "onCreateView: Pie: " + statPageId);
 
         loadWallets();
 
@@ -187,7 +188,9 @@ public class PieFragment extends Fragment {
     }
 
     private void loadWallets() {
-        Log.d(TAG, "loadWallets: Loading wallets...");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "loadWallets: Loading wallets...");
+
         walletNameArrayList = new ArrayList<>();
         walletIdArrayList = new ArrayList<>();
         currencySymbolArrayList = new ArrayList<>();
@@ -209,8 +212,10 @@ public class PieFragment extends Fragment {
                                 walletIdArrayList.add(""+model.getId());
                                 currencySymbolArrayList.add(model.getCurrencySymbol());
 
-                                Log.d(TAG, "onDataChange: ID: " + model.getId());
-                                Log.d(TAG, "onDataChange: Wallet: " + model.getWalletName());
+                                if (BuildConfig.DEBUG) {
+                                    Log.d(TAG, "onDataChange: ID: " + model.getId());
+                                    Log.d(TAG, "onDataChange: Wallet: " + model.getWalletName());
+                                }
                             }
                         }
 
@@ -223,7 +228,8 @@ public class PieFragment extends Fragment {
     }
 
     private void walletPickDialog() {
-        Log.d(TAG, "walletPickDialog: showing wallet pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "walletPickDialog: showing wallet pick dialog");
 
         if (firebaseAuth.getCurrentUser() != null) {
             //get string array of wallets from arraylist
@@ -252,7 +258,8 @@ public class PieFragment extends Fragment {
 
                                 loadCategoriesByWallet();
 
-                                Log.d(TAG, "onClick: Selected Wallet: " + selectedWalletId + " " + selectedWalletName);
+                                if (BuildConfig.DEBUG)
+                                    Log.d(TAG, "onClick: Selected Wallet: " + selectedWalletId + " " + selectedWalletName);
                             }
                     )
                     .show();

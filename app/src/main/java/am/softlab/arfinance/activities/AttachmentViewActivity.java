@@ -1,17 +1,24 @@
 package am.softlab.arfinance.activities;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
@@ -63,10 +70,20 @@ public class AttachmentViewActivity extends AppCompatActivity {
         //binding.photoViewPv.setImageResource(R.drawable.back02);
         Glide.with(getApplicationContext())
                 .load(imageUrl)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        progressDialog.dismiss();
+                        return false;
+                    }
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        progressDialog.dismiss();
+                        return false;
+                    }
+                })
                 .placeholder(R.drawable.ic_no_photo_gray)
                 .into(binding.photoViewPv);
-
-        progressDialog.dismiss();
 
         //handle click, goBack
         binding.backBtn.setOnClickListener(v -> {
@@ -82,12 +99,15 @@ public class AttachmentViewActivity extends AppCompatActivity {
                     .setMessage(res.getString(R.string.sure_download_image))
                     .setPositiveButton(res.getString(R.string.download), (dialogInterface, i) -> {
                         //begin download
-                        Log.d(TAG_DOWNLOAD, "onClick: Checking permission");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG_DOWNLOAD, "onClick: Checking permission");
+
                         if (MyApplication.checkPermission(this,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                 Constants.WRITE_EXTERNAL_STORAGE))
                         {
-                            Log.d(TAG_DOWNLOAD, "onClick: Permission already granted, can download image");
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG_DOWNLOAD, "onClick: Permission already granted, can download image");
                             Toast.makeText(this, res.getString(R.string.downloading), Toast.LENGTH_SHORT).show();
                             MyApplication.downloadImage(this, categoryName, operationTimestamp, imageUrl);
                         }

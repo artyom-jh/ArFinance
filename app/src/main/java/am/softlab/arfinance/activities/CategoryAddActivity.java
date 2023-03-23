@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityCategoryAddBinding;
@@ -125,7 +126,8 @@ public class CategoryAddActivity extends AppCompatActivity {
     }
 
     private void categoryTypePickDialog() {
-        Log.d(TAG, "categoryTypePickDialog: showing category pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "categoryTypePickDialog: showing category pick dialog");
 
         //alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -140,7 +142,8 @@ public class CategoryAddActivity extends AppCompatActivity {
                             //set to category textview
                             binding.categoryTypeTv.setText(selectedCategoryTypeTitle);
 
-                            Log.d(TAG, "onClick: Selected Category: " + selectedCategoryTypeIndex + " " + selectedCategoryTypeTitle);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "onClick: Selected Category: " + selectedCategoryTypeIndex + " " + selectedCategoryTypeTitle);
                         }
                 )
                 .show();
@@ -177,7 +180,9 @@ public class CategoryAddActivity extends AppCompatActivity {
                     .setValue(hashMap)
                     .addOnSuccessListener(unused -> {
                         //category add success
-                        Log.d(TAG, "onSuccess: Category added...");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Category added...");
+
                         progressDialog.dismiss();
                         Toast.makeText(CategoryAddActivity.this, res.getString(R.string.category_added), Toast.LENGTH_SHORT).show();
                     })
@@ -194,12 +199,16 @@ public class CategoryAddActivity extends AppCompatActivity {
             ref.child(""+categoryId)
                     .updateChildren(hashMap)
                     .addOnSuccessListener(unused -> {
-                        Log.d(TAG, "onSuccess: Category updated...");
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onSuccess: Category updated...");
+
                         progressDialog.dismiss();
                         Toast.makeText(CategoryAddActivity.this, res.getString(R.string.category_updated), Toast.LENGTH_SHORT).show();
                     })
                     .addOnFailureListener(e -> {
-                        Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onFailure: failed to update due to " + e.getMessage());
+
                         progressDialog.dismiss();
                         Toast.makeText(CategoryAddActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     })

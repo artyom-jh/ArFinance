@@ -98,7 +98,8 @@ public class OperationFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentOperationBinding.inflate(LayoutInflater.from(context), container, false);
 
-        Log.d(TAG, "onCreateView: OperationFragment: " + walletId);
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "onCreateView: OperationFragment: " + walletId);
         loadOperations();
 
         //edit text change listener, search

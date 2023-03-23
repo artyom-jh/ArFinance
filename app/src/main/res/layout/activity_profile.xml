@@ -56,23 +56,37 @@
         android:background="@drawable/shape_rect01"
         android:layout_marginTop="180dp"/>
 
-    <!-- Shapeable image view with rounded corners for image -->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/profileIv"
+    <RelativeLayout
+        android:id="@+id/profileRl"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="120dp"
-        android:background="@color/white"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_person_gray"
-        app:shapeAppearance="@style/styleRoundedCornersImage"/>
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" />
+
+        <!-- Shapeable image view with rounded corners for image -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profileIv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:background="@color/white"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_person_gray"
+            app:shapeAppearance="@style/styleRoundedCornersImage"/>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/nameTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/profileIv"
+        android:layout_below="@id/profileRl"
         android:layout_marginTop="8dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="7dp"

@@ -43,7 +43,8 @@ public class MyWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        Log.d(TAG, "doWork: success function called");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "doWork: success function called");
 
         if (MyApplication.getScheduleArrayList().size() <= 0)
             return Result.success();

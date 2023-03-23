@@ -1,17 +1,24 @@
 package am.softlab.arfinance.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityProfileBinding;
@@ -124,7 +132,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserInfo() {
-        Log.d(TAG, "loadUserInfo: Loading user info of user " + firebaseAuth.getUid());
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "loadUserInfo: Loading user info of user " + firebaseAuth.getUid());
 
         //get email verification status, after verification you have to re login to get changes...
         if(firebaseUser.isEmailVerified()){
@@ -154,9 +163,27 @@ public class ProfileActivity extends AppCompatActivity {
                         binding.memberDateTv.setText(formattedDate);
                         binding.accountTypeTv.setText(userType);
 
+                        binding.progressBar.setVisibility(View.VISIBLE);
+                        binding.profileIv.setVisibility(View.INVISIBLE);
+
                         //set image, using glide
                         Glide.with(getApplicationContext())
                                 .load(profileImage)
+                                .listener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        binding.progressBar.setVisibility(View.GONE);
+                                        binding.profileIv.setVisibility(View.VISIBLE);
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        binding.progressBar.setVisibility(View.GONE);
+                                        binding.profileIv.setVisibility(View.VISIBLE);
+                                        return false;
+                                    }
+                                })
                                 .placeholder(R.drawable.ic_person_gray)
                                 .into(binding.profileIv);
                     }
