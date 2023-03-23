@@ -232,7 +232,7 @@
     <string name="total_income">- total income</string>
     <string name="total_expenses">- total expenses</string>
     <string name="balance">Balance</string>
-    <string name="loading_walletss">Loading Wallets…</string>
+    <string name="loading_wallets">Loading Wallets…</string>
 
     <!--errors-->
     <string name="failed_to_update_db">Failed to update db due to</string>

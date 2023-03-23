@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -41,6 +42,9 @@ public class DashboardActivity extends AppCompatActivity {
     //firebase auth
     private FirebaseAuth firebaseAuth;
 
+    //progress dialog
+    private ProgressDialog progressDialog;
+
     //resources
     private Resources res;
 
@@ -54,6 +58,11 @@ public class DashboardActivity extends AppCompatActivity {
 
         //get resources
         res = this.getResources();
+
+        //configure progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(res.getString(R.string.please_wait));
+        progressDialog.setCanceledOnTouchOutside(false);
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -90,7 +99,7 @@ public class DashboardActivity extends AppCompatActivity {
             builder.setTitle(res.getString(R.string.signout))
                     .setMessage(res.getString(R.string.sure_signout))
                     .setPositiveButton(
-                            res.getString(R.string.confirm),
+                            res.getString(R.string.signout),
                             (dialogInterface, i) -> {
                                 firebaseAuth.signOut();
                                 startActivity(new Intent(DashboardActivity.this, MainActivity.class));
@@ -209,7 +218,11 @@ public class DashboardActivity extends AppCompatActivity {
             //set in textview of toolbar
             binding.subTitleTv.setText(email);
 
-            MyApplication.loadWalletList();
+            //show progress
+            progressDialog.setMessage(res.getString(R.string.please_wait));
+            progressDialog.show();
+
+            MyApplication.loadWalletList(progressDialog);
             // ATTENTION 1: loadCategoryList() called from loadWalletList
             // ATTENTION 2: loadSchedulers() called from loadCategoryList
             // ATTENTION 3: periodicWork() called from loadSchedulers

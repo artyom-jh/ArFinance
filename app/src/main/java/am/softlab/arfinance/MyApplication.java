@@ -82,6 +82,10 @@ public class MyApplication extends Application {
         MyApplication.context = getApplicationContext();
     }
 
+    public static List<List<String>> getCategoryArrayList() {
+        return categoryArrayList;
+    }
+
     //created a static method to convert timestamp to proper date format, so we can use
     //it everywhere in project, no need to rewrite again
     public static String formatTimestamp(long timestamp){
@@ -116,9 +120,12 @@ public class MyApplication extends Application {
         return formatterDecimal.format(number);
     }
 
-    public static void loadCategoryList() {
+    public static void loadCategoryList(ProgressDialog progressDialog) {
         //get category using categoryId
         categoryArrayList = new ArrayList<List<String>>();
+
+        if (progressDialog != null)
+            progressDialog.setMessage(context.getResources().getString(R.string.loading_categories));
 
         //get all categories from firebase > Categories
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
@@ -138,12 +145,13 @@ public class MyApplication extends Application {
                     categoryArrayList.add(currentList);
                 }
 
-                loadSchedulers(true);
+                loadSchedulers(progressDialog, true);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                //noop
+                if (progressDialog != null)
+                    progressDialog.dismiss();
             }
         });
     }
@@ -158,9 +166,12 @@ public class MyApplication extends Application {
         return "";
     }
 
-    public static void loadWalletList() {
+    public static void loadWalletList(ProgressDialog progressDialog) {
         //get wallet using walletId
         walletArrayList = new ArrayList<List<String>>();
+
+        if (progressDialog != null)
+            progressDialog.setMessage(context.getResources().getString(R.string.loading_wallets));
 
         //get all wallets from firebase > Wallets
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
@@ -181,12 +192,13 @@ public class MyApplication extends Application {
                     walletArrayList.add(currentList);
                 }
 
-                loadCategoryList();
+                loadCategoryList(progressDialog);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                //noop
+                if (progressDialog != null)
+                    progressDialog.dismiss();
             }
         });
     }
@@ -212,7 +224,10 @@ public class MyApplication extends Application {
         return "";
     }
 
-    public static void loadSchedulers(boolean runPeriodicWork) {
+    public static void loadSchedulers(ProgressDialog progressDialog, boolean runPeriodicWork) {
+        if (progressDialog != null)
+            progressDialog.setMessage(context.getResources().getString(R.string.loading_schedulers));
+
         //get schedullers from firebase > Schedulers
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Schedulers");
@@ -230,12 +245,15 @@ public class MyApplication extends Application {
                         }
 
                         if (runPeriodicWork)
-                            periodicWork();
+                            periodicWork(progressDialog);
+                        else
+                            progressDialog.dismiss();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        //noop
+                        if (progressDialog != null)
+                            progressDialog.dismiss();
                     }
                 });
     }
@@ -504,7 +522,7 @@ public class MyApplication extends Application {
 //                .enqueue(workRequest);
 //    }
 
-    public static void periodicWork() {
+    public static void periodicWork(ProgressDialog progressDialog) {
         WorkManager workManager = WorkManager.getInstance(context);
         //workManager.cancelUniqueWork(Constants.WORK_ID);
         workManager.cancelAllWorkByTag(Constants.WORK_ID);
@@ -525,6 +543,9 @@ public class MyApplication extends Application {
                 Constants.WORK_ID,
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
                 periodicWorkRequest);
+
+        if (progressDialog != null)
+            progressDialog.dismiss();
     }
 
 

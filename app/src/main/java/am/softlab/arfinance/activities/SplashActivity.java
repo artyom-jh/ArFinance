@@ -46,7 +46,7 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();// finish this activity
         }
-        else{
+        else {
             //user logged in check user type, same as done in login screen
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
             ref.child(firebaseUser.getUid())

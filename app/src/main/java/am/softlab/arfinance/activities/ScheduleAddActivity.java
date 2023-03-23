@@ -208,7 +208,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
     private void loadWallets() {
         Log.d(TAG, "loadWallets: Loading wallets...");
 
-        progressDialog.setMessage(res.getString(R.string.loading_walletss));
+        progressDialog.setMessage(res.getString(R.string.loading_wallets));
         progressDialog.show();
 
         walletNameArrayList = new ArrayList<>();

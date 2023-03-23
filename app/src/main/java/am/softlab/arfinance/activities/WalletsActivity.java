@@ -106,7 +106,7 @@ public class WalletsActivity extends AppCompatActivity {
     }
 
     private void loadWallets() {
-        progressDialog.setMessage(res.getString(R.string.loading_walletss));
+        progressDialog.setMessage(res.getString(R.string.loading_wallets));
         progressDialog.show();
 
         // init arraylist

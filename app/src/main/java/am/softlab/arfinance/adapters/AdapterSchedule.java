@@ -197,7 +197,7 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
                     public void onSuccess(Void unused) {
                         btn.setChecked(switchChecked);
 
-                        MyApplication.loadSchedulers(false);
+                        MyApplication.loadSchedulers(null, false);
 
                         progressDialog.dismiss();
                         final String toastMsg = switchChecked ? res.getString(R.string.started) : res.getString(R.string.stopped);
@@ -221,7 +221,7 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
                 .addOnSuccessListener(unused -> {
                     // deleted successfully
 
-                    MyApplication.loadSchedulers(false);
+                    MyApplication.loadSchedulers(null, false);
 
                     MyApplication.updateWalletBalance(deleteWalletId, deleteCategoryId, 0, model.getIsIncome(), Constants.ROW_DELETED);
                     // ATTENTION 1: updateCategoryUsage() called from updateWalletBalance
