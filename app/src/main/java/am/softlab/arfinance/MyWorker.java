@@ -19,7 +19,7 @@ import am.softlab.arfinance.models.ModelSchedule;
 
 public class MyWorker extends Worker {
 
-    private Context context;
+    private final Context context;
 
     private final FirebaseAuth firebaseAuth;
 
@@ -114,9 +114,7 @@ public class MyWorker extends Worker {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
             ref.updateChildren(
                     hashMapMulti,
-                    (error, ref1) -> {
-                        MyApplication.showNotification(res.getString(R.string.tasks_completed));
-                    }
+                    (error, ref1) -> MyApplication.showNotification(res.getString(R.string.tasks_completed))
             );
         }
 

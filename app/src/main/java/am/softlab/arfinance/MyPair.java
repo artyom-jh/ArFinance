@@ -21,7 +21,7 @@ public class MyPair {
     }
 
     private static boolean isMyPair(Object o) {
-        return o != null && o instanceof MyPair;
+        return o instanceof MyPair;
     }
 
     private boolean pairEqual(MyPair p) {

@@ -194,9 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
         ref.updateChildren(
                 hashMapMulti,
-                (error, ref1) -> {
-                    checkWalletsTable();
-                }
+                (error, ref1) -> checkWalletsTable()
         );
     }
 

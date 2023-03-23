@@ -2,7 +2,6 @@ package am.softlab.arfinance.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
@@ -12,14 +11,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.Menu;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -137,22 +131,16 @@ public class DashboardActivity extends AppCompatActivity {
         });
 
         //handle card click, Statistics
-        binding.statisticsCv.setOnClickListener(v -> {
-            startActivity((new Intent(DashboardActivity.this, StatisticsActivity.class)));
-        });
+        binding.statisticsCv.setOnClickListener(v -> startActivity((new Intent(DashboardActivity.this, StatisticsActivity.class))));
 
         //handle card click, Categories
-        binding.categoriesCv.setOnClickListener(v -> {
-            startActivity((new Intent(DashboardActivity.this, CategoriesActivity.class)));
-        });
+        binding.categoriesCv.setOnClickListener(v -> startActivity((new Intent(DashboardActivity.this, CategoriesActivity.class))));
 
         //handle card click, Wallets
-        binding.walletsCv.setOnClickListener(v -> {
-            startActivity((new Intent(DashboardActivity.this, WalletsActivity.class)));
-        });
+        binding.walletsCv.setOnClickListener(v -> startActivity((new Intent(DashboardActivity.this, WalletsActivity.class))));
     }
 
-    private OnMenuItemClickListener<PowerMenuItem> onMenuItemClickListener = new OnMenuItemClickListener<PowerMenuItem>() {
+    private final OnMenuItemClickListener<PowerMenuItem> onMenuItemClickListener = new OnMenuItemClickListener<PowerMenuItem>() {
         @Override
         public void onItemClick(int position, PowerMenuItem item) {
             powerMenu.dismiss();

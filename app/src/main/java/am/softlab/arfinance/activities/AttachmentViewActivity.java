@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,7 +30,8 @@ public class AttachmentViewActivity extends AppCompatActivity {
     //view binding
     private ActivityAttachmentViewBinding binding;
 
-    private String operId, categoryName, imageUrl;
+    private String mOperId, mCategoryName, mImageUrl;
+    private Uri mImageUri;
     private long operationTimestamp;
 
     //progress dialog
@@ -59,31 +61,54 @@ public class AttachmentViewActivity extends AppCompatActivity {
         progressDialog.show();
 
         //operation id get from intent started from AdapterOperation
-        operId = getIntent().getStringExtra("operId");
-        categoryName = getIntent().getStringExtra("categoryName");
+        mOperId = getIntent().getStringExtra("operId");
+        mCategoryName = getIntent().getStringExtra("categoryName");
         operationTimestamp = getIntent().getLongExtra("operationTimestamp", System.currentTimeMillis());
-        imageUrl = getIntent().getStringExtra("imageUrl");
+        mImageUrl = getIntent().getStringExtra("imageUrl");
+        String imageUriStr = getIntent().getStringExtra("imageUri");
+        if (imageUriStr == null || imageUriStr.isEmpty())
+            mImageUri = null;
+        else
+            mImageUri = Uri.parse(imageUriStr);
 
-        String attachmentName = categoryName + "_" + MyApplication.formatTimestamp2(operationTimestamp);
+        String attachmentName = mCategoryName + "_" + MyApplication.formatTimestamp2(operationTimestamp);
         binding.titleTv.setText(attachmentName);
 
         //binding.photoViewPv.setImageResource(R.drawable.back02);
-        Glide.with(getApplicationContext())
-                .load(imageUrl)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        progressDialog.dismiss();
-                        return false;
-                    }
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        progressDialog.dismiss();
-                        return false;
-                    }
-                })
-                .placeholder(R.drawable.ic_no_photo_gray)
-                .into(binding.photoViewPv);
+        if (mImageUri != null)
+            Glide.with(getApplicationContext())
+                    .load(mImageUri)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            progressDialog.dismiss();
+                            return false;
+                        }
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            progressDialog.dismiss();
+                            return false;
+                        }
+                    })
+                    .placeholder(R.drawable.ic_no_photo_gray)
+                    .into(binding.photoViewPv);
+        else
+            Glide.with(getApplicationContext())
+                    .load(mImageUrl)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            progressDialog.dismiss();
+                            return false;
+                        }
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            progressDialog.dismiss();
+                            return false;
+                        }
+                    })
+                    .placeholder(R.drawable.ic_no_photo_gray)
+                    .into(binding.photoViewPv);
 
         //handle click, goBack
         binding.backBtn.setOnClickListener(v -> {
@@ -109,7 +134,8 @@ public class AttachmentViewActivity extends AppCompatActivity {
                             if (BuildConfig.DEBUG)
                                 Log.d(TAG_DOWNLOAD, "onClick: Permission already granted, can download image");
                             Toast.makeText(this, res.getString(R.string.downloading), Toast.LENGTH_SHORT).show();
-                            MyApplication.downloadImage(this, categoryName, operationTimestamp, imageUrl);
+
+                            MyApplication.downloadImage(this, mCategoryName, operationTimestamp, mImageUrl, mImageUri);
                         }
                     })
                     .setNegativeButton(res.getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())

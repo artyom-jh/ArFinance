@@ -14,10 +14,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
@@ -58,6 +61,7 @@ import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,16 +98,16 @@ public class OperationAddActivity extends AppCompatActivity {
     //selected category id and category title
     private String selectedCategoryId, selectedCategoryTitle, oldSelectedCategoryId="";
     private double oldAmount = 0;
-    private long operationTimestamp=0;
+    private long mOperationTimestamp=0;
     //operation id get from intent started from AdapterOperation
 
     private boolean isIncome;
-    private String operId, walletId, oldImageUrl="";
+    private String mOperId, walletId, oldImageUrl="";
     private long currentOperationId = 0;
 
     private boolean imageChanged = false;
 
-    private Uri imageUri = null;
+    private Uri mImageUri = null;
 
     private static final String TAG = "OPERATION_ADD_TAG";
 
@@ -129,11 +133,11 @@ public class OperationAddActivity extends AppCompatActivity {
                 .setTitleText(res.getString(R.string.select_date));
 
         //operation id get from intent started from AdapterOperation
-        operId = getIntent().getStringExtra("operId");
+        mOperId = getIntent().getStringExtra("operId");
         walletId= getIntent().getStringExtra("walletId");
         isIncome = getIntent().getBooleanExtra("isIncome", false);
 
-        if (operId == null) {       // Add mode
+        if (mOperId == null) {       // Add mode
             if (isIncome)
                 binding.titleIv.setText(res.getString(R.string.add_income));
             else
@@ -148,13 +152,13 @@ public class OperationAddActivity extends AppCompatActivity {
 
         loadCategories();
 
-        if (operId == null) {       // Add mode
-            operationTimestamp = System.currentTimeMillis();
-            String formattedDate = MyApplication.formatTimestamp(operationTimestamp);
+        if (mOperId == null) {       // Add mode
+            mOperationTimestamp = System.currentTimeMillis();
+            String formattedDate = MyApplication.formatTimestamp(mOperationTimestamp);
             binding.operDateTv.setText(formattedDate);
         }
         else {                      // Edit mode
-            currentOperationId = Long.parseLong(operId);
+            currentOperationId = Long.parseLong(mOperId);
             loadOperationInfo();
         }
 
@@ -215,7 +219,7 @@ public class OperationAddActivity extends AppCompatActivity {
         progressDialog.show();
 
         DatabaseReference refOperations = FirebaseDatabase.getInstance().getReference("Operations");
-        refOperations.child(operId)
+        refOperations.child(mOperId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -227,8 +231,8 @@ public class OperationAddActivity extends AppCompatActivity {
 
                         String notes = ""+snapshot.child("notes").getValue();
                         //set to view
-                        operationTimestamp = Long.parseLong(snapshot.child("operationTimestamp").getValue().toString());
-                        String formattedDate = MyApplication.formatTimestamp(operationTimestamp);
+                        mOperationTimestamp = Long.parseLong(snapshot.child("operationTimestamp").getValue().toString());
+                        String formattedDate = MyApplication.formatTimestamp(mOperationTimestamp);
                         binding.operDateTv.setText( formattedDate );
                         binding.operAmountEt.setText( amountStr );
                         binding.operNotesEt.setText(notes);
@@ -303,10 +307,10 @@ public class OperationAddActivity extends AppCompatActivity {
             Log.d(TAG, "datePickDialog: showing date pick dialog");
 
         long selectedDate;
-        if (operId == null) {       // Add mode
+        if (mOperId == null) {       // Add mode
             selectedDate = MaterialDatePicker.todayInUtcMilliseconds();
         } else {                    // Edit mode
-            selectedDate = operationTimestamp;
+            selectedDate = mOperationTimestamp;
         }
 
         //configure datePicker
@@ -320,8 +324,8 @@ public class OperationAddActivity extends AppCompatActivity {
                 selection -> {
                     // if the user clicks on the positive button that is ok button update the selected date
                     //noinspection ConstantConditions
-                    operationTimestamp = materialDatePicker.getSelection();
-                    String formattedDate = MyApplication.formatTimestamp(operationTimestamp);
+                    mOperationTimestamp = materialDatePicker.getSelection();
+                    String formattedDate = MyApplication.formatTimestamp(mOperationTimestamp);
                     binding.operDateTv.setText(formattedDate);
                 });
 
@@ -362,14 +366,25 @@ public class OperationAddActivity extends AppCompatActivity {
     private void checkForAttachment() {
         AlertDialog.Builder builder = new AlertDialog.Builder(OperationAddActivity.this);
 
-        if (imageUri != null) {
+        if ( (mImageUri != null)
+                || (oldImageUrl != null && !oldImageUrl.isEmpty()) )
+        {
             //confirm recognize amount dialog
             builder.setTitle(res.getString(R.string.recognition))
                     .setMessage(res.getString(R.string.recognition_start))
                     .setPositiveButton(
                             res.getString(R.string.recognize),
-                            (dialogInterface, i) -> {
-                                recognizeAmountFromImage();
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    if (mImageUri != null)
+                                        OperationAddActivity.this.recognizeAmountFromImage(null);
+                                    else {
+                                        //if (oldImageUrl != null && !oldImageUrl.isEmpty())
+                                        Bitmap bitmap = ((BitmapDrawable) binding.operationImageIv.getDrawable()).getBitmap();
+                                        recognizeAmountFromImage(bitmap);
+                                    }
+                                }
                             }
                     )
                     .setNegativeButton(
@@ -379,7 +394,7 @@ public class OperationAddActivity extends AppCompatActivity {
                     .show();
         }
         else {
-            builder.setTitle(res.getString(R.string.warning))
+            builder.setTitle(res.getString(R.string.recognition))
                     .setMessage(res.getString(R.string.select_image))
                     .setPositiveButton(res.getString(R.string.close),null)
                     .show();
@@ -397,7 +412,7 @@ public class OperationAddActivity extends AppCompatActivity {
             amount = 0;
         }
 
-        if (operationTimestamp == 0) {
+        if (mOperationTimestamp == 0) {
             Toast.makeText(this, res.getString(R.string.pick_date), Toast.LENGTH_SHORT).show();
         }
         else if (amount == 0) {
@@ -411,7 +426,7 @@ public class OperationAddActivity extends AppCompatActivity {
             progressDialog.show();
 
             if (!imageChanged
-                    || (operId == null && imageUri == null) )
+                    || (mOperId == null && mImageUri == null) )
             {
                 //need to update without image
                 addOrUpdateOperationFirebase(oldImageUrl);
@@ -428,7 +443,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
         long timestamp = System.currentTimeMillis();
 
-        if (operId == null) {       // Add mode
+        if (mOperId == null) {       // Add mode
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "addOrEditOperationFirebase: Starting adding operation info to db...");
             progressDialog.setMessage(res.getString(R.string.adding_operation));
@@ -443,7 +458,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
         //setup data to update to db
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("operationTimestamp", operationTimestamp);
+        hashMap.put("operationTimestamp", mOperationTimestamp);
         hashMap.put("walletId", walletId);
         hashMap.put("categoryId", ""+selectedCategoryId);
         hashMap.put("notes", ""+notes);
@@ -456,7 +471,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Operations");
 
-        if (operId == null) {   // Add mode
+        if (mOperId == null) {   // Add mode
             hashMap.put("id", ""+currentOperationId);
 
             //add to firebase db... Database Root > Operations > operId > operation info
@@ -479,9 +494,9 @@ public class OperationAddActivity extends AppCompatActivity {
                     .addOnCompleteListener(task -> finish());
         }
         else {          // Edit mode
-            hashMap.put("id", ""+operId);
+            hashMap.put("id", ""+mOperId);
 
-            ref.child(""+operId)
+            ref.child(""+mOperId)
                     .updateChildren(hashMap)
                     .addOnSuccessListener(unused -> {
                         if (BuildConfig.DEBUG)
@@ -511,7 +526,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
     private void showImageAttachMenu() {
         boolean bool = ((oldImageUrl != null) && !oldImageUrl.isEmpty() && !imageChanged)
-                || (imageChanged && imageUri != null);
+                || (imageChanged && mImageUri != null);
         //init/setup popup menu
         PopupMenu popupMenu = new PopupMenu(this, binding.operationImageIv);
         popupMenu.getMenu().add(Menu.NONE, 0, 0, res.getString(R.string.camera));
@@ -548,11 +563,12 @@ public class OperationAddActivity extends AppCompatActivity {
             }
 
             else if (whichItemClicked == 2) {   //View menu
-                //todo
+                String imageUrl = (oldImageUrl == null) ? "" : oldImageUrl;
+                MyApplication.startAttachmentViewActivity(OperationAddActivity.this, mOperId, selectedCategoryTitle, mOperationTimestamp, imageUrl, mImageUri);
             }
 
             else if (whichItemClicked == 3) {   //Clear menu
-                imageUri = null;
+                mImageUri = null;
                 imageChanged = true;
                 binding.operationImageIv.setImageResource(R.drawable.ic_add_photo_gray);
             }
@@ -566,10 +582,10 @@ public class OperationAddActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, res.getString(R.string.new_pick));  //image title
         values.put(MediaStore.Images.Media.DESCRIPTION, res.getString(R.string.sample_image_desc));
-        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        mImageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
         cameraActivityResultLauncher.launch(intent);
     }
 
@@ -580,7 +596,7 @@ public class OperationAddActivity extends AppCompatActivity {
         galleryActivityResultLauncher.launch(intent);
     }
 
-    private ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -589,9 +605,9 @@ public class OperationAddActivity extends AppCompatActivity {
                     //get uri of image
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         if (BuildConfig.DEBUG)
-                            Log.d(TAG, "onActivityResult: Picked From Camera " + imageUri);
+                            Log.d(TAG, "onActivityResult: Picked From Camera " + mImageUri);
                         imageChanged = true;
-                        binding.operationImageIv.setImageURI(imageUri);
+                        binding.operationImageIv.setImageURI(mImageUri);
                     }
                     else {
                         Toast.makeText(OperationAddActivity.this, res.getString(R.string.canceled), Toast.LENGTH_SHORT).show();
@@ -600,7 +616,7 @@ public class OperationAddActivity extends AppCompatActivity {
             }
     );
 
-    private ActivityResultLauncher<Intent> galleryActivityResultLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> galleryActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -609,16 +625,16 @@ public class OperationAddActivity extends AppCompatActivity {
                     //get uri of image
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         if (BuildConfig.DEBUG)
-                            Log.d(TAG, "onActivityResult: " + imageUri);
+                            Log.d(TAG, "onActivityResult: " + mImageUri);
 
                         Intent data = result.getData();
-                        imageUri = data.getData();
+                        mImageUri = data.getData();
 
                         if (BuildConfig.DEBUG)
-                            Log.d(TAG, "onActivityResult: Picked From Gallery " + imageUri);
+                            Log.d(TAG, "onActivityResult: Picked From Gallery " + mImageUri);
 
                         imageChanged = true;
-                        binding.operationImageIv.setImageURI(imageUri);
+                        binding.operationImageIv.setImageURI(mImageUri);
                     }
                     else {
                         Toast.makeText(OperationAddActivity.this, res.getString(R.string.canceled), Toast.LENGTH_SHORT).show();
@@ -664,7 +680,7 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void uploadImage() {
-        if ((oldImageUrl != null) && !oldImageUrl.isEmpty() && imageChanged && imageUri == null) {    // image changed to null - delete image from server
+        if ((oldImageUrl != null) && !oldImageUrl.isEmpty() && imageChanged && mImageUri == null) {    // image changed to null - delete image from server
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "uploadImage: Deleting operation image from FirebaseStorage server...");
 
@@ -674,25 +690,19 @@ public class OperationAddActivity extends AppCompatActivity {
             StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
             reference
                     .delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            if (BuildConfig.DEBUG)
-                                Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
-                            addOrUpdateOperationFirebase("");
-                        }
+                    .addOnSuccessListener(unused -> {
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
+                        addOrUpdateOperationFirebase("");
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            if (BuildConfig.DEBUG)
-                                Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
-                            addOrUpdateOperationFirebase("");
-                        }
+                    .addOnFailureListener(e -> {
+                        if (BuildConfig.DEBUG)
+                            Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
+                        addOrUpdateOperationFirebase("");
                     });
         }
 
-        else if (imageUri != null) {
+        else if (mImageUri != null) {
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "uploadImage: Uploading operation image...");
 
@@ -706,7 +716,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
             //storage reference
             StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
-            reference.putFile(imageUri)
+            reference.putFile(mImageUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         if (BuildConfig.DEBUG) {
                             Log.d(TAG, "onSuccess: Operation image uploaded");
@@ -768,8 +778,8 @@ public class OperationAddActivity extends AppCompatActivity {
         return rotationCompensation;
     }
 
-    private void recognizeAmountFromImage() {
-        if (imageUri == null) {
+    private void recognizeAmountFromImage(Bitmap bitmap) {
+        if (mImageUri == null && bitmap == null) {
             // no bitmap
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "recognizeAmountFromImage: empty image Uri");
@@ -786,7 +796,10 @@ public class OperationAddActivity extends AppCompatActivity {
 
         InputImage image;
         try {
-            image = InputImage.fromFilePath(OperationAddActivity.this, imageUri);
+            if (mImageUri != null)
+                image = InputImage.fromFilePath(OperationAddActivity.this, mImageUri);
+            else
+                image = InputImage.fromBitmap(bitmap, Surface.ROTATION_0);
 
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "recognizeAmountFromImage: Recognizing Text...");
@@ -796,27 +809,19 @@ public class OperationAddActivity extends AppCompatActivity {
             //init TextRecognizer
             TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
 
+            // Task completed successfully
             Task<Text> textTaskResult =
                     recognizer.process(image)
-                            .addOnSuccessListener(new OnSuccessListener<Text>() {
-                                @Override
-                                public void onSuccess(Text visionText) {
-                                    // Task completed successfully
-                                    performTextAnalysis(visionText);
-                                }
-                            })
+                            .addOnSuccessListener(this::performTextAnalysis)
                             .addOnFailureListener(
-                                    new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            // Task failed with an exception
-                                            progressDialog.dismiss();
+                                    e -> {
+                                        // Task failed with an exception
+                                        progressDialog.dismiss();
 
-                                            if (BuildConfig.DEBUG)
-                                                Log.d(TAG, "recognizeAmountFromImage: Failed to recognize text due to " + e.getMessage());
+                                        if (BuildConfig.DEBUG)
+                                            Log.d(TAG, "recognizeAmountFromImage: Failed to recognize text due to " + e.getMessage());
 
-                                            Toast.makeText(OperationAddActivity.this, res.getString(R.string.failed_to_recognize) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
+                                        Toast.makeText(OperationAddActivity.this, res.getString(R.string.failed_to_recognize) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     });
         }
         catch (Exception e) {

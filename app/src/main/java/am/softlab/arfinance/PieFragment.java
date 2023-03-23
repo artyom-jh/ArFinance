@@ -1,7 +1,5 @@
 package am.softlab.arfinance;
 
-import static com.google.android.material.datepicker.MaterialDatePicker.Builder.dateRangePicker;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
@@ -40,10 +38,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Comparator;
 
 import am.softlab.arfinance.activities.StatisticsActivity;
@@ -126,7 +122,7 @@ public class PieFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentPieBinding.inflate(LayoutInflater.from(getContext()), container, false);
@@ -154,9 +150,7 @@ public class PieFragment extends Fragment {
             updateDateRangeButton(selection);
         });
         //date range - selectDateRangeTv
-        binding.selectDateRangeTv.setOnClickListener(view -> {
-            materialDatePicker.show(getActivity().getSupportFragmentManager(), "DATE_PICKER_RANGE");
-        });
+        binding.selectDateRangeTv.setOnClickListener(view -> materialDatePicker.show(getActivity().getSupportFragmentManager(), "DATE_PICKER_RANGE"));
         binding.selectDateRangeTv.setOnLongClickListener(v -> {
             updateDateRangeButton(null);
             return true;  //it has a return value, which should be true if long-click events are handled
@@ -354,11 +348,7 @@ public class PieFragment extends Fragment {
                                 }
                             }
 
-                            Arrays.sort(operArray, new Comparator<String[]>() {
-                                public int compare(String[] a, String[] b) {
-                                    return Double.compare(Float.parseFloat(b[1]), Float.parseFloat(a[1]));
-                                }
-                            });
+                            Arrays.sort(operArray, (a, b) -> Double.compare(Float.parseFloat(b[1]), Float.parseFloat(a[1])));
 
                             //show only Constants.PIE_MAX_ENTRIES entries, all other show in one amount
                             float otherAmountSum = 0;

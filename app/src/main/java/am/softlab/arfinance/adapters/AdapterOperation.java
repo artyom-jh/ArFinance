@@ -33,7 +33,6 @@ import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
-import am.softlab.arfinance.activities.AttachmentViewActivity;
 import am.softlab.arfinance.activities.OperationAddActivity;
 import am.softlab.arfinance.databinding.RowOperationBinding;
 import am.softlab.arfinance.filters.FilterOperation;
@@ -60,7 +59,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
     private FirebaseUser firebaseUser;
 
     //resources
-    private Resources res;
+    private final Resources res;
 
     private static final String TAG = "OPERATION_ADAPTER_TAG";
 
@@ -115,19 +114,8 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
             holder.operDateTv.setTextColor(ContextCompat.getColor(context, R.color.blue));
             holder.attachBtn.setVisibility(View.VISIBLE);
 
-            holder.operDateTv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startAttachmentViewActivity(id, category, operationTimestamp, imageUrl);
-                }
-            });
-
-            holder.attachBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startAttachmentViewActivity(id, category, operationTimestamp, imageUrl);
-                }
-            });
+            holder.operDateTv.setOnClickListener(v -> MyApplication.startAttachmentViewActivity(context, id, category, operationTimestamp, imageUrl, null));
+            holder.attachBtn.setOnClickListener(v -> MyApplication.startAttachmentViewActivity(context, id, category, operationTimestamp, imageUrl, null));
         }
         else {
             holder.operDateTv.setTextColor(ContextCompat.getColor(context, R.color.black));
@@ -180,15 +168,6 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
             Toast.makeText(context, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
     }
 
-    private void startAttachmentViewActivity(String id, String category, long operationTimestamp, String imageUrl) {
-        Intent intent = new Intent(context, AttachmentViewActivity.class);
-        intent.putExtra("operId", id);
-        intent.putExtra("categoryName", category);
-        intent.putExtra("operationTimestamp", operationTimestamp);
-        intent.putExtra("imageUrl", imageUrl);
-        context.startActivity(intent);
-    }
-
     private void deleteOperation(ModelOperation model) {
         //get id of operation to delete
         String id = model.getId();
@@ -214,19 +193,13 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                         StorageReference reference = FirebaseStorage.getInstance().getReference(filePathAndName);
                         reference
                                 .delete()
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        if (BuildConfig.DEBUG)
-                                            Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
-                                    }
+                                .addOnSuccessListener(unused1 -> {
+                                    if (BuildConfig.DEBUG)
+                                        Log.d(TAG, "uploadImage: Deleted from FirebaseStorage server...");
                                 })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        if (BuildConfig.DEBUG)
-                                            Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
-                                    }
+                                .addOnFailureListener(e -> {
+                                    if (BuildConfig.DEBUG)
+                                        Log.d(TAG, "onFailure: Failed to delete image due to " + e.getMessage());
                                 });
                     }
                 })

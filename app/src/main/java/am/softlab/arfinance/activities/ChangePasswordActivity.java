@@ -106,38 +106,35 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
             // Prompt the user to re-provide their sign-in credentials
             user.reauthenticate(credential)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                if (BuildConfig.DEBUG)
-                                    Log.d(TAG, "changeUserPassword: user re-authentication success");
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "changeUserPassword: user re-authentication success");
 
-                                user.updatePassword(newPassword)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
+                            user.updatePassword(newPassword)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
 
-                                                    if (BuildConfig.DEBUG)
-                                                        Log.d(TAG, "changeUserPassword: User password updated");
+                                                if (BuildConfig.DEBUG)
+                                                    Log.d(TAG, "changeUserPassword: User password updated");
 
-                                                    progressDialog.dismiss();
-                                                    Toast.makeText(ChangePasswordActivity.this, res.getString(R.string.password_updated), Toast.LENGTH_SHORT).show();
-                                                    firebaseAuth.signOut();
-                                                    startActivity(new Intent(ChangePasswordActivity.this, LoginActivity.class));
-                                                    finish();
-                                                }
+                                                progressDialog.dismiss();
+                                                Toast.makeText(ChangePasswordActivity.this, res.getString(R.string.password_updated), Toast.LENGTH_SHORT).show();
+                                                firebaseAuth.signOut();
+                                                startActivity(new Intent(ChangePasswordActivity.this, LoginActivity.class));
+                                                finish();
                                             }
-                                        });
-                            } else {
-                                progressDialog.dismiss();
+                                        }
+                                    });
+                        } else {
+                            progressDialog.dismiss();
 
-                                if (BuildConfig.DEBUG)
-                                    Log.d(TAG, "changeUserPassword: user re-authentication failed");
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "changeUserPassword: user re-authentication failed");
 
-                                Toast.makeText(ChangePasswordActivity.this, res.getString(R.string.reauth_failed), Toast.LENGTH_SHORT).show();
-                            }
+                            Toast.makeText(ChangePasswordActivity.this, res.getString(R.string.reauth_failed), Toast.LENGTH_SHORT).show();
                         }
                     });
         }

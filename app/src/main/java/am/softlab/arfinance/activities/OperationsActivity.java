@@ -159,6 +159,7 @@ public class OperationsActivity extends AppCompatActivity {
             this.context = context;
         }
 
+        @NonNull
         @Override
         public Fragment getItem(int position) {
             return fragmentList.get(position);

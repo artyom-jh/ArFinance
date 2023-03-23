@@ -46,7 +46,7 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
 
 
     //resources
-    private Resources res;
+    private final Resources res;
 
     public AdapterSchedule(Context context, ArrayList<ModelSchedule> scheduleArrayList) {
         this.context = context;
@@ -153,11 +153,7 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
                     final Switch btn = (Switch) view;
                     final boolean switchChecked = btn.isChecked();
 
-                    if (switchChecked) {
-                        btn.setChecked(false);
-                    } else {
-                        btn.setChecked(true);
-                    }
+                    btn.setChecked(!switchChecked);
 
                     final String positiveMsg = switchChecked ? res.getString(R.string.start) : res.getString(R.string.stop);
                     final String titleMsg = switchChecked ? res.getString(R.string.enable_schedule) : res.getString(R.string.disable_schedule);
@@ -192,17 +188,14 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Schedulers");
         reference.child(scheduleId)
                 .updateChildren(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        btn.setChecked(switchChecked);
+                .addOnSuccessListener(unused -> {
+                    btn.setChecked(switchChecked);
 
-                        MyApplication.loadSchedulers(null, false);
+                    MyApplication.loadSchedulers(null, false);
 
-                        progressDialog.dismiss();
-                        final String toastMsg = switchChecked ? res.getString(R.string.started) : res.getString(R.string.stopped);
-                        Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
-                    }
+                    progressDialog.dismiss();
+                    final String toastMsg = switchChecked ? res.getString(R.string.started) : res.getString(R.string.stopped);
+                    Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> progressDialog.dismiss());
     }

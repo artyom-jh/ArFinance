@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.text.format.DateFormat;
@@ -47,17 +48,20 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import am.softlab.arfinance.activities.AttachmentViewActivity;
 import am.softlab.arfinance.activities.DashboardActivity;
 import am.softlab.arfinance.models.ModelCategory;
 import am.softlab.arfinance.models.ModelSchedule;
@@ -65,9 +69,9 @@ import am.softlab.arfinance.models.ModelWallet;
 
 public class MyApplication extends Application {
 
-    private static Context context;
+    private static Context mContext;
     public static Context getContext() {
-        return context;
+        return mContext;
     }
 
     private static List<ModelCategory> categoryArrayList = new ArrayList<ModelCategory>();
@@ -79,7 +83,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        MyApplication.context = getApplicationContext();
+        MyApplication.mContext = getApplicationContext();
     }
 
     public static List<ModelCategory> getCategoryArrayList() {
@@ -120,12 +124,25 @@ public class MyApplication extends Application {
         return formatterDecimal.format(number);
     }
 
+    public static void startAttachmentViewActivity(Context context, String id, String category, long operationTimestamp, String imageUrl, Uri imageUri) {
+        Intent intent = new Intent(context, AttachmentViewActivity.class);
+        intent.putExtra("operId", id);
+        intent.putExtra("categoryName", category);
+        intent.putExtra("operationTimestamp", operationTimestamp);
+        intent.putExtra("imageUrl", imageUrl);
+        if (imageUri == null)
+            intent.putExtra("imageUri", "");
+        else
+            intent.putExtra("imageUri", imageUri.toString());
+        context.startActivity(intent);
+    }
+
     public static void loadCategoryList(ProgressDialog progressDialog) {
         // clear arraylist before adding data into it
         categoryArrayList.clear();
 
         if (progressDialog != null)
-            progressDialog.setMessage(context.getResources().getString(R.string.loading_categories));
+            progressDialog.setMessage(mContext.getResources().getString(R.string.loading_categories));
 
         //get all categories from firebase > Categories
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
@@ -165,7 +182,7 @@ public class MyApplication extends Application {
         walletArrayList = new ArrayList<List<String>>();
 
         if (progressDialog != null)
-            progressDialog.setMessage(context.getResources().getString(R.string.loading_wallets));
+            progressDialog.setMessage(mContext.getResources().getString(R.string.loading_wallets));
 
         //get all wallets from firebase > Wallets
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Wallets");
@@ -220,7 +237,7 @@ public class MyApplication extends Application {
 
     public static void loadSchedulers(ProgressDialog progressDialog, boolean runPeriodicWork) {
         if (progressDialog != null)
-            progressDialog.setMessage(context.getResources().getString(R.string.loading_schedulers));
+            progressDialog.setMessage(mContext.getResources().getString(R.string.loading_schedulers));
 
         //get schedullers from firebase > Schedulers
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -393,7 +410,7 @@ public class MyApplication extends Application {
             return true;
         }
         // Checking if permission is not granted
-        else if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_DENIED) {
+        else if (ContextCompat.checkSelfPermission(mContext, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(activity, new String[] { permission }, requestCode);
             return false;
         }
@@ -415,7 +432,7 @@ public class MyApplication extends Application {
             }
 
             // Checking if permission is not granted
-            if (ContextCompat.checkSelfPermission(context, oneItem) == PackageManager.PERMISSION_DENIED) {
+            if (ContextCompat.checkSelfPermission(mContext, oneItem) == PackageManager.PERMISSION_DENIED) {
                 permsList.add(oneItem);
                 retVal = false;
             }
@@ -461,44 +478,44 @@ public class MyApplication extends Application {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is not in the Support Library.
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = context.getResources().getString(R.string.notification_channel_name);
-            String description = context.getResources().getString(R.string.notification_channel_desc);
+            CharSequence name = mContext.getResources().getString(R.string.notification_channel_name);
+            String description = mContext.getResources().getString(R.string.notification_channel_desc);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;  //.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(Constants.CHANNEL_ID, name, importance);
             channel.setDescription(description);
             // Register the channel with the system. You can't change the importance
             // or other notification behaviors after this.
-            NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(channel);
         }
     }
 
     public static void showNotification(String msg) {
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mContext, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
-        Intent notifyIntent = new Intent(context, DashboardActivity.class);
+        Intent notifyIntent = new Intent(mContext, DashboardActivity.class);
         // Set the Activity to start in a new, empty task
         notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         // Create the PendingIntent
         PendingIntent notifyPendingIntent = PendingIntent.getActivity(
-                context, 0, notifyIntent,
+                mContext, 0, notifyIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constants.CHANNEL_ID);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, Constants.CHANNEL_ID);
         builder.setContentIntent(notifyPendingIntent);
-        builder.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.logo));
+        builder.setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.logo));
         builder.setSmallIcon(R.drawable.ic_notification_icon);
-        builder.setContentTitle(context.getResources().getString(R.string.notification_channel_name));
+        builder.setContentTitle(mContext.getResources().getString(R.string.notification_channel_name));
         builder.setContentText(msg);
         builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         builder.setSubText("");
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
 
         notificationManager.notify(Constants.POST_NOTIFICATIONS, builder.build());
     }
@@ -517,7 +534,7 @@ public class MyApplication extends Application {
 //    }
 
     public static void periodicWork(ProgressDialog progressDialog) {
-        WorkManager workManager = WorkManager.getInstance(context);
+        WorkManager workManager = WorkManager.getInstance(mContext);
         //workManager.cancelUniqueWork(Constants.WORK_ID);
         workManager.cancelAllWorkByTag(Constants.WORK_ID);
 
@@ -543,7 +560,7 @@ public class MyApplication extends Application {
     }
 
 
-    public static void downloadImage(Context context, String categoryName, long operationTimestamp, String imageUrl) {
+    public static void downloadImage(Context context, String categoryName, long operationTimestamp, String imageUrl, Uri imageUri) {
         if (BuildConfig.DEBUG)
             Log.d(TAG_DOWNLOAD, "downloadImage: downloading image...");
 
@@ -560,27 +577,45 @@ public class MyApplication extends Application {
         progressDialog.show();
 
         //download from firebase storage using url
-        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-        storageReference.getBytes(Constants.MAX_BYTES_UPLOAD)
-                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
+        if (imageUri != null) {
+            try {
+                InputStream iStream =  context.getContentResolver().openInputStream(imageUri);
+                byte[] bytes = getBytes(iStream);
+                saveDownloadedImage(context, progressDialog, bytes, nameWithExtension);
+            }
+            catch (Exception e) {
+                //noop
+            }
+        }
+        else {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+            storageReference.getBytes(Constants.MAX_BYTES_UPLOAD)
+                    .addOnSuccessListener(bytes -> {
                         if (BuildConfig.DEBUG) {
                             Log.d(TAG_DOWNLOAD, "onSuccess: Image Downloaded");
                             Log.d(TAG_DOWNLOAD, "onSuccess: Saving image...");
                         }
                         saveDownloadedImage(context, progressDialog, bytes, nameWithExtension);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                    })
+                    .addOnFailureListener(e -> {
                         if (BuildConfig.DEBUG)
                             Log.d(TAG_DOWNLOAD, "onFailure: Failed to download due to " + e.getMessage());
                         progressDialog.dismiss();
                         Toast.makeText(context, "Failed to download due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    });
+        }
+    }
+
+    public static byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
 
     private static void saveDownloadedImage(Context context, ProgressDialog progressDialog, byte[] bytes, String nameWithExtension) {
@@ -615,18 +650,18 @@ public class MyApplication extends Application {
 
     public static Drawable getCountryFlag(String currencyCode) {
         switch(currencyCode) {
-            case "AMD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_armenia, null);
-            case "AUD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_australia, null);
-            case "GBP": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_uk, null);
-            case "CAD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_canada, null);
-            case "CNY": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_china, null);
-            case "EUR": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_eu, null);
-            case "JPY": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_japan, null);
-            case "RUB": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_russia, null);
-            case "KRW": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_south_korea, null);
-            case "CHF": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_switzerland, null);
-            case "USD": return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_us, null);
-            default: return ResourcesCompat.getDrawable(context.getResources(), R.drawable.flag_empty, null);
+            case "AMD": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_armenia, null);
+            case "AUD": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_australia, null);
+            case "GBP": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_uk, null);
+            case "CAD": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_canada, null);
+            case "CNY": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_china, null);
+            case "EUR": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_eu, null);
+            case "JPY": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_japan, null);
+            case "RUB": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_russia, null);
+            case "KRW": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_south_korea, null);
+            case "CHF": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_switzerland, null);
+            case "USD": return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_us, null);
+            default: return ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.flag_empty, null);
         }
     }
 
