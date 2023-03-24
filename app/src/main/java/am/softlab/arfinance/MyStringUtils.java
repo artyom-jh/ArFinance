@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class MyStringUtils {
 
-    public static String removeDateTimeFromString(String string){
+    public static String removeDateTimeFromString(String string) {
         // \\s+     - space
         // \b       - a word break and will work for both spaces and end of lines
         // (^|\s+)  - match space or start of string
@@ -36,4 +36,11 @@ public class MyStringUtils {
         return retval;
     }
 
+    public static String cleanAllExceptDigitsAndDecimal(String string) {
+        String retval = string;
+
+        retval = retval.replaceAll("[^\\d.]", "");
+
+        return retval;
+    }
 }

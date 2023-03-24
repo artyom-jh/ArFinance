@@ -447,11 +447,11 @@ public class OperationAddActivity extends AppCompatActivity {
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "addOrEditOperationFirebase: Starting adding operation info to db...");
             progressDialog.setMessage(res.getString(R.string.adding_operation));
+            currentOperationId = timestamp;
         } else {                    // Edit mode
             if (BuildConfig.DEBUG)
                 Log.d(TAG, "addOrEditOperationFirebase: Starting updating operation info to db...");
             progressDialog.setMessage(res.getString(R.string.updating_operation));
-            currentOperationId = timestamp;
         }
 
         String notes = binding.operNotesEt.getText().toString().trim();
@@ -967,7 +967,8 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void amountPickDialog(List<MyPair> amountsMyPairList) {
-        Log.d(TAG, "amountPickDialog: showing amount pick dialog");
+        if (BuildConfig.DEBUG)
+            Log.d(TAG, "amountPickDialog: showing amount pick dialog");
 
         //get string array of amounts from amountsList
         String[] amountsArray = new String[amountsMyPairList.size()];
@@ -982,9 +983,20 @@ public class OperationAddActivity extends AppCompatActivity {
                         amountsArray,
                         (dialogInterface, which) -> {
                             //handle item click
+                            double dAmount= 0;
                             //get clicked item from list and set to amount edittext
-                            binding.operAmountEt.setText(amountsArray[which]);
-                            Log.d(TAG, "onClick: Selected Amount: " + amountsArray[which]);
+                            try {
+                                String amountStr = amountsArray[which];
+                                if (amountStr != null) {
+                                    amountStr = MyStringUtils.cleanAllExceptDigitsAndDecimal(amountStr);
+                                    dAmount = Double.parseDouble(amountStr);
+                                }
+                            } catch (NumberFormatException e) {
+                                dAmount = 0;
+                            }
+                            binding.operAmountEt.setText(""+dAmount);
+                            if (BuildConfig.DEBUG)
+                                Log.d(TAG, "onClick: Selected Amount: " + amountsArray[which]);
                         }
                 )
                 .show();

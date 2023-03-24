@@ -147,45 +147,47 @@ public class ProfileActivity extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        //get all info of user here from snapshot
-                        String email = ""+snapshot.child("email").getValue();
-                        String name = ""+snapshot.child("name").getValue();
-                        String profileImage = ""+snapshot.child("profileImage").getValue();
-                        String timestamp = ""+snapshot.child("timestamp").getValue();
-                        String userType = ""+snapshot.child("userType").getValue();
+                        if (snapshot.getChildrenCount() > 0) {
+                            //get all info of user here from snapshot
+                            String email = "" + snapshot.child("email").getValue();
+                            String name = "" + snapshot.child("name").getValue();
+                            String profileImage = "" + snapshot.child("profileImage").getValue();
+                            String timestamp = "" + snapshot.child("timestamp").getValue();
+                            String userType = "" + snapshot.child("userType").getValue();
 
-                        //format date to dd/MM/yyy
-                        String formattedDate = MyApplication.formatTimestamp(Long.parseLong(timestamp));
+                            //format date to dd/MM/yyy
+                            String formattedDate = MyApplication.formatTimestamp(Long.parseLong(timestamp));
 
-                        //set data to ui
-                        binding.emailTv.setText(email);
-                        binding.nameTv.setText(name);
-                        binding.memberDateTv.setText(formattedDate);
-                        binding.accountTypeTv.setText(userType);
+                            //set data to ui
+                            binding.emailTv.setText(email);
+                            binding.nameTv.setText(name);
+                            binding.memberDateTv.setText(formattedDate);
+                            binding.accountTypeTv.setText(userType);
 
-                        binding.progressBar.setVisibility(View.VISIBLE);
-                        binding.profileIv.setVisibility(View.INVISIBLE);
+                            binding.progressBar.setVisibility(View.VISIBLE);
+                            binding.profileIv.setVisibility(View.INVISIBLE);
 
-                        //set image, using glide
-                        Glide.with(getApplicationContext())
-                                .load(profileImage)
-                                .listener(new RequestListener<Drawable>() {
-                                    @Override
-                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                        binding.progressBar.setVisibility(View.GONE);
-                                        binding.profileIv.setVisibility(View.VISIBLE);
-                                        return false;
-                                    }
+                            //set image, using glide
+                            Glide.with(getApplicationContext())
+                                    .load(profileImage)
+                                    .listener(new RequestListener<Drawable>() {
+                                        @Override
+                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                            binding.progressBar.setVisibility(View.GONE);
+                                            binding.profileIv.setVisibility(View.VISIBLE);
+                                            return false;
+                                        }
 
-                                    @Override
-                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                        binding.progressBar.setVisibility(View.GONE);
-                                        binding.profileIv.setVisibility(View.VISIBLE);
-                                        return false;
-                                    }
-                                })
-                                .placeholder(R.drawable.ic_person_gray)
-                                .into(binding.profileIv);
+                                        @Override
+                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                            binding.progressBar.setVisibility(View.GONE);
+                                            binding.profileIv.setVisibility(View.VISIBLE);
+                                            return false;
+                                        }
+                                    })
+                                    .placeholder(R.drawable.ic_person_gray)
+                                    .into(binding.profileIv);
+                        }
                     }
 
                     @Override
