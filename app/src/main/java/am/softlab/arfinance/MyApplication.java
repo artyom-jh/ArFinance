@@ -167,9 +167,9 @@ public class MyApplication extends Application {
         });
     }
     public static String getCategoryById(String catId) {
-        if (categoryArrayList != null && categoryArrayList.size() > 0) {
+        if (categoryArrayList != null && categoryArrayList.size() > 0 && catId != null) {
             for (ModelCategory model : categoryArrayList) {
-                if (model.getId().equals(catId)) {
+                if (model.getId() != null && model.getId().equals(catId)) {
                     return model.getCategory();
                 }
             }
@@ -311,21 +311,30 @@ public class MyApplication extends Application {
                         int usageCount;
 
                         //totalIncome
-                        String amountStr = ""+snapshot.child("totalIncome").getValue();
+                        String amountStr = "";
+                        if (snapshot.child("totalIncome") != null)
+                            amountStr = ""+snapshot.child("totalIncome").getValue();
+
                         if (amountStr.equals("") || amountStr.equals("null"))
                             totalIncome = 0.0;
                         else
                             totalIncome = Double.parseDouble(amountStr);
 
                         //totalExpenses
-                        amountStr = ""+snapshot.child("totalExpenses").getValue();
+                        amountStr = "";
+                        if (snapshot.child("totalExpenses") != null)
+                            amountStr = ""+snapshot.child("totalExpenses").getValue();
+
                         if (amountStr.equals("") || amountStr.equals("null"))
                             totalExpenses = 0.0;
                         else
                             totalExpenses = Double.parseDouble(amountStr);
 
                         //usageCount
-                        amountStr = ""+snapshot.child("usageCount").getValue();
+                        amountStr = "";
+                        if (snapshot.child("usageCount") != null)
+                            amountStr = ""+snapshot.child("usageCount").getValue();
+
                         if (amountStr.equals("") || amountStr.equals("null"))
                             usageCount = 0;
                         else
@@ -377,7 +386,10 @@ public class MyApplication extends Application {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         //get usage count
-                        String usageCountStr = ""+snapshot.child("usageCount").getValue();
+                        String usageCountStr = "";
+                        if (snapshot.child("usageCount") != null)
+                            usageCountStr = ""+snapshot.child("usageCount").getValue();
+
                         //in case of null replace with 0
                         if (usageCountStr.equals("") || usageCountStr.equals("null")) {
                             usageCountStr = "0";
