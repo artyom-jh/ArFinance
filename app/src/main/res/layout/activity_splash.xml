@@ -8,12 +8,6 @@
     android:background="@drawable/back01"
     tools:context=".activities.SplashActivity">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/sic_removebg"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_gravity="center_vertical|start"
@@ -46,11 +40,4 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:text="@string/app_copyright"
-        android:textSize="16sp"
-        android:textColor="@color/black"/>
 </LinearLayout>
