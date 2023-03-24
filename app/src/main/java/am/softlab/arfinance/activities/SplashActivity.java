@@ -33,7 +33,7 @@ public class SplashActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         //start main screen after 1 seconds
-        new Handler().postDelayed(this::checkUser, 1000);
+        new Handler().postDelayed(this::checkUser, 2000);
     }
 
     private void checkUser() {
@@ -43,7 +43,8 @@ public class SplashActivity extends AppCompatActivity {
         if(firebaseUser == null){
             //user not logged in
             //start main screen
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(mainIntent);
             finish();// finish this activity
         }
         else {
@@ -53,7 +54,9 @@ public class SplashActivity extends AppCompatActivity {
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            startActivity(new Intent(SplashActivity.this, DashboardActivity.class));
+                            Intent dashIntent = new Intent(SplashActivity.this, DashboardActivity.class);
+                            dashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(dashIntent);
                             finish();
                         }
 

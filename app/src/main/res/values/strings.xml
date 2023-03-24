@@ -150,6 +150,7 @@
     <string name="operation_category">Category</string>
     <string name="operAmount">Amount</string>
     <string name="not_logged_in">Not Logged In</string>
+    <string name="about">About</string>
 
     <!--operations activity-->
     <string name="operations">Income/Expenses</string>

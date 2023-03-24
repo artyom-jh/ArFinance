@@ -18,12 +18,15 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
         android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
+        <activity
+            android:name=".activities.AboutActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.AttachmentViewActivity"
             android:exported="false" />
@@ -82,10 +85,9 @@
         <activity
             android:name=".activities.DashboardActivity"
             android:excludeFromRecents="true"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:taskAffinity=""
-            android:windowSoftInputMode="stateHidden" />
+            android:exported="true"
+            android:windowSoftInputMode="stateHidden" /> <!-- android:launchMode="singleTask" -->
+        <!-- android:taskAffinity="" -->
         <activity
             android:name=".activities.LoginActivity"
             android:exported="false" />
@@ -106,15 +108,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Optional but recommended: You can configure your app to automatically download the ML model-->
-        <!-- to the device after your app is installed from the Play Store. To do so, add the following-->
-        <!-- declaration to your app's AndroidManifest.xml file:-->
+        </activity> <!-- Optional but recommended: You can configure your app to automatically download the ML model -->
+        <!-- to the device after your app is installed from the Play Store. To do so, add the following -->
+        <!-- declaration to your app's AndroidManifest.xml file: -->
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="ocr" />
-        <!-- To use multiple models: android:value="ocr,model2,model3" -->
     </application>
 
 </manifest>

@@ -67,7 +67,13 @@ public class DashboardActivity extends AppCompatActivity {
                 .addItem(new PowerMenuItem(res.getString(R.string.profile), false, R.drawable.ic_person_black))
                 .setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.gray01)))
                 .setDividerHeight(1)
+
                 .addItem(new PowerMenuItem(res.getString(R.string.scheduler), false, R.drawable.ic_schedule_black))
+                .setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.gray01)))
+                .setDividerHeight(1)
+
+                .addItem(new PowerMenuItem(res.getString(R.string.about), false))
+
                 .setWidth(screenWidth*3/5)
                 .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
                 .setMenuRadius(10f) // sets the corner radius.
@@ -160,6 +166,9 @@ public class DashboardActivity extends AppCompatActivity {
                 {
                     startSchedulerActivity();
                 }
+            }
+            else if (position == 2) {
+                startActivity((new Intent(DashboardActivity.this, AboutActivity.class)));
             }
         }
     };

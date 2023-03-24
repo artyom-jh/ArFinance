@@ -212,7 +212,9 @@ public class LoginActivity extends AppCompatActivity {
                             initWalletTablesAndStartDashboard();
                         } else {
                             progressDialog.dismiss();
-                            startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                            Intent dashIntent = new Intent(LoginActivity.this, DashboardActivity.class);
+                            dashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(dashIntent);
                             finish();
                         }
                     }
@@ -278,7 +280,9 @@ public class LoginActivity extends AppCompatActivity {
                 hashMapMulti,
                 (error, ref1) -> {
                     progressDialog.dismiss();
-                    startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
+                    Intent dashIntent = new Intent(LoginActivity.this, DashboardActivity.class);
+                    dashIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(dashIntent);
                     finish();
                 }
         );
