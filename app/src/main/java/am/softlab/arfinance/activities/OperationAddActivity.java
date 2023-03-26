@@ -534,7 +534,7 @@ public class OperationAddActivity extends AppCompatActivity {
         popupMenu.getMenu().add(Menu.NONE, 1, 1, res.getString(R.string.gallery));
         popupMenu.getMenu().add(Menu.NONE, 2, 2, res.getString(R.string.view)).setEnabled(bool);
         popupMenu.getMenu().add(Menu.NONE, 3, 3, res.getString(R.string.clear)).setEnabled(bool);
-
+        popupMenu.getMenu().add(Menu.NONE, 4, 4, res.getString(R.string.recognize)).setEnabled(bool);
         popupMenu.show();
 
         //handle menu item click
@@ -572,6 +572,10 @@ public class OperationAddActivity extends AppCompatActivity {
                 mImageUri = null;
                 imageChanged = true;
                 binding.operationImageIv.setImageResource(R.drawable.ic_add_photo_gray);
+            }
+
+            else if (whichItemClicked == 4) {   //Recognize menu
+                checkForAttachment();
             }
 
             return false;

@@ -1,5 +1,8 @@
 package am.softlab.arfinance;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +42,15 @@ public class MyStringUtils {
     public static String cleanAllExceptDigitsAndDecimal(String string) {
         String retval = string;
 
-        retval = retval.replaceAll("[^\\d.]", "");
+        NumberFormat nf = NumberFormat.getInstance();
+        char decSeparator = '.';
+        if (nf instanceof DecimalFormat) {
+            DecimalFormatSymbols sym = ((DecimalFormat) nf).getDecimalFormatSymbols();
+            decSeparator = sym.getDecimalSeparator();
+        }
+
+        retval = retval.replaceAll("[^\\d" + decSeparator + "]", "");
+        retval = retval.replace(',', '.');
 
         return retval;
     }
