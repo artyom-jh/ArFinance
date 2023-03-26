@@ -283,7 +283,8 @@ public class OperationAddActivity extends AppCompatActivity {
                                         //get category
                                         String category = ""+snapshot.child("category").getValue();
                                         //set to category text view
-                                        binding.categoryTv.setText(category);
+                                        selectedCategoryTitle = category;
+                                        binding.categoryTv.setText(selectedCategoryTitle);
 
                                         progressDialog.dismiss();
                                     }
