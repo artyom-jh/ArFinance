@@ -38,7 +38,7 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
 
     //view binding
     private RowScheduleBinding binding;
-    private ProgressDialog progressDialog;
+    private final ProgressDialog progressDialog;
 
     private FirebaseAuth firebaseAuth;
     //firebase current user
@@ -163,7 +163,8 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setTitle(titleMsg)
                             .setMessage(bodyMsg)
-                            .setPositiveButton(positiveMsg, (dialogInterface, i) -> setScheduleEnabled(holder, id, btn, switchChecked))
+                            .setPositiveButton(positiveMsg,
+                                    (dialogInterface, i) -> setScheduleEnabled(holder, id, btn, switchChecked))
                             .setNegativeButton(res.getString(R.string.cancel), null)
                             .show();
                 }

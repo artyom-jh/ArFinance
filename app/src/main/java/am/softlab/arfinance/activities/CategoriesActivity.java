@@ -156,4 +156,13 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        String filterStr = binding.searchEt.getText().toString().trim();
+        if (!filterStr.isEmpty()) {
+            adapterCategory.getFilter().filter(filterStr);
+        }
+    }
 }

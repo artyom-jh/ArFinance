@@ -257,8 +257,10 @@ public class MyApplication extends Application {
 
                         if (runPeriodicWork)
                             periodicWork(progressDialog);
-                        else
-                            progressDialog.dismiss();
+                        else {
+                            if (progressDialog != null)
+                                progressDialog.dismiss();
+                        }
                     }
 
                     @Override

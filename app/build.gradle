@@ -13,7 +13,7 @@ android {
         minSdk 24
         targetSdk 33
         versionCode 10
-        versionName "3.1"
+        versionName "3.2"
         setProperty("archivesBaseName", "ArFinance-v$versionName")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

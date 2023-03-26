@@ -54,7 +54,11 @@ public class OperationFragment extends Fragment {
 
     //arraylist to store operation
     private ArrayList<ModelOperation> operationArrayList;
+
     private AdapterOperation adapterOperation;
+    public AdapterOperation getAdapterOperation() {
+        return adapterOperation;
+    }
 
     private static final String TAG = "OPERATION_FRAGMENT_TAG";
 
@@ -188,4 +192,13 @@ public class OperationFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        String filterStr = binding.searchEt.getText().toString().trim();
+        if (!filterStr.isEmpty()) {
+            adapterOperation.getFilter().filter(filterStr);
+        }
+    }
 }

@@ -157,4 +157,14 @@ public class WalletsActivity extends AppCompatActivity {
             progressDialog.dismiss();
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        String filterStr = binding.searchEt.getText().toString().trim();
+        if (!filterStr.isEmpty()) {
+            adapterWallet.getFilter().filter(filterStr);
+        }
+    }
 }
