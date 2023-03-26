@@ -941,7 +941,8 @@ public class OperationAddActivity extends AppCompatActivity {
         progressDialog.dismiss();
 
         //show alert dialog if no amount found in recognized strings
-        if (amountsMyPairList.size() <= 0) {
+        int amArrSize = amountsMyPairList.size();
+        if (amArrSize <= 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(OperationAddActivity.this);
             builder.setTitle(res.getString(R.string.failure))
                     .setMessage(res.getString(R.string.recognition_amount_failed))
@@ -950,18 +951,23 @@ public class OperationAddActivity extends AppCompatActivity {
         }
         //show amount selection dialog for recognized amounts
         else {
-            //sort amountsMyPairList in descending order by FontSize field
-            amountsMyPairList.sort((a, b) -> Double.compare(b.getFontSize(), a.getFontSize()));
+            if (amArrSize > 1) {
+                //sort amountsMyPairList in descending order by FontSize field
+                amountsMyPairList.sort((a, b) -> Double.compare(b.getFontSize(), a.getFontSize()));
 
-            int toIndex = 0;
-            int firstFontSize = amountsMyPairList.get(0).getFontSize();
-            // ignore elements with FontSize less than 50% than the size of the first element
-            for (MyPair myPair: amountsMyPairList) {
-                if (myPair.getFontSize() >= (firstFontSize * 0.5))
-                    toIndex++;
+                int toIndex = 0;
+                int firstFontSize = amountsMyPairList.get(0).getFontSize();
+                // ignore elements with FontSize less than 50% than the size of the first element
+                for (int i=1;  i < amArrSize; i++) {
+                    if (amountsMyPairList.get(i).getFontSize() >= (firstFontSize * 0.5))
+                        toIndex = i;
+                    else
+                        break;
+                }
+
+                if (toIndex < amArrSize-1)
+                    amountsMyPairList = amountsMyPairList.subList(0, toIndex+1);
             }
-
-            amountsMyPairList = amountsMyPairList.subList(0, toIndex-1);
             amountPickDialog(amountsMyPairList);
         }
     }
