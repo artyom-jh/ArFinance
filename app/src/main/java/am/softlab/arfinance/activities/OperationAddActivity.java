@@ -209,6 +209,9 @@ public class OperationAddActivity extends AppCompatActivity {
                 }
             }
         }
+        else {
+            MyApplication.loadWalletList(null);
+        }
     }
 
     private void loadOperationInfo() {
@@ -336,6 +339,11 @@ public class OperationAddActivity extends AppCompatActivity {
     private void categoryPickDialog() {
         if (BuildConfig.DEBUG)
             Log.d(TAG, "categoryPickDialog: showing category pick dialog");
+
+        if (categoryTitleArrayList == null || categoryTitleArrayList.size() == 0) {
+            loadCategories();
+            return;
+        }
 
         //get string array of categories from arraylist
         String[] categoriesArray = new String[categoryTitleArrayList.size()];

@@ -78,6 +78,8 @@ public class MyApplication extends Application {
     private static List<List<String>> walletArrayList = new ArrayList<List<String>>();
     private static ArrayList<ModelSchedule> scheduleArrayList = new ArrayList<ModelSchedule>();
 
+    private static boolean periodicWorkIsRunned = false;
+
     private static final String TAG_DOWNLOAD = "DOWNLOAD_TAG";
 
     @Override
@@ -214,24 +216,30 @@ public class MyApplication extends Application {
         });
     }
     public static String getWalletById(String walletId) {
-        if (walletArrayList != null && walletArrayList.size() > 1) {
+        if (walletArrayList != null && walletArrayList.size() > 0) {
             for (List<String> stringList : walletArrayList) {
                 if (stringList.get(0).equals(walletId)) {
                     return stringList.get(1);
                 }
             }
         }
+        else
+            loadWalletList(null);
+
         return "";
     }
 
     public static String getWalletSymbolById(String walletId) {
-        if (walletArrayList != null && walletArrayList.size() > 1) {
+        if (walletArrayList != null && walletArrayList.size() > 0) {
             for (List<String> stringList : walletArrayList) {
                 if (stringList.get(0).equals(walletId)) {
                     return stringList.get(2);
                 }
             }
         }
+        else
+            loadWalletList(null);
+
         return "";
     }
 
@@ -255,7 +263,7 @@ public class MyApplication extends Application {
                                 scheduleArrayList.add(model);
                         }
 
-                        if (runPeriodicWork)
+                        if (runPeriodicWork && !periodicWorkIsRunned)
                             periodicWork(progressDialog);
                         else {
                             if (progressDialog != null)
@@ -568,6 +576,8 @@ public class MyApplication extends Application {
                 Constants.WORK_ID,
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
                 periodicWorkRequest);
+
+        periodicWorkIsRunned = true;
 
         if (progressDialog != null)
             progressDialog.dismiss();
