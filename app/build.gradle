@@ -12,8 +12,8 @@ android {
         applicationId "am.softlab.arfinance"
         minSdk 24
         targetSdk 33
-        versionCode 12
-        versionName "3.3.1"
+        versionCode 13
+        versionName "3.3.2"
         setProperty("archivesBaseName", "ArFinance-v$versionName")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

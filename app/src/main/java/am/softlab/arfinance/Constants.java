@@ -81,11 +81,11 @@ public class Constants {
     public static final long MILLIS_IN_WEEK = 604800000L;
     public static final long MILLIS_IN_MONTH = 2629746000L;
     public static final long MILLIS_IN_YEAR = 31556952000L;
-    public static final int PERIOD_UNKNOWN = -1;  // ATTENTION - see periodsArray
-    public static final int PERIOD_DAILY = 0;     // ATTENTION - see periodsArray
-    public static final int PERIOD_WEEKLY = 1;    // ATTENTION - see periodsArray
-    public static final int PERIOD_MONTHLY = 2;   // ATTENTION - see periodsArray
-    public static final int PERIOD_YEARLY = 3;    // ATTENTION - see periodsArray
+    public static final int PERIOD_UNKNOWN = 0;  // ATTENTION - see periodsArray
+    public static final int PERIOD_DAILY = 1;     // ATTENTION - see periodsArray
+    public static final int PERIOD_WEEKLY = 2;    // ATTENTION - see periodsArray
+    public static final int PERIOD_MONTHLY = 3;   // ATTENTION - see periodsArray
+    public static final int PERIOD_YEARLY = 4;    // ATTENTION - see periodsArray
     public static final String[] periodsArray = new String[] {
             "Unknown",
             "Daily",
