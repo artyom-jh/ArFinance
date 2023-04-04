@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back01"
+    android:orientation="vertical"
+    tools:context=".activities.SettingsActivity">
+
+    <!-- HEADER - Toolbar -->
+    <RelativeLayout
+        android:id="@+id/toolbarRl"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:background="@drawable/shape_toolbar02">
+        <!-- Back button -->
+        <ImageButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_back_white"/>
+        <!-- Toolbar title -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginEnd="5dp"
+                android:gravity="center_vertical"
+                android:src="@drawable/ic_settings_white" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/settings"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+    <!-- BODY - ScrollView -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Divider - Statistics -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_smallest"
+                android:layout_marginBottom="@dimen/s_x_small"
+                android:layout_marginStart="@dimen/s_smallest"
+                android:layout_marginEnd="@dimen/s_smallest"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/s_smallest"
+                    android:paddingVertical="1dp"
+                    android:text="@string/statistics"
+                    android:textColor="@color/gray02"
+                    tools:ignore="RtlSymmetry" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/gray02" />
+            </LinearLayout>
+
+            <!-- Statistics - Max Sectors in a Pie -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/s_large"
+                android:layout_marginEnd="@dimen/s_smallest"
+                android:layout_marginBottom="@dimen/s_smallest"
+                android:background="@drawable/border"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/maxPieSectorsTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/s_smallest"
+                    android:layout_marginTop="@dimen/s_x_small"
+                    android:text="@string/max_pie_sectors"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"/>
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/maxPieSectorsSl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/max_pie_sectors"
+                    android:value="6"
+                    android:valueFrom="3"
+                    android:valueTo="13"
+                    android:stepSize="1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+            </LinearLayout>
+
+
+            <!-- Divider - Security -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/s_smallest"
+                android:layout_marginBottom="@dimen/s_x_small"
+                android:layout_marginStart="@dimen/s_smallest"
+                android:layout_marginEnd="@dimen/s_smallest"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="@dimen/s_smallest"
+                    android:paddingVertical="1dp"
+                    android:text="@string/security"
+                    android:textColor="@color/gray02"
+                    tools:ignore="RtlSymmetry" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/gray02" />
+            </LinearLayout>
+
+            <!-- Security - Encryption Passphrase -->
+            <!-- https://m2.material.io/components/text-fields/android#filled-text-field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/encryptionPassTil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/s_large"
+                android:layout_marginEnd="@dimen/s_smallest"
+                android:layout_marginBottom="@dimen/s_smallest"
+                android:hint="@string/enc_passphrase"
+                app:startIconDrawable="@drawable/ic_password_gray"
+                app:passwordToggleEnabled="true"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/encryptionPassTiet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:inputType="textPassword"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <!-- FOOTER - Save Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/s_smallest"
+            android:layout_marginStart="@dimen/s_smallest"
+            android:layout_marginEnd="@dimen/s_smallest"
+            android:background="@color/gray02" />
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/s_smallest"
+            android:layout_marginTop="@dimen/s_smallest"
+            android:layout_marginEnd="@dimen/s_smallest"
+            android:layout_marginBottom="@dimen/s_smallest"
+            android:background="@drawable/shape_button01"
+            android:text="@string/save"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+</LinearLayout>

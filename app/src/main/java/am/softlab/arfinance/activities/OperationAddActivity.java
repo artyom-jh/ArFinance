@@ -1,5 +1,9 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+import static am.softlab.arfinance.utils.DateTimeUtils.formatTimestamp;
+import static am.softlab.arfinance.utils.NumberUtils.formatDouble;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -43,8 +47,6 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,7 +63,6 @@ import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.TextRecognizer;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +73,7 @@ import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.MyPair;
-import am.softlab.arfinance.MyStringUtils;
+import am.softlab.arfinance.utils.StringUtils;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityOperationAddBinding;
 import am.softlab.arfinance.models.ModelCategory;
@@ -154,7 +155,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
         if (mOperId == null) {       // Add mode
             mOperationTimestamp = System.currentTimeMillis();
-            String formattedDate = MyApplication.formatTimestamp(mOperationTimestamp);
+            String formattedDate = formatTimestamp(mOperationTimestamp);
             binding.operDateTv.setText(formattedDate);
         }
         else {                      // Edit mode
@@ -164,7 +165,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
         //handle click, go back
         binding.backBtn.setOnClickListener(view -> {
-            MyApplication.hideKeyboard(this);
+            hideKeyboardInView(this);
             onBackPressed();
         });
 
@@ -235,7 +236,7 @@ public class OperationAddActivity extends AppCompatActivity {
                         String notes = ""+snapshot.child("notes").getValue();
                         //set to view
                         mOperationTimestamp = Long.parseLong(snapshot.child("operationTimestamp").getValue().toString());
-                        String formattedDate = MyApplication.formatTimestamp(mOperationTimestamp);
+                        String formattedDate = formatTimestamp(mOperationTimestamp);
                         binding.operDateTv.setText( formattedDate );
                         binding.operAmountEt.setText( amountStr );
                         binding.operNotesEt.setText(notes);
@@ -329,7 +330,7 @@ public class OperationAddActivity extends AppCompatActivity {
                     // if the user clicks on the positive button that is ok button update the selected date
                     //noinspection ConstantConditions
                     mOperationTimestamp = materialDatePicker.getSelection();
-                    String formattedDate = MyApplication.formatTimestamp(mOperationTimestamp);
+                    String formattedDate = formatTimestamp(mOperationTimestamp);
                     binding.operDateTv.setText(formattedDate);
                 });
 
@@ -448,7 +449,7 @@ public class OperationAddActivity extends AppCompatActivity {
     }
 
     private void addOrUpdateOperationFirebase(String uploadedImageUrl) {
-        MyApplication.hideKeyboard(this);
+        hideKeyboardInView(this);
 
         long timestamp = System.currentTimeMillis();
 
@@ -871,7 +872,7 @@ public class OperationAddActivity extends AppCompatActivity {
         //extract integers or decimals from a string
         for (Text.TextBlock block : visionText.getTextBlocks()) {
             for (Text.Line line : block.getLines()) {
-                String lineText = MyStringUtils.removeDateTimeFromString(block.getText());
+                String lineText = StringUtils.removeDateTimeFromString(block.getText());
 
                 Pattern pattern = Pattern.compile(".*\\d.*");
                 // find match between given string and pattern
@@ -882,7 +883,7 @@ public class OperationAddActivity extends AppCompatActivity {
 
                 for (Text.Element element : line.getElements()) {
                     String elementText = element.getText();
-                    elementText = MyStringUtils.removeDateTimeFromString(elementText);
+                    elementText = StringUtils.removeDateTimeFromString(elementText);
 
                     Rect frame = element.getBoundingBox();
                     int fontSize = 0;
@@ -992,7 +993,7 @@ public class OperationAddActivity extends AppCompatActivity {
         //get string array of amounts from amountsList
         String[] amountsArray = new String[amountsMyPairList.size()];
         for(int i = 0; i < amountsMyPairList.size(); i++){
-            amountsArray[i] = MyApplication.formatDouble(amountsMyPairList.get(i).getAmount());
+            amountsArray[i] = formatDouble(amountsMyPairList.get(i).getAmount());
         }
 
         //alert dialog
@@ -1007,7 +1008,7 @@ public class OperationAddActivity extends AppCompatActivity {
                             try {
                                 String amountStr = amountsArray[which];
                                 if (amountStr != null) {
-                                    amountStr = MyStringUtils.cleanAllExceptDigitsAndDecimal(amountStr);
+                                    amountStr = StringUtils.cleanAllExceptDigitsAndDecimal(amountStr);
                                     dAmount = Double.parseDouble(amountStr);
                                 }
                             } catch (NumberFormatException e) {

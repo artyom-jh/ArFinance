@@ -24,6 +24,7 @@ import com.skydoves.powermenu.PowerMenu;
 import com.skydoves.powermenu.PowerMenuItem;
 
 import am.softlab.arfinance.Constants;
+import am.softlab.arfinance.DBManager;
 import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityDashboardBinding;
@@ -41,6 +42,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     //resources
     private Resources res;
+    private DBManager mDBManager;
 
     private PowerMenu powerMenu;
 
@@ -52,6 +54,8 @@ public class DashboardActivity extends AppCompatActivity {
 
         //get resources
         res = this.getResources();
+
+        this.mDBManager = ((MyApplication) DashboardActivity.this.getApplicationContext()).getDBManager();
 
         //configure progress dialog
         progressDialog = new ProgressDialog(this);
@@ -69,6 +73,10 @@ public class DashboardActivity extends AppCompatActivity {
                 .setDividerHeight(1)
 
                 .addItem(new PowerMenuItem(res.getString(R.string.scheduler), false, R.drawable.ic_schedule_black))
+                .setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.gray01)))
+                .setDividerHeight(1)
+
+                .addItem(new PowerMenuItem(res.getString(R.string.settings), false, R.drawable.ic_settings_black))
                 .setDivider(new ColorDrawable(ContextCompat.getColor(this, R.color.gray01)))
                 .setDividerHeight(1)
 
@@ -151,14 +159,14 @@ public class DashboardActivity extends AppCompatActivity {
         public void onItemClick(int position, PowerMenuItem item) {
             powerMenu.dismiss();
 
-            if (position == 0) {
+            if (position == 0) {                //Profile
                 if (firebaseAuth.getCurrentUser() != null) {
                     startActivity((new Intent(DashboardActivity.this, ProfileActivity.class)));
                 } else {
                     Toast.makeText(DashboardActivity.this, res.getString(R.string.not_logged_in_detailed), Toast.LENGTH_SHORT).show();
                 }
             }
-            else if (position == 1) {
+            else if (position == 1) {           //Scheduler
                 if (MyApplication.checkPermission(
                         DashboardActivity.this,
                         new String[] {Manifest.permission.POST_NOTIFICATIONS},
@@ -167,7 +175,10 @@ public class DashboardActivity extends AppCompatActivity {
                     startSchedulerActivity();
                 }
             }
-            else if (position == 2) {
+            else if (position == 2) {           //Settings
+                startActivity((new Intent(DashboardActivity.this, SettingsActivity.class)));
+            }
+            else if (position == 3) {           //About
                 startActivity((new Intent(DashboardActivity.this, AboutActivity.class)));
             }
         }

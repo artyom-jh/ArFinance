@@ -39,6 +39,8 @@
     <string name="warning">Warning</string>
     <string name="close">Close</string>
     <string name="failure">Failure</string>
+    <string name="save">Save</string>
+    <string name="unlimited">unlimited</string>
 
     <!--login/register activity-->
     <string name="logging_in">Logging In…</string>
@@ -150,7 +152,12 @@
     <string name="operation_category">Category</string>
     <string name="operAmount">Amount</string>
     <string name="not_logged_in">Not Logged In</string>
+
+    <!--about and log viewer activities-->
     <string name="about">About</string>
+    <string name="logviewer">Log Viewer</string>
+    <string name="logs_copied_to_clipboard">Application logs have been copied to the clipboard</string>
+    <string name="error_copy_to_clipboard">An error occurred while copying text to clipboard</string>
 
     <!--operations activity-->
     <string name="operations">Income/Expenses</string>
@@ -234,6 +241,12 @@
     <string name="total_expenses">- total expenses</string>
     <string name="balance">Balance</string>
     <string name="loading_wallets">Loading Wallets…</string>
+
+    <!--settings activity-->
+    <string name="settings">Settings</string>
+    <string name="security">Security</string>
+    <string name="enc_passphrase">Encryption Passphrase</string>
+    <string name="max_pie_sectors">Max Sectors in a Pie</string>
 
     <!--errors-->
     <string name="failed_to_update_db">Failed to update db due to</string>

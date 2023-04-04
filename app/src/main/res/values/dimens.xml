@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="t_x_large">32sp</dimen>
+    <dimen name="t_largest">26sp</dimen>
+    <dimen name="t_larger">24sp</dimen>
+    <dimen name="t_large">20sp</dimen>
+    <dimen name="t_medium">18sp</dimen>
+    <dimen name="t_small">16sp</dimen>
+    <dimen name="t_smaller">14sp</dimen>
+    <dimen name="t_smallest">12sp</dimen>
+    <dimen name="t_x_small">10sp</dimen>
+    <dimen name="t_x_x_small">8sp</dimen>
+
+    <dimen name="s_x_x_large">100dp</dimen>
+    <dimen name="s_x_large">80dp</dimen>
+    <dimen name="s_largest">60dp</dimen>
+    <dimen name="s_larger">50dp</dimen>
+    <dimen name="s_large">30dp</dimen>
+    <dimen name="s_medium">25dp</dimen>
+    <dimen name="s_small">20dp</dimen>
+    <dimen name="s_smaller">15dp</dimen>
+    <dimen name="s_smallest">10dp</dimen>
+    <dimen name="s_x_small">5dp</dimen>
+    <dimen name="s_x_x_small">2dp</dimen>
+
+    <dimen name="d_x_x_large">500dp</dimen>
+    <dimen name="d_x_large">300dp</dimen>
+    <dimen name="d_largest">200dp</dimen>
+    <dimen name="d_larger">150dp</dimen>
+    <dimen name="d_large">100dp</dimen>
+    <dimen name="d_medium">80dp</dimen>
+    <dimen name="d_small">50dp</dimen>
+    <dimen name="d_smaller">30dp</dimen>
+    <dimen name="d_smallest">25dp</dimen>
+    <dimen name="d_x_small">20dp</dimen>
+    <dimen name="d_x_x_small">10dp</dimen>
+
+    <dimen name="nav_header_height">176dp</dimen>
+
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_extra_small">2dp</dimen>
+    <dimen name="margin_medium">8dp</dimen>
+    <dimen name="margin_large">12dp</dimen>
+    <dimen name="margin_extra_large">16dp</dimen>
+
+    <dimen name="text_sz_small">12sp</dimen>
+    <dimen name="text_sz_medium">14sp</dimen>
+    <dimen name="text_sz_large">16sp</dimen>
+</resources>

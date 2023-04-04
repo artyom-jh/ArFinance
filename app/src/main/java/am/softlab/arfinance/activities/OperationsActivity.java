@@ -1,5 +1,7 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -25,7 +27,6 @@ import java.util.ArrayList;
 
 import am.softlab.arfinance.Constants;
 import am.softlab.arfinance.MyApplication;
-import am.softlab.arfinance.OperationFragment;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityOperationsBinding;
 import am.softlab.arfinance.models.ModelWallet;
@@ -83,7 +84,7 @@ public class OperationsActivity extends AppCompatActivity {
 
         //handle click, goBack
         binding.backBtn.setOnClickListener(v -> {
-            MyApplication.hideKeyboard(this);
+            hideKeyboardInView(this);
             onBackPressed();
         });
     }

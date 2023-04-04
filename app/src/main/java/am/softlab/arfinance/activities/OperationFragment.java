@@ -1,4 +1,4 @@
-package am.softlab.arfinance;
+package am.softlab.arfinance.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +26,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import am.softlab.arfinance.activities.OperationAddActivity;
+import am.softlab.arfinance.BuildConfig;
+import am.softlab.arfinance.R;
 import am.softlab.arfinance.adapters.AdapterOperation;
 import am.softlab.arfinance.databinding.FragmentOperationBinding;
 import am.softlab.arfinance.models.ModelOperation;

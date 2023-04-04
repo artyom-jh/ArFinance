@@ -1,5 +1,7 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -93,7 +95,7 @@ public class CategoryAddActivity extends AppCompatActivity {
 
         //handle click, go back
         binding.backBtn.setOnClickListener(view -> {
-            MyApplication.hideKeyboard(this);
+            hideKeyboardInView(this);
             onBackPressed();
         });
 
@@ -150,7 +152,7 @@ public class CategoryAddActivity extends AppCompatActivity {
     }
 
     private void addCategoryFirebase() {
-        MyApplication.hideKeyboard(this);
+        hideKeyboardInView(this);
 
         //show progress
         progressDialog.setMessage(res.getString(R.string.adding_category));

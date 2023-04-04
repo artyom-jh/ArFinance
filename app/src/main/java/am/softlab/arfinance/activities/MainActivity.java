@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import am.softlab.arfinance.MyApplication;
 import am.softlab.arfinance.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        ((MyApplication) getApplicationContext()).getDBManager().open();
 
         //handle loginBtn click, start login screen
         binding.loginBtn.setOnClickListener(

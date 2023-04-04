@@ -1,4 +1,4 @@
-package am.softlab.arfinance;
+package am.softlab.arfinance.utils;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -6,7 +6,76 @@ import java.text.NumberFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MyStringUtils {
+public class StringUtils {
+
+    private StringUtils() {
+        throw new AssertionError();
+    }
+
+    /**
+     * returns empty string if passed string is null, otherwise returns passed string
+     */
+    public static String notNullStr(String s) {
+        if (s == null) {
+            return "";
+        }
+        return s;
+    }
+
+    /**
+     * returns true if two strings are equal or two strings are null
+     */
+    public static boolean equals(String s1, String s2) {
+        if (s1 == null) {
+            return s2 == null;
+        }
+        return s1.equals(s2);
+    }
+
+
+    /* ----- stringToInt ----- */
+    /**
+     * simple wrapper for Integer.valueOf(string) so caller doesn't need to catch NumberFormatException
+     */
+    public static int stringToInt(String s) {
+        return stringToInt(s, 0);
+    }
+
+    /**
+     * simple wrapper for Integer.valueOf(string) with default value, so caller doesn't need to catch NumberFormatException
+     */
+    public static int stringToInt(String s, int defaultValue) {
+        if (s == null)
+            return defaultValue;
+        try {
+            return Integer.valueOf(s);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+
+    /* ----- stringToLong ----- */
+    /**
+     * simple wrapper for Long.valueOf(string) so caller doesn't need to catch NumberFormatException
+     */
+    public static long stringToLong(String s) {
+        return stringToLong(s, 0L);
+    }
+
+    /**
+     * simple wrapper for Long.valueOf(string) with default value, so caller doesn't need to catch NumberFormatException
+     */
+    public static long stringToLong(String s, long defaultValue) {
+        if (s == null)
+            return defaultValue;
+        try {
+            return Long.valueOf(s);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
 
     public static String removeDateTimeFromString(String string) {
         // \\s+     - space

@@ -1,5 +1,8 @@
 package am.softlab.arfinance.adapters;
 
+import static am.softlab.arfinance.utils.DateTimeUtils.formatTimestamp;
+import static am.softlab.arfinance.utils.NumberUtils.formatDouble;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -99,11 +102,11 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
         boolean hasImage = (imageUrl != null) && !imageUrl.isEmpty();
 
         //format date, already made in function in MyApplication class
-        String dateStr = MyApplication.formatTimestamp(operationTimestamp);
+        String dateStr = formatTimestamp(operationTimestamp);
 
         //set data
         holder.operDateTv.setText(dateStr);
-        String amountStr = MyApplication.formatDouble(amount) + " " + mCurrencySymbol;
+        String amountStr = formatDouble(amount) + " " + mCurrencySymbol;
         holder.operAmountTv.setText(amountStr);
         holder.categoryTv.setText(category);
         holder.operNotesTv.setText(notes);

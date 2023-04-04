@@ -1,5 +1,7 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -95,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginUser() {
-        MyApplication.hideKeyboard(this);
+        hideKeyboardInView(this);
 
         //show progress
         progressDialog.setMessage(res.getString(R.string.logging_in));

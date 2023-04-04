@@ -1,5 +1,7 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -58,7 +60,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         //handle click, go back
         binding.backBtn.setOnClickListener(view -> {
-            MyApplication.hideKeyboard(this);
+            hideKeyboardInView(this);
             finish();
         });
 
@@ -91,7 +93,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     }
 
     private void changeUserPassword() {
-        MyApplication.hideKeyboard(this);
+        hideKeyboardInView(this);
 
         //show progress
         progressDialog.setMessage(res.getString(R.string.creating_password));

@@ -1,5 +1,7 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.DateTimeUtils.formatTimestamp;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -156,7 +158,7 @@ public class ProfileActivity extends AppCompatActivity {
                             String userType = "" + snapshot.child("userType").getValue();
 
                             //format date to dd/MM/yyy
-                            String formattedDate = MyApplication.formatTimestamp(Long.parseLong(timestamp));
+                            String formattedDate = formatTimestamp(Long.parseLong(timestamp));
 
                             //set data to ui
                             binding.emailTv.setText(email);

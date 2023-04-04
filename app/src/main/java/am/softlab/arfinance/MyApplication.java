@@ -1,5 +1,7 @@
 package am.softlab.arfinance;
 
+import static am.softlab.arfinance.utils.DateTimeUtils.formatTimestampUnderline;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
@@ -17,10 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,15 +29,12 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.fragment.app.Fragment;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,19 +49,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import am.softlab.arfinance.activities.AttachmentViewActivity;
 import am.softlab.arfinance.activities.DashboardActivity;
+import am.softlab.arfinance.datasets.SettingsTable;
 import am.softlab.arfinance.models.ModelCategory;
 import am.softlab.arfinance.models.ModelSchedule;
+import am.softlab.arfinance.models.ModelSettings;
 import am.softlab.arfinance.models.ModelWallet;
+import am.softlab.arfinance.utils.AppLog;
 
 public class MyApplication extends Application {
 
@@ -74,56 +70,53 @@ public class MyApplication extends Application {
         return mContext;
     }
 
+    private DBManager mDBManager;
+
     private static List<ModelCategory> categoryArrayList = new ArrayList<ModelCategory>();
     private static List<List<String>> walletArrayList = new ArrayList<List<String>>();
     private static ArrayList<ModelSchedule> scheduleArrayList = new ArrayList<ModelSchedule>();
 
     private static boolean periodicWorkIsRunned = false;
 
+    private ModelSettings mAFSettings;
     private static final String TAG_DOWNLOAD = "DOWNLOAD_TAG";
+    private static final String TAG = "APPLICATION";
 
     @Override
     public void onCreate() {
         super.onCreate();
         MyApplication.mContext = getApplicationContext();
+
+        mDBManager = new DBManager(this);
+        mDBManager.open();
+
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        mAFSettings = SettingsTable.getUserSetting(mDBManager.getDatabase(), firebaseAuth.getCurrentUser().getUid());
+
+        // Enable log recording
+        AppLog.enableRecording(true);
+        AppLog.i(TAG, "ArFinance.onCreate");
+    }
+
+    public DBManager getDBManager() {
+        return mDBManager;
+    }
+
+    public ModelSettings getAFSettings() {
+        return mAFSettings;
+    }
+    public void setAFSettings(ModelSettings model) {
+        mAFSettings = model;
+    }
+    public void updateAFSettings(ModelSettings model) {
+        mAFSettings.setSt_id(model.getSt_id());
+        mAFSettings.setUser_id(model.getUser_id());
+        mAFSettings.setSt_enc_pass(model.getSt_enc_pass());
+        mAFSettings.setSt_max_pie_sectors(model.getSt_max_pie_sectors());
     }
 
     public static List<ModelCategory> getCategoryArrayList() {
         return categoryArrayList;
-    }
-
-    //created a static method to convert timestamp to proper date format, so we can use
-    //it everywhere in project, no need to rewrite again
-    public static String formatTimestamp(long timestamp){
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(timestamp);
-
-        //formatting timestamp to dd/MM/yyyy
-        return DateFormat.format("dd/MM/yyyy", cal).toString();
-    }
-    public static String formatTimestamp2(long timestamp){
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(timestamp);
-
-        //formatting timestamp to dd/MM/yyyy
-        return DateFormat.format("yyyy_MM_dd", cal).toString();
-    }
-    public static String formatTimestampShort(long timestamp){
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(timestamp);
-
-        //formatting timestamp to dd/MM/yyyy
-        return DateFormat.format("dd/MM/yy", cal).toString();
-    }
-
-    public static String formatDouble(double number){
-        DecimalFormat formatterDecimal = new DecimalFormat("#,###,##0.00");
-        return formatterDecimal.format(number);
-    }
-
-    public static String formatInteger(int number){
-        DecimalFormat formatterDecimal = new DecimalFormat("#,###,##0");
-        return formatterDecimal.format(number);
     }
 
     public static void startAttachmentViewActivity(Context context, String id, String category, long operationTimestamp, String imageUrl, Uri imageUri) {
@@ -468,34 +461,6 @@ public class MyApplication extends Application {
         return retVal;
     }
 
-    public static void hideKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
-        view.clearFocus();
-    }
-
-    public static void hideKeyboard(Fragment fragment) {
-        InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = fragment.getView().getRootView();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(fragment.getActivity());
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
-        view.clearFocus();
-    }
-
-
     public static void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is not in the Support Library.
@@ -583,12 +548,11 @@ public class MyApplication extends Application {
             progressDialog.dismiss();
     }
 
-
     public static void downloadImage(Context context, String categoryName, long operationTimestamp, String imageUrl, Uri imageUri) {
         if (BuildConfig.DEBUG)
             Log.d(TAG_DOWNLOAD, "downloadImage: downloading image...");
 
-        String nameWithExtension = categoryName + "_" + formatTimestamp2(operationTimestamp) + ".jpg";
+        String nameWithExtension = categoryName + "_" + formatTimestampUnderline(operationTimestamp) + ".jpg";
 
         if (BuildConfig.DEBUG)
             Log.d(TAG_DOWNLOAD, "downloadImage: NAME: " + nameWithExtension);

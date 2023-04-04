@@ -1,5 +1,8 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+import static am.softlab.arfinance.utils.DateTimeUtils.formatTimestampUnderline;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -71,7 +74,7 @@ public class AttachmentViewActivity extends AppCompatActivity {
         else
             mImageUri = Uri.parse(imageUriStr);
 
-        String attachmentName = mCategoryName + "_" + MyApplication.formatTimestamp2(operationTimestamp);
+        String attachmentName = mCategoryName + "_" + formatTimestampUnderline(operationTimestamp);
         binding.titleTv.setText(attachmentName);
 
         //binding.photoViewPv.setImageResource(R.drawable.back02);
@@ -112,7 +115,7 @@ public class AttachmentViewActivity extends AppCompatActivity {
 
         //handle click, goBack
         binding.backBtn.setOnClickListener(v -> {
-            MyApplication.hideKeyboard(this);
+            hideKeyboardInView(this);
             onBackPressed();
         });
 

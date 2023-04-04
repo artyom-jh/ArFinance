@@ -1,5 +1,7 @@
 package am.softlab.arfinance.adapters;
 
+import static am.softlab.arfinance.utils.NumberUtils.formatDouble;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -93,13 +95,13 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
         holder.walletNotesTv.setText(notes);
 
         //String amountStr = NumberFormat.getCurrencyInstance().format(amount);
-        String amountStr = MyApplication.formatDouble(totalIncome) + " " + currencySymbol;
+        String amountStr = formatDouble(totalIncome) + " " + currencySymbol;
         holder.totalIncomeTv.setText(amountStr);
 
-        amountStr = MyApplication.formatDouble(totalExpenses) + " " + currencySymbol;
+        amountStr = formatDouble(totalExpenses) + " " + currencySymbol;
         holder.totalExpensesTv.setText(amountStr);
 
-        amountStr = MyApplication.formatDouble(balance) + " " + currencySymbol;
+        amountStr = formatDouble(balance) + " " + currencySymbol;
         holder.balanceTv.setText(amountStr);
         if (balance < 0)
             holder.balanceTv.setTextColor(Color.RED);

@@ -1,5 +1,7 @@
 package am.softlab.arfinance.adapters;
 
+import static am.softlab.arfinance.utils.NumberUtils.formatInteger;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -84,7 +86,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.Holder
         holder.categoryTypeTv.setText(isIncome ? res.getString(R.string.income) : res.getString(R.string.expenses) );
         holder.categoryNotesTv.setText(notes);
 
-        String amountStr = res.getString(R.string.usage_count) + " " + MyApplication.formatInteger(usageCount);
+        String amountStr = res.getString(R.string.usage_count) + " " + formatInteger(usageCount);
         holder.usageCountTv.setText(amountStr);
 
         // handle click, delete category

@@ -1,4 +1,9 @@
-package am.softlab.arfinance;
+package am.softlab.arfinance.activities;
+
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboard;
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+import static am.softlab.arfinance.utils.DateTimeUtils.formatTimestampShort;
+import static am.softlab.arfinance.utils.NumberUtils.formatDouble;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -40,19 +45,22 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 
-import am.softlab.arfinance.activities.StatisticsActivity;
+import am.softlab.arfinance.BuildConfig;
+import am.softlab.arfinance.Constants;
+import am.softlab.arfinance.MyApplication;
+import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.FragmentPieBinding;
 import am.softlab.arfinance.models.ModelOperation;
+import am.softlab.arfinance.models.ModelSettings;
 import am.softlab.arfinance.models.ModelWallet;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link PieFragment#newInstance} factory method to
+ * Use the {@link StatisticsPieFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PieFragment extends Fragment {
+public class StatisticsPieFragment extends Fragment {
 
     //that we passed while creating instance of this fragment
     private int statPageId;
@@ -69,6 +77,7 @@ public class PieFragment extends Fragment {
 
     private Context context;
     private Resources res;
+    private ModelSettings mAFSettingsLocal;
 
     //firebase auth
     private FirebaseAuth firebaseAuth;
@@ -79,12 +88,12 @@ public class PieFragment extends Fragment {
 
     private static final String TAG = "PIE_FRAGMENT_TAG";
 
-    public PieFragment() {
+    public StatisticsPieFragment() {
         // Required empty public constructor
     }
 
-    public static PieFragment newInstance(int statPageId) {
-        PieFragment fragment = new PieFragment();
+    public static StatisticsPieFragment newInstance(int statPageId) {
+        StatisticsPieFragment fragment = new StatisticsPieFragment();
         Bundle args = new Bundle();
         args.putInt("statPageId", statPageId);
 
@@ -104,6 +113,7 @@ public class PieFragment extends Fragment {
 
         //get resources
         res = this.getResources();
+        mAFSettingsLocal = ((MyApplication) context.getApplicationContext()).getAFSettings();
 
         // create the calendar constraint builder
         CalendarConstraints.Builder calendarConstraintBuilder = new CalendarConstraints.Builder();
@@ -146,7 +156,7 @@ public class PieFragment extends Fragment {
 
         //date range - materialDatePicker
         materialDatePicker.addOnPositiveButtonClickListener((MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>>) selection -> {
-            MyApplication.hideKeyboard(materialDatePicker);
+            hideKeyboard(materialDatePicker);
             updateDateRangeButton(selection);
         });
         //date range - selectDateRangeTv
@@ -170,8 +180,8 @@ public class PieFragment extends Fragment {
         else {
             binding.selectDateRangeTv.setText(
                     String.format("%s - %s",
-                            MyApplication.formatTimestampShort(dateRange.first),
-                            MyApplication.formatTimestampShort(dateRange.second)
+                            formatTimestampShort(dateRange.first),
+                            formatTimestampShort(dateRange.second)
                     ));
         }
 
@@ -281,7 +291,7 @@ public class PieFragment extends Fragment {
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 PieEntry pieEntry = (PieEntry)e;
-                String amountStr = MyApplication.formatDouble(pieEntry.getValue()) + " " + selectedCurrencySymbol; //NumberFormat.getCurrencyInstance().format(pieEntry.getValue());
+                String amountStr = formatDouble(pieEntry.getValue()) + " " + selectedCurrencySymbol; //NumberFormat.getCurrencyInstance().format(pieEntry.getValue());
                 //                   + System.getProperty("line.separator")
 
                 new AlertDialog.Builder(getContext())
@@ -353,7 +363,7 @@ public class PieFragment extends Fragment {
                             //show only Constants.PIE_MAX_ENTRIES entries, all other show in one amount
                             float otherAmountSum = 0;
                             for (int i=0; i <= lastIndex; i++) {
-                                if (i < Constants.PIE_MAX_ENTRIES) {
+                                if (i < mAFSettingsLocal.getSt_max_pie_sectors()) {
                                     totalAmount += Double.parseDouble(operArray[i][1]);
                                     entries.add(
                                             new PieEntry(
@@ -415,7 +425,7 @@ public class PieFragment extends Fragment {
         categoryPieChart.setCenterText(
                 res.getString(R.string.spending_category)
                 + System.getProperty("line.separator")
-                + MyApplication.formatDouble(totalAmount) + " " + selectedCurrencySymbol
+                + formatDouble(totalAmount) + " " + selectedCurrencySymbol
         );
         categoryPieChart.setData(data);
         categoryPieChart.invalidate();

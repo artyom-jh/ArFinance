@@ -1,5 +1,8 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+import static am.softlab.arfinance.utils.DateTimeUtils.formatTimestamp;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -94,7 +97,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
         if (scheduleId == null) {   // Add mode
             mStartDateTime = System.currentTimeMillis();
             mOldStartDateTime = 0L;
-            String formattedDate = MyApplication.formatTimestamp(mStartDateTime);
+            String formattedDate = formatTimestamp(mStartDateTime);
             binding.scheduleStartDateTv.setText(formattedDate);
 
             binding.titleIv.setText(res.getString(R.string.add_schedule));
@@ -124,7 +127,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
 
         //handle click, go back
         binding.backBtn.setOnClickListener(view -> {
-            MyApplication.hideKeyboard(this);
+            hideKeyboardInView(this);
             onBackPressed();
         });
     }
@@ -196,7 +199,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
                     // if the user clicks on the positive button that is ok button update the selected date
                     //noinspection ConstantConditions
                     mStartDateTime = materialDatePicker.getSelection();
-                    String formattedDate = MyApplication.formatTimestamp(mStartDateTime);
+                    String formattedDate = formatTimestamp(mStartDateTime);
                     binding.scheduleStartDateTv.setText(formattedDate);
                 });
 
@@ -472,7 +475,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
 
                         mStartDateTime = Long.parseLong(snapshot.child("startDateTime").getValue().toString());
                         mOldStartDateTime = mStartDateTime;
-                        String formattedDate = MyApplication.formatTimestamp(mStartDateTime);
+                        String formattedDate = formatTimestamp(mStartDateTime);
 
                         selectedWalletId = ""+snapshot.child("walletId").getValue();
                         selectedWalletName = MyApplication.getWalletById(selectedWalletId);
@@ -524,7 +527,7 @@ public class ScheduleAddActivity extends AppCompatActivity {
 
 
     private void addOrUpdateScheduleFirebase() {
-        MyApplication.hideKeyboard(this);
+        hideKeyboardInView(this);
 
         if (scheduleId == null) {       // Add mode
             if (BuildConfig.DEBUG)

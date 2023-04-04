@@ -1,5 +1,7 @@
 package am.softlab.arfinance.activities;
 
+import static am.softlab.arfinance.utils.ActivityUtils.hideKeyboardInView;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -81,7 +83,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         //handle click, goBack
         binding.backBtn.setOnClickListener(v -> {
-            MyApplication.hideKeyboard(this);
+            hideKeyboardInView(this);
             onBackPressed();
         });
 
@@ -182,7 +184,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     private void updateProfile(String imageUrl) {
-        MyApplication.hideKeyboard(this);
+        hideKeyboardInView(this);
 
         if (BuildConfig.DEBUG)
             Log.d(TAG, "updateProfile: Updating user profile");

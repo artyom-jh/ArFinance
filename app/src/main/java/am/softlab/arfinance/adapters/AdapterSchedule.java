@@ -1,5 +1,8 @@
 package am.softlab.arfinance.adapters;
 
+import static am.softlab.arfinance.utils.DateTimeUtils.formatTimestamp;
+import static am.softlab.arfinance.utils.NumberUtils.formatDouble;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -85,8 +88,8 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
         long scheduleTimestamp = model.getStartDateTime();
 
         //format date, already made in function in MyApplication class
-        String dateStr = MyApplication.formatTimestamp(scheduleTimestamp);
-        String amountStr = MyApplication.formatDouble(amount) + " " + currencySymbol;
+        String dateStr = formatTimestamp(scheduleTimestamp);
+        String amountStr = formatDouble(amount) + " " + currencySymbol;
         String periodStr = MyApplication.getPeriodById(model.getPeriod());
 
         //set data

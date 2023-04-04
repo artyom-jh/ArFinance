@@ -15,8 +15,6 @@ public class Constants {
     public static final int ROW_UPDATED = 2;
     public static final int ROW_DELETED = 3;
 
-    public static final int PIE_MAX_ENTRIES = 6;
-
     public static final int CAMERA_PERMISSION_CODE = 100;
     public static final int WRITE_EXTERNAL_STORAGE = 101;
     public static final int POST_NOTIFICATIONS = 102;
@@ -93,4 +91,6 @@ public class Constants {
             "Monthly",
             "Yearly"
     };
+
+    public static final int MAX_PIE_SECTORS_LIMIT = 13;
 }

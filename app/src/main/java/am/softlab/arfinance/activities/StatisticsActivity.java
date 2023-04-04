@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 import am.softlab.arfinance.BuildConfig;
 import am.softlab.arfinance.Constants;
-import am.softlab.arfinance.PieFragment;
 import am.softlab.arfinance.R;
 import am.softlab.arfinance.databinding.ActivityStatisticsBinding;
 import am.softlab.arfinance.models.ModelCategory;
@@ -83,10 +82,10 @@ public class StatisticsActivity extends AppCompatActivity {
 //                res.getString(R.string.expenses));
 
         //add data to view pager adapter
-        viewPagerAdapter.addFragment(PieFragment.newInstance(
+        viewPagerAdapter.addFragment(StatisticsPieFragment.newInstance(
                 Constants.PAGE_INCOME
         ), res.getString(R.string.income));
-        viewPagerAdapter.addFragment(PieFragment.newInstance(
+        viewPagerAdapter.addFragment(StatisticsPieFragment.newInstance(
                 Constants.PAGE_EXPENSES
         ), res.getString(R.string.expenses));
 
@@ -99,7 +98,7 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
     public class ViewPagerAdapter extends FragmentPagerAdapter {
-        private ArrayList<PieFragment> fragmentList = new ArrayList<>();
+        private ArrayList<StatisticsPieFragment> fragmentList = new ArrayList<>();
         private ArrayList<String> fragmentTitleList = new ArrayList<>();
         private final Context context;
 
@@ -119,7 +118,7 @@ public class StatisticsActivity extends AppCompatActivity {
             return fragmentList.size();
         }
 
-        private void addFragment(PieFragment fragment, String title) {
+        private void addFragment(StatisticsPieFragment fragment, String title) {
             //add fragment passed as parameter in fragmentList
             fragmentList.add(fragment);
             //add title passed as parameter in fragmentTitleList

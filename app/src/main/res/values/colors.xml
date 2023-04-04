@@ -13,4 +13,37 @@
     <color name="gray03">#EDEDED</color>
     <color name="gray04">#FBFBFB</color>
     <color name="gray05">#E5E5E5</color>
+    <color name="grayBB">#BBBBBB</color>
+
+    <!-- Primary Greys -->
+    <color name="grey">#87a6bc</color>
+    <color name="grey_light">#868789</color>
+    <color name="grey_dark">#2f2f30</color>
+
+    <!-- Secondary Greys -->
+    <color name="grey_lighten_30">#e9eff3</color>
+    <color name="grey_lighten_20">#c8d7e1</color>
+    <color name="grey_lighten_10">#a8bece</color>
+    <color name="grey_darken_10">#668eaa</color>
+    <color name="grey_darken_20">#4f748e</color>
+    <color name="grey_darken_30">#3d596d</color>
+
+    <!-- Blues -->
+    <color name="blue_inact">#0087be</color>
+    <color name="blue_light">#78dcfa</color>
+    <color name="blue_medium">#00aadc</color>
+    <color name="blue_dark">#005082</color>
+
+    <!-- Oranges -->
+    <color name="orange_jazzy">#f0821e</color>
+
+    <!-- Reds -->
+    <color name="red_rgs_title">#870014</color>
+
+    <!-- Translucent -->
+    <color name="semi_transparent_grey_dark">#B32e4453</color>
+    <color name="translucent_grey_dark">#802e4453</color>
+    <color name="translucent_grey_lighten_10">#80a8bece</color>
+    <color name="translucent_grey_lighten_20">#80c8d7e1</color>
+    <color name="translucent_grey_lighten_30">#80e9eff3</color>
 </resources>
