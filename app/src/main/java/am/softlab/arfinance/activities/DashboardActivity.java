@@ -74,7 +74,7 @@ public class DashboardActivity extends AppCompatActivity {
 
                 .addItem(new PowerMenuItem(res.getString(R.string.about), false))
 
-                .setWidth(screenWidth*3/5)
+                .setWidth(screenWidth*4/5)
                 .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
                 .setMenuRadius(10f) // sets the corner radius.
                 .setMenuShadow(10f) // sets the shadow.
@@ -99,7 +99,7 @@ public class DashboardActivity extends AppCompatActivity {
             builder.setTitle(res.getString(R.string.signout))
                     .setMessage(res.getString(R.string.sure_signout))
                     .setPositiveButton(
-                            res.getString(R.string.signout),
+                            res.getString(R.string.signout_do),
                             (dialogInterface, i) -> {
                                 firebaseAuth.signOut();
                                 startActivity(new Intent(DashboardActivity.this, MainActivity.class));

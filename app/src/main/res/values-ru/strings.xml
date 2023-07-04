@@ -1,0 +1,256 @@
+<resources>
+    <string name="app_name">ArFinance</string>
+    <string name="app_description">Управление личными финансами</string>
+    <string name="app_site">www.softlab.am</string>
+    <string name="app_copyright">© 2023 Артём Джангирян</string>
+    <string name="app_samsung">Samsung Innovation Campus</string>
+
+    <!--General strings-->
+    <string name="please_wait">Пожалуйста подождите</string>
+    <string name="login">Войти</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="submit">Выполнить</string>
+    <string name="update">Обновить</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отменить</string>
+    <string name="name">Имя</string>
+    <string name="record_type">Тип</string>
+    <string name="search">Поиск</string>
+    <string name="camera">Камера</string>
+    <string name="gallery">Галерея</string>
+    <string name="view">View</string>
+    <string name="clear">Очистить</string>
+    <string name="canceled">Отменено</string>
+    <string name="verified">Подтверждено</string>
+    <string name="not_verified">Не проверено</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_title">Удаление</string>
+    <string name="download">Скачать</string>
+    <string name="downloading">Загрузка…</string>
+    <string name="deleted">Успешно удалено…</string>
+    <string name="deleting">Удаление…</string>
+    <string name="usage_count">кол-во</string>
+    <string name="camera_denied">Доступ к камере запрещен</string>
+    <string name="camera_granted">Разрешение камеры предоставлено</string>
+    <string name="write_external_granted">Write External Storage Permission Granted</string>
+    <string name="write_external_denied">Write External Storage Permission Denied</string>
+    <string name="notification_channel_name">ArFinance</string>
+    <string name="notification_channel_desc">ArFinance notifications</string>
+    <string name="warning">Внимание</string>
+    <string name="close">Закрыть</string>
+    <string name="failure">Сбой</string>
+    <string name="version">Версия</string>
+    <string name="send">Отправить</string>
+
+    <!--login/register activity-->
+    <string name="logging_in">Вход в систему…</string>
+    <string name="checking_user">Checking User…</string>
+    <string name="new_user_signup">Новый пользователь? <b>Регистрация</b></string>
+    <string name="enter_your_name">Введите ваше имя…</string>
+    <string name="invalid_email">Неверный формат e-mail…!</string>
+    <string name="enter_password">Введите пароль…!</string>
+    <string name="confirm_password_msg">Подтвердите пароль…!</string>
+    <string name="password_not_match">Пароль не совпадает…!</string>
+    <string name="creating_account">Creating account</string>
+    <string name="saving_user_info">Saving user info…</string>
+    <string name="account_created">Account created…</string>
+    <string name="please_login">Вход в систему</string>
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="forgot_password">Забыли пароль ?</string>
+    <string name="reset_password_title">Enter your registered email address to receiver instructions to reset your password.</string>
+    <string name="enter_email">Enter Email…</string>
+    <string name="sending_password">Sending password recovery instructions to</string>
+    <string name="instructions_sent">Instructions to reset password sent to</string>
+    <string name="failed_to_send">Failed to send due to</string>
+    <string name="initCategoriesTables">Init categories table…</string>
+    <string name="initWalletsTables">Init wallets table…</string>
+    <string name="register">Регистрация</string>
+    <string name="create_new_account">Создать новый аккаунт</string>
+    <string name="confirm_password">Повторите пароль</string>
+
+
+    <!--profile/editProfile activities-->
+    <string name="profile">Профиль</string>
+    <string name="account">Аккаунт</string>
+    <string name="member">Дата</string>
+    <string name="account_status">Статус аккаунта</string>
+    <string name="already_verified">Already verified…</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_pass">Изменить пароль</string>
+    <string name="updating_profile_image">Updating profile image</string>
+    <string name="failed_to_upload_image">Failed to upload image due to</string>
+    <string name="updating_user_profile">Updating user profile…</string>
+    <string name="profile_updated">Profile updated…</string>
+    <string name="new_pick">New Pick</string>
+    <string name="sample_image_desc">Sample Image Description</string>
+    <string name="verify_email">Подтверждение e-mail</string>
+    <string name="sure_send_email_verification">Отправить письмо для подтверждения адреса электронной почты</string>
+    <string name="sending_email_verification">Sending email verification instructions to your email</string>
+    <string name="verification_instructions_sent">Instructions sent, check your email</string>
+
+    <!--scheduler activity-->
+    <string name="scheduler">Планировщик</string>
+    <string name="post_notification_denied">Post Notification Denied</string>
+    <string name="post_notification_granted">Post Notification Granted</string>
+    <string name="add_schedule_btn">+ Добавить расписание</string>
+    <string name="add_schedule">Новое расписание</string>
+    <string name="edit_schedule">Правка расписания</string>
+    <string name="schedule_name">Название</string>
+    <string name="schedule_start_date">Дата начала</string>
+    <string name="schedule_wallet">Кошелек</string>
+    <string name="schedule_oper_type">Тип операции</string>
+    <string name="schedule_period">Период</string>
+    <string name="sure_delete_schedule">Are you sure you want to delete this schedule ?</string>
+    <string name="loading_schedulers">Loading Schedulers…</string>
+    <string name="pick_schedule_type">Pick Schedule Type</string>
+    <string name="enter_schedule_name">Please enter schedule name…!</string>
+    <string name="pick_period">Выбора периода</string>
+    <string name="adding_schedule">Adding schedule…</string>
+    <string name="updating_schedule">Updating schedule…</string>
+    <string name="schedule_added">Расписание успешно добавлено…</string>
+    <string name="schedule_updated">Расписание успешно обновлено…</string>
+    <string name="sure_start_schedule">Вы уверены, что хотите активировать это расписание ?</string>
+    <string name="sure_stop_schedule">Вы уверены, что хотите отключить это расписание ?</string>
+    <string name="start">Старт</string>
+    <string name="stop">Стоп</string>
+    <string name="started">Запущено !</string>
+    <string name="stopped">Остановлено !</string>
+    <string name="enable_schedule">Enable Schedule</string>
+    <string name="disable_schedule">Отключение расписания</string>
+    <string name="deny_change_schedule">Schedule is enabled, no changes allowed</string>
+    <string name="starting">Запуск…</string>
+    <string name="stopping">Остановка…</string>
+    <string name="tasks_completed">Задачи планировщика выполнены</string>
+    <string name="schrow_start_date">Дата начала</string>
+    <string name="schrow_wallet">Кошелек</string>
+    <string name="schrow_type">Тип</string>
+    <string name="schrow_category">Категория</string>
+    <string name="schrow_amount">Сумма</string>
+    <string name="schrow_period">Период</string>
+
+    <!--forgot/change password activities-->
+    <string name="old_password">Старый пароль</string>
+    <string name="new_password">Новый пароль</string>
+    <string name="confirm_new_password">Подтвердите новый пароль</string>
+    <string name="enter_old_password">Введите старый пароль…!</string>
+    <string name="enter_new_password">Введите новый пароль…!</string>
+    <string name="confirm_new_password_msg">Подтвердите новый пароль…!</string>
+    <string name="no_current_user">No current user…</string>
+    <string name="password_updated">Пароль успешно обновлен…</string>
+    <string name="reauth_failed">Re-Authentication failed…</string>
+    <string name="creating_password">Изменение пароля</string>
+
+    <!--main/dashboard activity-->
+    <string name="dashboard">Панель Инструментов</string>
+    <string name="signout">Выход</string>
+    <string name="signout_do">Выйти</string>
+    <string name="sure_signout">Вы уверены, что хотите выйти ?</string>
+    <string name="income">Доходы</string>
+    <string name="income_by_wallet">Доходы по кошелькам и категориям</string>
+    <string name="expenses">Расходы</string>
+    <string name="expenses_by_wallet">Расходы по кошелькам и категориям</string>
+    <string name="statistics">Статистика</string>
+    <string name="statistics_desc">Статистика, отчеты и диаграммы</string>
+    <string name="categories">Категории</string>
+    <string name="categories_desc">Категории доходов и расходов</string>
+    <string name="wallets">Кошельки</string>
+    <string name="wallets_desc">Кошельки, валюты и баланс</string>
+    <string name="operdate">Дата</string>
+    <string name="operation_category">Категория</string>
+    <string name="operAmount">Сумма</string>
+    <string name="not_logged_in">Вы не вошли в систему</string>
+    <string name="about">О программе</string>
+
+    <!--operations activity-->
+    <string name="operations">Income/Expenses</string>
+    <string name="sure_delete_operation">Вы уверены, что хотите удалить эту операцию ?</string>
+    <string name="add_operation_btn">+ Add Operation</string>
+    <string name="add_income">Новый доход</string>
+    <string name="add_expense">Новый расход</string>
+    <string name="edit_income">Edit Income</string>
+    <string name="edit_expenses">Edit Expenses</string>
+    <string name="operation_notes">Примечание</string>
+    <string name="pick_date">Выберите дату</string>
+    <string name="pick_category">Выберите категорию</string>
+    <string name="adding_operation">Adding operation…</string>
+    <string name="updating_operation">Updating operation…</string>
+    <string name="enter_amount">Enter Amount…</string>
+    <string name="operation_added">Операция успешно добавлена…</string>
+    <string name="operation_updated">Операция успешно обновлена…</string>
+    <string name="select_date">Выберите дату</string>
+    <string name="category_used">Категория используется, невозможно удалить</string>
+    <string name="loading_operations">Загрузка операций…</string>
+    <string name="loading_operation">Загрузка операции…</string>
+    <string name="updating_operation_image">Updating operation image</string>
+    <string name="loading_image">Loading Image…</string>
+    <string name="sure_download_image">Вы уверены, что хотите загрузить это изображение ?</string>
+    <string name="recognition">Распознавание</string>
+    <string name="recognition_start">Start amount recognition from picture ?</string>
+    <string name="recognize">Распознать</string>
+    <string name="select_image">Чтобы распознать сумму, выберите изображение из галереи или с камеры в верхней части экрана.</string>
+    <string name="select_image_short">Выберите изображение из галереи или с камеры в верхней части экрана.</string>
+    <string name="failed_to_get_rotation">Failed to get rotation compensation due to</string>
+    <string name="failed_to_recognize">Failed to recognize text due to</string>
+    <string name="preparing_image">Preparing Image…</string>
+    <string name="recognizing_text">Recognizing Text…</string>
+    <string name="perform_text_analysis">Perform Text Analysis, detecting amount…</string>
+    <string name="recognition_failed">Sorry, recognition failed…</string>
+    <string name="recognition_amount_failed">Text recognized but no amount found…</string>
+    <string name="pick_amount">Выберите сумму</string>
+
+    <!--attachment view activity-->
+    <string name="loading_attachment">Loading Attachment…</string>
+
+    <!--statistics activity-->
+    <string name="income_category">Категория дохода</string>
+    <string name="expenses_category">Категория расхода</string>
+    <string name="spending_category">Всего</string>
+    <string name="pick_wallet">Выбор кошелька</string>
+    <string name="other_categories">Other</string>
+    <string name="select_date_range">ВЫБЕРИТЕ ДИАПАЗОН ДАТ</string>
+    <string name="for_all_time">За все время</string>
+    <string name="select_wallet">Now Select Wallet</string>
+
+    <!--categories activity-->
+    <string name="add_category">Новая категория</string>
+    <string name="edit_category">Редактировать категорию</string>
+    <string name="category_title">Название категории</string>
+    <string name="category_notes">Примечания</string>
+    <string name="enter_category">Пожалуйста, введите категорию…!</string>
+    <string name="pick_category_type">Выберите тип категории</string>
+    <string name="adding_category">Добавляем категорию…</string>
+    <string name="add_category_btn">+ Добавить категорию</string>
+    <string name="category_added">Категория успешно добавлена…</string>
+    <string name="category_updated">Категория успешно обновлена…</string>
+    <string name="sure_delete_category">Вы уверены, что хотите удалить эту категорию ?</string>
+    <string name="loading_categories">Загрузка категорий…</string>
+
+    <!--wallets activity-->
+    <string name="add_wallet">Новый кошелек</string>
+    <string name="add_wallet_btn">+ Добавить кошелек</string>
+    <string name="edit_wallet">Правка кошелька</string>
+    <string name="wallet_name">Название кошелька</string>
+    <string name="currency">Валюта</string>
+    <string name="wallet_notes">Примечания</string>
+    <string name="sure_delete_wallet">Вы уверены, что хотите удалить этот кошелек ?</string>
+    <string name="wallet_used">Кошелек используется, невозможно удалить</string>
+    <string name="enter_wallet">Введите название кошелька…!</string>
+    <string name="pick_currency">Выберите валюту</string>
+    <string name="adding_wallet">Добавление кошелька…</string>
+    <string name="wallet_added">Кошелек успешно добавлен…</string>
+    <string name="wallet_updated">Кошелек успешно обновлен…</string>
+    <string name="total_income">- итого доход</string>
+    <string name="total_expenses">- итого расход</string>
+    <string name="balance">Баланс</string>
+    <string name="loading_wallets">Загрузка кошельков…</string>
+
+    <!--errors-->
+    <string name="failed_to_update_db">Failed to update db due to</string>
+    <string name="not_logged_in_detailed">Войдите в систему и пройдите верификацию</string>
+    <string name="not_verified_detailed">Сначала подтвердите свой адрес электронной почты</string>
+
+    <string name="continue_without_login">Продолжить без входа</string>
+    <string name="welcome_to_arfinance">Добро пожаловать в ArFinance</string>
+
+</resources>

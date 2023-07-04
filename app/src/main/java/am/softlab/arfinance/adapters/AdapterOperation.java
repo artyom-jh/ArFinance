@@ -129,7 +129,7 @@ public class AdapterOperation extends RecyclerView.Adapter<AdapterOperation.Hold
                 if (firebaseUser.isEmailVerified()) {
                     //confirm delete dialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle(res.getString(R.string.delete))
+                    builder.setTitle(res.getString(R.string.delete_title))
                             .setMessage(res.getString(R.string.sure_delete_operation))
                             .setPositiveButton(res.getString(R.string.delete), (dialogInterface, i) -> {
                                 //begin delete

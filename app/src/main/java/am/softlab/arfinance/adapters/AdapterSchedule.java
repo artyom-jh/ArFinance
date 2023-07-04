@@ -112,7 +112,7 @@ public class AdapterSchedule extends RecyclerView.Adapter<AdapterSchedule.Holder
                     if (firebaseUser.isEmailVerified()) {
                         //confirm delete dialog
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                        builder.setTitle(res.getString(R.string.delete))
+                        builder.setTitle(res.getString(R.string.delete_title))
                                 .setMessage(res.getString(R.string.sure_delete_schedule))
                                 .setPositiveButton(res.getString(R.string.delete), (dialogInterface, i) -> {
                                     //begin delete

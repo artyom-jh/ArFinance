@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
-                android:text="Start date"
+                android:text="@string/schrow_start_date"
                 android:textColor="@color/black"/>
 
             <TextView
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
-                android:text="Wallet"
+                android:text="@string/schrow_wallet"
                 android:textColor="@color/black"/>
 
             <TextView
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
-                android:text="Type"
+                android:text="@string/schrow_type"
                 android:textColor="@color/black"/>
 
             <TextView
@@ -166,7 +166,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
-                android:text="Category"
+                android:text="@string/schrow_category"
                 android:textColor="@color/black"/>
 
             <!--delete-->
@@ -197,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
-                android:text="Amount"
+                android:text="@string/schrow_amount"
                 android:textColor="@color/black"/>
 
             <TextView
@@ -227,7 +227,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="12dp"
-                android:text="Period"
+                android:text="@string/schrow_period"
                 android:textColor="@color/black"/>
 
             <!--delete-->

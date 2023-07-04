@@ -3,12 +3,15 @@ package am.softlab.arfinance.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -83,6 +86,15 @@ public class ProfileActivity extends AppCompatActivity {
         //handle click, goBack
         binding.backBtn.setOnClickListener(v -> onBackPressed());
 
+        if (firebaseUser.isEmailVerified()) {
+            binding.accountStatusTv.setTextColor(ContextCompat.getColor(this, R.color.black));
+            binding.accountStatusTv.setTypeface(null, Typeface.NORMAL);
+        }
+        else {
+            binding.accountStatusTv.setTextColor(ContextCompat.getColor(this, R.color.blue));
+            binding.accountStatusTv.setTypeface(null, Typeface.BOLD_ITALIC);
+        }
+
         //handle click, verify user if not
         binding.accountStatusTv.setOnClickListener(v -> {
 
@@ -90,7 +102,7 @@ public class ProfileActivity extends AppCompatActivity {
                 //already verified
                 Toast.makeText(ProfileActivity.this, res.getString(R.string.already_verified), Toast.LENGTH_SHORT).show();
             }
-            else{
+            else {
                 //not verified, show confirmation dialog first
                 emailVerificationDialog();
             }
@@ -108,8 +120,8 @@ public class ProfileActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(res.getString(R.string.verify_email))
                 .setMessage(res.getString(R.string.sure_send_email_verification) + " " + firebaseUser.getEmail())
-                .setPositiveButton("SEND", (dialog, which) -> sendEmailVerification())
-                .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton(res.getString(R.string.send), (dialog, which) -> sendEmailVerification())
+                .setNegativeButton(res.getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 

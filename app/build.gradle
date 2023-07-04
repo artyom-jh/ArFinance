@@ -10,10 +10,10 @@ android {
 
     defaultConfig {
         applicationId "am.softlab.arfinance"
-        minSdk 24
+        minSdk 26
         targetSdk 33
-        versionCode 13
-        versionName "3.3.2"
+        versionCode 14
+        versionName "3.3.3"
         setProperty("archivesBaseName", "ArFinance-v$versionName")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

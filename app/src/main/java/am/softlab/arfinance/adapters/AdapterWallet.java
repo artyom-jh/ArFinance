@@ -111,7 +111,7 @@ public class AdapterWallet extends RecyclerView.Adapter<AdapterWallet.HolderWall
             if (firebaseAuth.getCurrentUser() != null) {
                 //confirm delete dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(res.getString(R.string.delete))
+                builder.setTitle(res.getString(R.string.delete_title))
                         .setMessage(res.getString(R.string.sure_delete_wallet))
                         .setPositiveButton(
                                 res.getString(R.string.delete),

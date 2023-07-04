@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "am.softlab.arfinance",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 13,
+      "versionName": "3.3.3",
+      "outputFile": "ArFinance-v3.3.3-debug-2023-07-04.apk"
+    }
+  ],
+  "elementType": "File"
+}
